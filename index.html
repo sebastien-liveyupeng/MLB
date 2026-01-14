@@ -24,7 +24,12 @@
                 <div class="logo-text">Gascom Esport</div>
             </div>
             <nav>
-                <ul class="nav-menu">
+                <button class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
                     <li class="nav-item"><a href="/" class="active">Accueil</a></li>
                     <li class="nav-item"><a href="/equipe">Équipe</a></li>
                     <li class="nav-item"><a href="/tournois">Tournois</a></li>
@@ -118,6 +123,23 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
                 header.style.background = 'rgba(11, 11, 15, 0.95)';
                 header.style.boxShadow = 'none';
             }
+        });
+
+        // Hamburger menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        document.querySelectorAll('.nav-item a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                hamburger.classList.remove('active');
+            });
         });
 
         // Dynamic particles
