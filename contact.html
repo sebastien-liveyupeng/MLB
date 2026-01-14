@@ -676,14 +676,11 @@
 
         setInterval(createParticle, 2000);
 
-        // Form handling
+        // Form handling with Formspree
         const contactForm = document.getElementById('contactForm');
-        const formMessage = document.getElementById('formMessage');
 
         if (contactForm) {
             contactForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-
                 const name = document.getElementById('name').value;
                 const email = document.getElementById('email').value;
                 const subject = document.getElementById('subject').value;
@@ -691,6 +688,7 @@
 
                 // Basic validation
                 if (name.trim() === '' || email.trim() === '' || subject.trim() === '' || message.trim() === '') {
+                    e.preventDefault();
                     showMessage('Veuillez remplir tous les champs', 'error');
                     return;
                 }
@@ -698,22 +696,26 @@
                 // Email validation
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(email)) {
+                    e.preventDefault();
                     showMessage('Veuillez entrer une adresse email valide', 'error');
                     return;
                 }
 
-                // Simulate form submission
-                showMessage('Message envoyé avec succès! Nous vous répondrons bientôt.', 'success');
-                contactForm.reset();
-
-                // Clear message after 5 seconds
-                setTimeout(() => {
-                    formMessage.style.display = 'none';
-                }, 5000);
+                // Allow form to submit to Formspree
             });
+
+            // Show success message after redirect from Formspree
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('success')) {
+                showMessage('Message envoyé avec succès! Nous vous répondrons bientôt.', 'success');
+                setTimeout(() => {
+                    window.location.href = '/contact';
+                }, 3000);
+            }
         }
 
         function showMessage(text, type) {
+            const formMessage = document.getElementById('formMessage');
             formMessage.textContent = text;
             formMessage.className = `form-message ${type}`;
             formMessage.style.display = 'block';
