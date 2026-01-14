@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournois - Gascom Esport</title>
+    <link rel="icon" type="image/png" href="assets/Ges-white.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        /* Tournaments Page Styles */
+        .tournaments-hero {
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px;
+        }
+
+        .tournaments-hero-content {
+            text-align: center;
+            z-index: 10;
+            max-width: 600px;
+            padding: 0 2rem;
+        }
+
+        .tournaments-hero-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #FF0000, #FFFFFF);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-wave 4s ease-in-out infinite;
+        }
+
+        .tournaments-hero-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0;
+            font-weight: 300;
+        }
+
+        /* Tournaments Grid */
+        .tournaments-section {
+            padding: 5rem 2rem;
+            background: rgba(25, 25, 35, 0.3);
+        }
+
+        .tournaments-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .tournaments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tournament-item {
+            background: linear-gradient(135deg, rgba(25, 25, 35, 0.6), rgba(50, 25, 20, 0.4));
+            border: 2px solid rgba(156, 44, 23, 0.4);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 60px rgba(156, 44, 23, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tournament-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(156, 44, 23, 0.1), transparent);
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .tournament-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .tournament-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #7c1808, #9c2c17);
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tournament-status {
+            display: inline-block;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tournament-status.live {
+            background: linear-gradient(135deg, #ff4444, #ff6666);
+            color: white;
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        .tournament-status.upcoming {
+            background: linear-gradient(135deg, #4444ff, #6666ff);
+            color: white;
+        }
+
+        .tournament-status.completed {
+            background: linear-gradient(135deg, #44ff44, #66ff66);
+            color: #000;
+        }
+
+        .tournament-item-name {
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #FF0000, #ecf4f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tournament-item-details {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid rgba(156, 44, 23, 0.3);
+        }
+
+        .tournament-detail {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .tournament-detail i {
+            font-size: 1.5rem;
+            color: #9c2c17;
+            min-width: 25px;
+        }
+
+        .tournament-detail-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tournament-detail-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.2rem;
+        }
+
+        .tournament-detail-value {
+            font-size: 1.1rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .tournament-item-description {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .tournament-item-action {
+            display: inline-block;
+            background: linear-gradient(135deg, #7c1808, #9c2c17);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tournament-item-action:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(156, 44, 23, 0.4);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Responsive */
+        @media (max-width: 1023px) {
+            .tournaments-hero-title {
+                font-size: 2.8rem;
+            }
+
+            .tournaments-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .tournaments-hero {
+                height: 50vh;
+                padding-top: 70px;
+            }
+
+            .tournaments-hero-title {
+                font-size: 2.2rem;
+            }
+
+            .tournaments-section {
+                padding: 3rem 1rem;
+            }
+
+            .tournament-item {
+                padding: 1.5rem;
+            }
+
+            .tournament-item-name {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .tournament-item-details {
+                gap: 0.8rem;
+                margin-bottom: 1rem;
+                padding-bottom: 1rem;
+            }
+
+            .tournament-detail i {
+                font-size: 1.2rem;
+            }
+
+            .tournament-detail-value {
+                font-size: 1rem;
+            }
+
+            .tournament-item-description {
+                font-size: 0.95rem;
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media (max-width: 599px) {
+            .tournaments-hero {
+                height: 45vh;
+                padding-top: 60px;
+            }
+
+            .tournaments-hero-title {
+                font-size: 1.8rem;
+            }
+
+            .tournaments-hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .tournaments-section {
+                padding: 2rem 0.8rem;
+            }
+
+            .tournament-item {
+                padding: 1.2rem;
+            }
+
+            .tournament-item-header {
+                margin-bottom: 1rem;
+            }
+
+            .tournament-item-name {
+                font-size: 1.3rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .tournament-badge,
+            .tournament-status {
+                font-size: 0.75rem;
+                padding: 0.4rem 0.8rem;
+            }
+
+            .tournament-item-details {
+                gap: 0.6rem;
+                margin-bottom: 0.8rem;
+                padding-bottom: 0.8rem;
+            }
+
+            .tournament-detail i {
+                font-size: 1rem;
+            }
+
+            .tournament-detail-label {
+                font-size: 0.75rem;
+            }
+
+            .tournament-detail-value {
+                font-size: 0.95rem;
+            }
+
+            .tournament-item-description {
+                font-size: 0.9rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .tournament-item-action {
+                padding: 0.7rem 1.5rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 479px) {
+            .tournaments-hero {
+                height: 40vh;
+                padding-top: 55px;
+            }
+
+            .tournaments-hero-title {
+                font-size: 1.5rem;
+            }
+
+            .tournaments-hero-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .tournaments-section {
+                padding: 1.5rem 0.6rem;
+            }
+
+            .tournament-item {
+                padding: 1rem;
+            }
+
+            .tournament-item-name {
+                font-size: 1.1rem;
+                margin-bottom: 0.6rem;
+            }
+
+            .tournament-item-details {
+                gap: 0.5rem;
+                margin-bottom: 0.6rem;
+                padding-bottom: 0.6rem;
+            }
+
+            .tournament-detail i {
+                font-size: 0.9rem;
+            }
+
+            .tournament-detail-label {
+                font-size: 0.7rem;
+            }
+
+            .tournament-detail-value {
+                font-size: 0.9rem;
+            }
+
+            .tournament-item-description {
+                font-size: 0.85rem;
+                margin-bottom: 0.6rem;
+            }
+
+            .tournament-item-action {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Modal Styles */
+        .live-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .live-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .live-modal-content {
+            background: linear-gradient(135deg, #1a1a25, #2a2a35);
+            border: 2px solid #9c2c17;
+            border-radius: 15px;
+            padding: 3rem 2rem;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(156, 44, 23, 0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .live-modal-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .live-modal-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #FF0000, #FFFFFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .live-modal-message {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .live-modal-close {
+            background: linear-gradient(135deg, #7c1808, #9c2c17);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .live-modal-close:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(156, 44, 23, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <img src="assets/Ges-white.png" alt="Gascom Esport Logo" class="logo-img">
+                </div>
+                <div class="logo-text">Gascom Esport</div>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="/">Accueil</a></li>
+                    <li class="nav-item"><a href="/equipe">Équipe</a></li>
+                    <li class="nav-item"><a href="/tournois" class="active">Tournois</a></li>
+                    <li class="nav-item"><a href="/contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="tournaments-hero">
+        <div class="hero-particles">
+            <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+            <div class="particle" style="left: 20%; animation-delay: 1s;"></div>
+            <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
+            <div class="particle" style="left: 40%; animation-delay: 3s;"></div>
+            <div class="particle" style="left: 50%; animation-delay: 4s;"></div>
+            <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+            <div class="particle" style="left: 70%; animation-delay: 6s;"></div>
+            <div class="particle" style="left: 80%; animation-delay: 7s;"></div>
+            <div class="particle" style="left: 90%; animation-delay: 8s;"></div>
+        </div>
+        <div class="tournaments-hero-content">
+            <h1 class="tournaments-hero-title">Nos Tournois</h1>
+            <p class="tournaments-hero-subtitle">Rejoignez les meilleures compétitions eSport</p>
+        </div>
+    </section>
+
+    <!-- Tournaments Section -->
+    <section class="tournaments-section">
+        <div class="tournaments-container">
+            <div class="tournaments-grid" id="tournamentsGrid">
+                <!-- Tournois Samedi 17h -->
+                <div class="tournament-item">
+                    <div class="tournament-item-header">
+                        <span class="tournament-badge">Mobile Legends</span>
+                        <span class="tournament-status upcoming">À VENIR</span>
+                    </div>
+                    <h3 class="tournament-item-name">Surge Europe</h3>
+                    <div class="tournament-item-details">
+                        <div class="tournament-detail">
+                            <i class='bx bxs-calendar'></i>
+                            <div class="tournament-detail-info">
+                                <span class="tournament-detail-label">Date</span>
+                                <span class="tournament-detail-value">Samedi</span>
+                            </div>
+                        </div>
+                        <div class="tournament-detail">
+                            <i class='bx bxs-time'></i>
+                            <div class="tournament-detail-info">
+                                <span class="tournament-detail-label">Heure</span>
+                                <span class="tournament-detail-value">17h00</span>
+                            </div>
+                        </div>
+                        <div class="tournament-detail">
+                            <i class='bx bxs-globe'></i>
+                            <div class="tournament-detail-info">
+                                <span class="tournament-detail-label">Région</span>
+                                <span class="tournament-detail-value">Europe</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="tournament-item-description">Préparez-vous pour une bataille épique! Gascom Esport en direct du tournoi Surge Europe. Venez nous supporter!</p>
+                    <button class="tournament-item-action" onclick="openLiveModal()">Regarder en Direct</button>
+                </div>
+
+                <!-- Ajoute tes autres tournois ici -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Modal -->
+    <div id="liveModal" class="live-modal" onclick="closeLiveModal(event)">
+        <div class="live-modal-content" onclick="event.stopPropagation()">
+            <div class="live-modal-icon">📡</div>
+            <h2 class="live-modal-title">Live en Direct</h2>
+            <p class="live-modal-message">Le live n'est pas encore disponible. Revenez bientôt pour regarder Gascom Esport en action!</p>
+            <button class="live-modal-close" onclick="closeLiveModal()">Fermer</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Gascom Esport</div>
+            <p class="footer-text">© 2025 Gascom - Tous droits réservés | Made in Madagascar 🇲🇬</p>
+        </div>
+    </footer>
+
+    <script>
+        // Modal functions
+        function openLiveModal() {
+            document.getElementById('liveModal').classList.add('show');
+        }
+
+        function closeLiveModal(event) {
+            // Si on clique sur le fond gris (pas le contenu), on ferme
+            if (!event || event.target.id === 'liveModal') {
+                document.getElementById('liveModal').classList.remove('show');
+            }
+        }
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(11, 11, 15, 0.98)';
+                header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+            } else {
+                header.style.background = 'rgba(11, 11, 15, 0.95)';
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // Dynamic particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 8 + 's';
+            document.querySelector('.hero-particles').appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 12000);
+        }
+
+        setInterval(createParticle, 2000);
+    </script>
+</body>
+</html>

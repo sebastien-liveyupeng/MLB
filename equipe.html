@@ -1,269 +1,151 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>4EVERMORE - Notre Équipe</title>
-  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary-purple: #7c1808;
-      --electric-blue: #9c2c17;
-      --neon-green: #ecf4f6;
-      --dark-bg: #000000;
-      --card-bg: #7c1808q;
-    }
-
-    body {
-      font-family: 'Exo 2', sans-serif;
-      background: var(--dark-bg);
-      color: white;
-      margin: 0;
-      padding-top: 100px;
-    }
-
-    header {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      padding: 1rem 2rem;
-      background: linear-gradient(90deg, rgba(0, 212, 255, 0.1), rgba(106, 13, 173, 0.1));
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(0, 212, 255, 0.3);
-      z-index: 1000;
-    }
-
-    .header-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .logo-container {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .logo-icon {
-      width: 50px;
-      height: 50px;
-      background: linear-gradient(135deg, var(--primary-purple), var(--electric-blue));
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-family: 'Russo One', sans-serif;
-      font-size: 1.2rem;
-    }
-
-    .logo-text {
-      font-family: 'Russo One', sans-serif;
-      font-size: 1.8rem;
-      background: linear-gradient(45deg, var(--electric-blue), var(--neon-green));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .nav-menu {
-      display: flex;
-      list-style: none;
-      gap: 2rem;
-    }
-
-    .nav-item a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      position: relative;
-    }
-
-    .nav-item a::after {
-      content: "";
-      display: block;
-      width: 0;
-      height: 2px;
-      background: var(--electric-blue);
-      transition: width 0.3s;
-      position: absolute;
-      bottom: -4px;
-      left: 0;
-    }
-
-    .nav-item a:hover::after,
-    .nav-item a.active::after {
-      width: 100%;
-    }
-
-    .team-section {
-      padding: 4rem 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .team-title {
-      text-align: center;
-      font-size: 3rem;
-      font-family: 'Russo One', sans-serif;
-      margin-bottom: 3rem;
-      background: linear-gradient(45deg, var(--electric-blue), var(--neon-green));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .team-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-    }
-
-    .player-card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 1.5rem;
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-    }
-
-    .player-card:hover {
-      transform: scale(1.05);
-    }
-
-    .player-card h3 {
-      margin: 1rem 0 0.5rem;
-      font-family: 'Russo One', sans-serif;
-      color: var(--electric-blue);
-    }
-
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      visibility: hidden;
-      opacity: 0;
-      transition: all 0.3s ease;
-      z-index: 2000;
-    }
-
-    .modal.active {
-      visibility: visible;
-      opacity: 1;
-    }
-
-    .modal-content {
-      background: var(--card-bg);
-      padding: 2rem;
-      border-radius: 12px;
-      max-width: 600px;
-      width: 100%;
-      position: relative;
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: transparent;
-      border: none;
-      color: white;
-      font-size: 1.5rem;
-      cursor: pointer;
-    }
-
-    .modal-content h2 {
-      font-family: 'Russo One', sans-serif;
-      color: var(--electric-blue);
-    }
-
-    .modal-content p {
-      margin: 0.5rem 0;
-    }
-
-    .hero-list {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .hero-list img {
-      width: 60px;
-      height: 60px;
-      border-radius: 8px;
-      object-fit: cover;
-      border: 2px solid var(--electric-blue);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notre Équipe - Gascom Esport</title>
+    <link rel="icon" type="image/png" href="assets/Ges-white.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header>
-    <div class="header-content">
-      <div class="logo-container">
-        <div class="logo-icon">4E</div>
-        <div class="logo-text">4EVERMORE</div>
-      </div>
-      <nav>
-        <ul class="nav-menu">
-          <li class="nav-item"><a href="index.html">Accueil</a></li>
-          <li class="nav-item"><a href="#" class="active">Équipe</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+    <div class="bg-animation"></div>
+    
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <img src="assets/Ges-white.png" alt="Gascom Esport Logo" class="logo-img">
+                </div>
+                <div class="logo-text">Gascom Esport</div>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="/">Accueil</a></li>
+                    <li class="nav-item"><a href="/tournois">Tournois</a></li>
+                    <li class="nav-item"><a href="/equipe" class="active">Équipe</a></li>
+                    <li class="nav-item"><a href="/contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-  <section class="team-section">
-    <h1 class="team-title">Notre Équipe</h1>
-    <div class="team-grid">
-      <div class="player-card" onclick="openModal('ALPHA', ['Ling', 'Lancelot'], ['Jungle', 'Gold Lane'])">
-        <img src="membres/alpha.jpg" alt="ALPHA" class="player-img"/>
-        <h3></h3>
-      </div>
-      <div class="player-card" onclick="openModal('BETA', ['Esmeralda', 'Benedetta'], ['EXP Lane', 'Roam'])">
-        <img src="membres/beta.jpg" alt="BETA" class="player-img"/>
-        <h3></h3>
-      </div>
-    </div>
-  </section>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-particles">
+            <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+            <div class="particle" style="left: 20%; animation-delay: 1s;"></div>
+            <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
+            <div class="particle" style="left: 40%; animation-delay: 3s;"></div>
+            <div class="particle" style="left: 50%; animation-delay: 4s;"></div>
+            <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+            <div class="particle" style="left: 70%; animation-delay: 6s;"></div>
+            <div class="particle" style="left: 80%; animation-delay: 7s;"></div>
+            <div class="particle" style="left: 90%; animation-delay: 8s;"></div>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-title">Notre Équipe</h1>
+            <p class="hero-subtitle">Rencontre les champions de Gascom Esport</p>
+        </div>
+    </section>
 
-  <div class="modal" id="playerModal">
-    <div class="modal-content">
-      <button class="modal-close" onclick="closeModal()">&times;</button>
-      <h2 id="playerName"></h2>
-      <p><strong>Lanes :</strong> <span id="playerLanes"></span></p>
-      <p><strong>Héros :</strong></p>
-      <div class="hero-list" id="playerHeroes"></div>
-    </div>
-  </div>
+    <!-- Team Section -->
+    <section class="team-section">
+        <div class="team-container">
+            <h2 class="team-title">Les Joueurs</h2>
+            <div class="team-grid">
+                <div class="member-card" style="background-image: url('télécharger.webp');">
+                    <div class="member-overlay"></div>
+                    <div class="member-content">
+                        <h3 class="member-name">Nganjin</h3>
+                        <p class="member-role">Mid Lane</p>
+                    </div>
+                </div>
 
-  <script>
-    function openModal(name, heroes, lanes) {
-      document.getElementById('playerName').textContent = name;
-      document.getElementById('playerLanes').textContent = lanes.join(', ');
+                <div class="member-card" style="background-image: url('OIP (1).webp');">
+                    <div class="member-overlay"></div>
+                    <div class="member-content">
+                        <h3 class="member-name">Shi</h3>
+                        <p class="member-role">Jungle</p>
+                    </div>
+                </div>
 
-      const heroList = document.getElementById('playerHeroes');
-      heroList.innerHTML = '';
-      heroes.forEach(hero => {
-        const img = document.createElement('img');
-        img.src = `heros/${hero.toLowerCase()}.jpg`;
-        img.alt = hero;
-        heroList.appendChild(img);
-      });
+                <div class="member-card" style="background-image: url('OIP (2).webp');">
+                    <div class="member-overlay"></div>
+                    <div class="member-content">
+                        <h3 class="member-name">Sansa</h3>
+                        <p class="member-role">Gold</p>
+                    </div>
+                </div>
 
-      document.getElementById('playerModal').classList.add('active');
-    }
+                <div class="member-card" style="background-image: url('mazinab.jpg');">
+                    <div class="member-overlay"></div>
+                    <div class="member-content">
+                        <h3 class="member-name">Enryu</h3>
+                        <p class="member-role">Roam</p>
+                    </div>
+                </div>
 
-    function closeModal() {
-      document.getElementById('playerModal').classList.remove('active');
-    }
-  </script>
+                <div class="member-card" style="background-image: url('télécharger (1).webp');">
+                    <div class="member-overlay"></div>
+                    <div class="member-content">
+                        <h3 class="member-name">Maestrr</h3>
+                        <p class="member-role">Exp Laner</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Gascom Esport</div>
+            <p class="footer-text">© 2025 Gascom - Tous droits réservés | Made in Madagascar 🇲🇬</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(11, 11, 15, 0.98)';
+                header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+            } else {
+                header.style.background = 'rgba(11, 11, 15, 0.95)';
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // Dynamic particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 8 + 's';
+            document.querySelector('.hero-particles').appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 12000);
+        }
+
+        setInterval(createParticle, 2000);
+    </script>
 </body>
 </html>
