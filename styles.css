@@ -1213,12 +1213,13 @@
 
             .about-visual {
                 height: 150px;
-                display: none;
+                display: block;
             }
 
             .about-visual::before {
                 width: 250px;
                 height: 150px;
+                opacity: 0.15;
             }
 
             .cta-section {
