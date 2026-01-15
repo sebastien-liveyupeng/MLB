@@ -9,17 +9,17 @@
 }
 
 .roster-item-1 {
-    background: rgba(255, 255, 255, 0.08);
+   
     flex-direction: row;
 }
 
 .roster-item-2 {
-    background: rgba(220, 50, 50, 0.15);
+   
     flex-direction: row-reverse;
 }
 
 .roster-item-3 {
-    background: rgba(50, 200, 50, 0.15);
+   
     flex-direction: row;
 }
 

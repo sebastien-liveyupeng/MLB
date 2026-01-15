@@ -442,13 +442,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(107, 30, 30, 0.8) 100%);
+            background: transparent;
             z-index: 1;
             transition: all 0.3s ease;
         }
 
         .member-card:hover .member-overlay {
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(107, 30, 30, 0.9) 100%);
+            /* Pas d'effet */
         }
 
         .member-content {
@@ -477,9 +477,7 @@
         }
 
         .member-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(255, 0, 0, 0.25);
-            border-color: rgba(255, 255, 255, 0.3);
+            /* Pas d'effet */
         }
 
         /* About Section */

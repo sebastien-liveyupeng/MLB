@@ -43,29 +43,28 @@
 
         /* Members Grid */
         .roster-members-section {
-            padding: 3rem 2rem;
+            padding: 5rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
         .members-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
         }
 
+        /* Member Card Design - Modern & Clean */
         .member-card {
-            height: 350px;
-            border-radius: 12px;
-            overflow: hidden;
             position: relative;
+            height: 420px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .member-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            transform-style: preserve-3d;
         }
 
         .member-card::before {
@@ -73,21 +72,48 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 0;
+            bottom: 0;
             background-size: cover;
             background-position: center;
             z-index: 1;
+            filter: brightness(1.1) contrast(1.1) saturate(1.2);
+        }
+
+        .member-card:nth-child(1)::before {
+            background: linear-gradient(135deg, #2d1b4e 0%, #1a0f2e 100%);
+        }
+
+        .member-card:nth-child(2)::before {
+            background: linear-gradient(135deg, #0d4d4d 0%, #051f1f 100%);
+        }
+
+        .member-card:nth-child(3)::before {
+            background: linear-gradient(135deg, #4d3d0d 0%, #2a1f05 100%);
+        }
+
+        .member-card:nth-child(4)::before {
+            background: linear-gradient(135deg, #7c1808 0%, #4d0d05 100%);
+        }
+
+        .member-card:nth-child(5)::before {
+            background: linear-gradient(135deg, #1a3a52 0%, #0d1f2d 100%);
+        }
+
+        .member-card:hover {
+            transform: rotateY(12deg) rotateX(-8deg) translateZ(30px) scale(1.02);
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+        }
+
+        @media (hover: none) {
+            .member-card:active {
+                transform: rotateY(12deg) rotateX(-8deg) translateZ(30px) scale(1.02);
+                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+            }
         }
 
         .member-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
-            z-index: 2;
+            display: none;
         }
 
         .member-content {
@@ -95,65 +121,53 @@
             bottom: 0;
             left: 0;
             right: 0;
-            padding: 2rem;
-            z-index: 3;
-            color: white;
+            top: 0;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 3rem 2rem;
+            background: linear-gradient(180deg, 
+                rgba(0, 0, 0, 0) 0%,
+                rgba(0, 0, 0, 0.15) 50%,
+                rgba(0, 0, 0, 0.65) 100%);
+        }
+
+        .member-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .member-role {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #FFD700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 0.8rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .member-name {
             font-family: 'Exo 2', sans-serif;
-            font-size: 1.6rem;
+            font-size: 2.2rem;
             color: #FFFFFF;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
         }
 
-        .member-role {
-            font-size: 1rem;
-            font-weight: 600;
-            opacity: 0.9;
-            color: #FFB3B3;
-        }
-
-        /* Couleurs d'accent pour chaque carte - toutes en rouge/brun */
-        .member-card:nth-child(1) .member-overlay {
-            background: linear-gradient(180deg, rgba(124, 24, 8, 0.2) 0%, rgba(156, 44, 23, 0.9) 100%);
-        }
-
-        .member-card:nth-child(1) .member-role {
-            color: #FFB3B3;
-        }
-
-        .member-card:nth-child(2) .member-overlay {
-            background: linear-gradient(180deg, rgba(124, 24, 8, 0.2) 0%, rgba(156, 44, 23, 0.9) 100%);
-        }
-
-        .member-card:nth-child(2) .member-role {
-            color: #FFB3B3;
-        }
-
-        .member-card:nth-child(3) .member-overlay {
-            background: linear-gradient(180deg, rgba(124, 24, 8, 0.2) 0%, rgba(156, 44, 23, 0.9) 100%);
-        }
-
-        .member-card:nth-child(3) .member-role {
-            color: #FFB3B3;
-        }
-
-        .member-card:nth-child(4) .member-overlay {
-            background: linear-gradient(180deg, rgba(124, 24, 8, 0.2) 0%, rgba(156, 44, 23, 0.9) 100%);
-        }
-
-        .member-card:nth-child(4) .member-role {
-            color: #FFB3B3;
-        }
-
-        .member-card:nth-child(5) .member-overlay {
-            background: linear-gradient(180deg, rgba(124, 24, 8, 0.2) 0%, rgba(156, 44, 23, 0.9) 100%);
-        }
-
-        .member-card:nth-child(5) .member-role {
-            color: #FFB3B3;
+        .member-pseudo {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            font-style: italic;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .member-status {
@@ -169,12 +183,6 @@
             margin-bottom: 2rem;
             padding: 0.5rem 1rem;
             border-radius: 50px;
-            transition: all 0.3s ease;
-        }
-
-        .back-button:hover {
-            color: #9c2c17;
-            background: rgba(156, 44, 23, 0.1);
         }
 
         @media (max-width: 767px) {
@@ -185,6 +193,18 @@
             .members-grid {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
+            }
+
+            .member-card {
+                height: 350px;
+            }
+
+            .member-content {
+                padding: 2rem 1.5rem;
+            }
+
+            .member-name {
+                font-size: 1.8rem;
             }
         }
     </style>
@@ -246,44 +266,53 @@
             </a>
 
             <div class="members-grid" id="membersGrid">
-                <!-- Les joueurs seront ajoutés ici -->
-                <div class="member-card" style="background-image: url('assets/Ges-white.png');">
-                    <div class="member-overlay"></div>
+                <div class="member-card">
                     <div class="member-content">
-                        <h3 class="member-name">Joueur 1</h3>
-                        <p class="member-role">Rôle</p>
+                        <div class="member-info">
+                            <span class="member-role">Mid Lane</span>
+                            <h3 class="member-name">Player 1</h3>
+                            <span class="member-pseudo">Pseudo</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="member-card" style="background-image: url('assets/Ges-white.png');">
-                    <div class="member-overlay"></div>
+                <div class="member-card">
                     <div class="member-content">
-                        <h3 class="member-name">Joueur 2</h3>
-                        <p class="member-role">Rôle</p>
+                        <div class="member-info">
+                            <span class="member-role">Jungle</span>
+                            <h3 class="member-name">Player 2</h3>
+                            <span class="member-pseudo">Pseudo</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="member-card" style="background-image: url('assets/Ges-white.png');">
-                    <div class="member-overlay"></div>
+                <div class="member-card">
                     <div class="member-content">
-                        <h3 class="member-name">Joueur 3</h3>
-                        <p class="member-role">Rôle</p>
+                        <div class="member-info">
+                            <span class="member-role">Gold Laner</span>
+                            <h3 class="member-name">Player 3</h3>
+                            <span class="member-pseudo">Pseudo</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="member-card" style="background-image: url('assets/Ges-white.png');">
-                    <div class="member-overlay"></div>
+                <div class="member-card">
                     <div class="member-content">
-                        <h3 class="member-name">Joueur 4</h3>
-                        <p class="member-role">Rôle</p>
+                        <div class="member-info">
+                            <span class="member-role">Roam</span>
+                            <h3 class="member-name">Player 4</h3>
+                            <span class="member-pseudo">Pseudo</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="member-card" style="background-image: url('assets/Ges-white.png');">
-                    <div class="member-overlay"></div>
+                <div class="member-card">
                     <div class="member-content">
-                        <h3 class="member-name">Joueur 5</h3>
-                        <p class="member-role">Rôle</p>
+                        <div class="member-info">
+                            <span class="member-role">Exp Laner</span>
+                            <h3 class="member-name">Player 5</h3>
+                            <span class="member-pseudo">Pseudo</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -325,6 +354,24 @@
             link.addEventListener('click', () => {
                 navMenu.classList.remove('active');
                 hamburger.classList.remove('active');
+            });
+        });
+
+        // 3D Parallax Tilt Effect
+        const memberCards = document.querySelectorAll('.member-card');
+        memberCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const xPercent = x / rect.width - 0.5;
+                const yPercent = y / rect.height - 0.5;
+                const rotateY = xPercent * 25;
+                const rotateX = -yPercent * 20;
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(40px) scale(1.02)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'rotateX(0) rotateY(0) translateZ(0) scale(1)';
             });
         });
 
