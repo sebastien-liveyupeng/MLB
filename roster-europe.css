@@ -79,7 +79,7 @@
 }
 
 .member-card:nth-child(3)::before {
-    background: linear-gradient(135deg, #4d3d0d 0%, #2a1f05 100%);
+    background: url('assets/maestrr-avatar.webp') center/cover;
 }
 
 .member-card:nth-child(4)::before {
