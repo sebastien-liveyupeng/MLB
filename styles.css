@@ -209,12 +209,13 @@
 
         /* Hero Section */
         .hero {
-            height: 100vh;
+            height: 60vh;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
             overflow: hidden;
+            min-height: 500px;
         }
 
         .hero-particles {
@@ -269,9 +270,9 @@
 
         .hero-title {
             font-family: 'Russo One', sans-serif;
-            font-size: 4.5rem;
+            font-size: 3.2rem;
             font-weight: 400;
-            margin-bottom: 1rem;
+            margin-bottom: 0.6rem;
             background: linear-gradient(45deg, #FF0000, #FFFFFF);
             background-size: 300% 300%;
             -webkit-background-clip: text;
@@ -287,9 +288,9 @@
         }
 
         .hero-subtitle {
-            font-size: 1.4rem;
+            font-size: 1.1rem;
             color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             font-weight: 300;
         }
 

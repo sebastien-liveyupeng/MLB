@@ -7,8 +7,221 @@
     <link rel="icon" type="image/png" href="assets/Ges-white.png">
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
-        
+        /* Roster Carousel Styles */
+        .carousel-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(180deg, rgba(11, 11, 15, 0.5) 0%, rgba(11, 11, 15, 0.8) 100%);
+        }
+
+        .carousel-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .carousel-title {
+            text-align: center;
+            font-family: 'Russo One', sans-serif;
+            font-size: 2.5rem;
+            color: #FFFFFF;
+            margin-bottom: 3rem;
+            background: linear-gradient(45deg, #FFD700, #9c2c17);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .carousel-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .carousel-item {
+            min-width: 100%;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, rgba(156, 44, 23, 0.1) 0%, rgba(124, 24, 8, 0.1) 100%);
+            border: 1px solid rgba(156, 44, 23, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .carousel-image {
+            flex: 0 0 40%;
+            text-align: center;
+        }
+
+        .carousel-image i {
+            font-size: 10rem;
+            color: rgba(156, 44, 23, 0.6);
+            text-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .carousel-content {
+            flex: 1;
+            color: #FFFFFF;
+        }
+
+        .carousel-content h3 {
+            font-family: 'Russo One', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #FFD700;
+        }
+
+        .carousel-content p {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 1.5rem;
+        }
+
+        .carousel-btn {
+            display: inline-block;
+            padding: 0.8rem 1.8rem;
+            background: linear-gradient(135deg, #7c1808, #9c2c17);
+            color: #FFFFFF;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .carousel-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(156, 44, 23, 0.4);
+        }
+
+        /* Carousel Controls */
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            align-items: center;
+        }
+
+        .carousel-nav-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(156, 44, 23, 0.6);
+            border: 2px solid rgba(156, 44, 23, 0.8);
+            color: #FFFFFF;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .carousel-nav-btn:hover {
+            background: rgba(156, 44, 23, 0.9);
+            transform: scale(1.1);
+        }
+
+        .carousel-indicators {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background: #FFD700;
+            width: 32px;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .carousel-item {
+                flex-direction: column;
+                padding: 2rem 1.5rem;
+            }
+
+            .carousel-image {
+                flex: 0 0 auto;
+                margin-bottom: 1rem;
+            }
+
+            .carousel-image i {
+                font-size: 6rem;
+            }
+
+            .carousel-content h3 {
+                font-size: 1.5rem;
+            }
+
+            .carousel-title {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Scroll Animations */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+        }
+
+        .slide-up {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .slide-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .scale-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Stagger animation delays */
+        .scroll-animate:nth-child(1) { transition-delay: 0.1s; }
+        .scroll-animate:nth-child(2) { transition-delay: 0.2s; }
+        .scroll-animate:nth-child(3) { transition-delay: 0.3s; }
+        .scroll-animate:nth-child(4) { transition-delay: 0.4s; }
     </style>
 </head>
 <body>
@@ -57,17 +270,76 @@
         <div class="hero-content">
             <h1 class="hero-title">Gascom Esport</h1>
             <p class="hero-subtitle">L'élite eSport de Madagascar conquiert Mobile Legends</p>
-          <a href="/equipe" class="hero-cta">
+           
+        </div>
+    </section>
 
-                <span>⚡</span>
-                Découvrir notre équipe
-            </a>
-              <div class="about-visual"></div>
+    <!-- Rosters Carousel Section -->
+    <section class="carousel-section scroll-animate">
+        <div class="carousel-container">
+            <h2 class="carousel-title">Nos Rosters</h2>
+            
+            <div class="carousel-wrapper">
+                <div class="carousel-inner" id="carouselInner">
+                    <!-- Roster 1 -->
+                    <div class="carousel-item">
+                        <div class="carousel-image">
+                            <i class='bx bx-user-circle'></i>
+                        </div>
+                        <div class="carousel-content">
+                            <h3>Roster Féminin</h3>
+                            <p>Découvrez notre équipe féminine talentueuse basée à Madagascar. Nos joueuses compétentes dominent le champ de bataille avec stratégie et précision. Unis par une seule passion : l'eSport.</p>
+                            <a href="/roster-feminin" class="carousel-btn">Voir l'équipe</a>
+                        </div>
+                    </div>
+
+                    <!-- Roster 2 -->
+                    <div class="carousel-item">
+                        <div class="carousel-image">
+                            <i class='bx bx-user-circle'></i>
+                        </div>
+                        <div class="carousel-content">
+                            <h3>Roster Masculin</h3>
+                            <p>Explorez notre équipe masculine basée à Madagascar. Nos champions expérimentés sont prêts à affronter les plus grands défis eSport. Avec détermination et excellence, nous conquérons chaque tournoi.</p>
+                            <a href="/roster-masculin" class="carousel-btn">Voir l'équipe</a>
+                        </div>
+                    </div>
+
+                    <!-- Roster 3 -->
+                    <div class="carousel-item">
+                        <div class="carousel-image">
+                            <i class='bx bx-user-circle'></i>
+                        </div>
+                        <div class="carousel-content">
+                            <h3>Roster Europe</h3>
+                            <p>Rencontrez notre division européenne avec les meilleurs joueurs du continent. Une équipe internationale prête à conquérir les tournois européens. Excellence et compétitivité au plus haut niveau.</p>
+                            <a href="/roster-europe" class="carousel-btn">Voir l'équipe</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carousel Controls -->
+            <div class="carousel-controls">
+                <button class="carousel-nav-btn" id="prevBtn" aria-label="Previous">
+                    <i class='bx bx-chevron-left'></i>
+                </button>
+                
+                <div class="carousel-indicators">
+                    <span class="carousel-dot active" data-slide="0"></span>
+                    <span class="carousel-dot" data-slide="1"></span>
+                    <span class="carousel-dot" data-slide="2"></span>
+                </div>
+                
+                <button class="carousel-nav-btn" id="nextBtn" aria-label="Next">
+                    <i class='bx bx-chevron-right'></i>
+                </button>
+            </div>
         </div>
     </section>
 
     <!-- About Section -->
-    <section class="about-section">
+    <section class="about-section scroll-animate">
         <div class="about-container">
             <div class="about-content">
                 <h2>Gascom</h2>
@@ -82,7 +354,7 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
     </section>
 
     <!-- CTA Section -->
-    <section class="cta-section">
+    <section class="cta-section scroll-animate">
         <div class="cta-container">
             <h2>Rejoins l'Élite</h2>
             <p>Prêt à faire partie de la légende ? Contacte-nous et deviens un champion avec Gascom Esport !</p>
@@ -114,6 +386,98 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
                 }
             });
         });
+
+        // ===== CAROUSEL FUNCTIONALITY =====
+        let currentSlide = 0;
+        const carouselInner = document.getElementById('carouselInner');
+        const dots = document.querySelectorAll('.carousel-dot');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        let autoplayInterval;
+
+        function goToSlide(n) {
+            currentSlide = (n + 3) % 3;
+            carouselInner.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            // Update dots
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        function nextSlide() {
+            goToSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            goToSlide(currentSlide - 1);
+        }
+
+        function startAutoplay() {
+            autoplayInterval = setInterval(nextSlide, 5000);
+        }
+
+        function stopAutoplay() {
+            clearInterval(autoplayInterval);
+        }
+
+        // Event listeners
+        prevBtn.addEventListener('click', () => {
+            prevSlide();
+            stopAutoplay();
+            startAutoplay();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            nextSlide();
+            stopAutoplay();
+            startAutoplay();
+        });
+
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                goToSlide(index);
+                stopAutoplay();
+                startAutoplay();
+            });
+        });
+
+        // Start autoplay on load
+        startAutoplay();
+
+        // ===== SCROLL ANIMATIONS =====
+        const scrollElements = document.querySelectorAll('.scroll-animate, .fade-in, .slide-up, .scale-in');
+
+        const elementInView = (el, offset = 0.2) => {
+            const elementTop = el.getBoundingClientRect().top;
+            return (
+                elementTop <= (window.innerHeight || document.documentElement.clientHeight) * (1 - offset)
+            );
+        };
+
+        const displayScrollElement = (element) => {
+            element.classList.add('visible');
+        };
+
+        const hideScrollElement = (element) => {
+            element.classList.remove('visible');
+        };
+
+        const handleScrollAnimation = () => {
+            scrollElements.forEach((el) => {
+                if (elementInView(el, 0.15)) {
+                    displayScrollElement(el);
+                }
+            });
+        };
+
+        // Trigger on scroll
+        window.addEventListener('scroll', () => {
+            handleScrollAnimation();
+        });
+
+        // Initial check on page load
+        handleScrollAnimation();
 
         // Header scroll effect
         window.addEventListener('scroll', () => {
