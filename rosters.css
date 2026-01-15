@@ -1,0 +1,143 @@
+/* Rosters Styles */
+.roster-item {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 4rem;
+    align-items: center;
+    padding: 3rem 2rem;
+    border-radius: 20px;
+}
+
+.roster-item-1 {
+    background: rgba(255, 255, 255, 0.08);
+    flex-direction: row;
+}
+
+.roster-item-2 {
+    background: rgba(220, 50, 50, 0.15);
+    flex-direction: row-reverse;
+}
+
+.roster-item-3 {
+    background: rgba(50, 200, 50, 0.15);
+    flex-direction: row;
+}
+
+.roster-image {
+    flex: 0 0 40%;
+}
+
+.roster-image img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+.roster-info {
+    flex: 1;
+}
+
+.roster-title {
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.8rem;
+    color: #FFFFFF;
+    margin-bottom: 1rem;
+}
+
+.roster-description {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.roster-btn {
+    background: linear-gradient(135deg, #7c1808, #9c2c17);
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.roster-btn:active {
+    transform: scale(0.98);
+}
+
+/* Mobile - Garder le même style d'affichage */
+@media (max-width: 767px) {
+    .roster-item {
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        padding: 2rem 1rem;
+    }
+
+    .roster-item-1 {
+        flex-direction: row;
+    }
+
+    .roster-item-2 {
+        flex-direction: row-reverse;
+    }
+
+    .roster-item-3 {
+        flex-direction: row;
+    }
+
+    .roster-image {
+        flex: 0 0 35%;
+    }
+
+    .roster-image img {
+        height: 250px;
+    }
+
+    .roster-title {
+        font-size: 1.4rem;
+    }
+
+    .roster-description {
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .roster-btn {
+        padding: 0.7rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Petit mobile */
+@media (max-width: 480px) {
+    .roster-item {
+        gap: 1rem;
+        padding: 1.5rem 0.8rem;
+    }
+
+    .roster-image {
+        flex: 0 0 30%;
+    }
+
+    .roster-image img {
+        height: 200px;
+    }
+
+    .roster-title {
+        font-size: 1.2rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .roster-description {
+        font-size: 0.85rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .roster-btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
+    }
+}

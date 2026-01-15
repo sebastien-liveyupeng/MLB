@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roster Féminin - Gascom Esport</title>
+    <link rel="icon" type="image/png" href="assets/Ges-white.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        /* Roster Page Styles */
+        .roster-hero {
+            height: 30vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 40px;
+        }
+
+        .roster-hero-content {
+            text-align: center;
+            z-index: 10;
+        }
+
+        .roster-hero-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: 3rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #7c1808, #9c2c17);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .roster-hero-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Members Grid */
+        .roster-members-section {
+            padding: 3rem 2rem;
+        }
+
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .member-card {
+            height: 350px;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .member-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .member-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+        }
+
+        .member-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+            z-index: 2;
+        }
+
+        .member-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            z-index: 3;
+            color: white;
+        }
+
+        .member-name {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1.6rem;
+            color: #FFFFFF;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .member-role {
+            font-size: 1rem;
+            font-weight: 600;
+            opacity: 0.9;
+            color: #FFB3B3;
+        }
+
+        /* Couleurs d'accent pour chaque carte - toutes en rouge/brun */
+        .member-card:nth-child(1) .member-overlay {
+            background: linear-gradient(180deg, rgba(124, 24, 8, 0.2) 0%, rgba(156, 44, 23, 0.9) 100%);
+        }
+
+        .member-card:nth-child(1) .member-role {
+            color: #FFB3B3;
+        }
+
+        .member-card:nth-child(2) .member-overlay {
+            background: linear-gradient(180deg, rgba(124, 24, 8, 0.2) 0%, rgba(156, 44, 23, 0.9) 100%);
+        }
+
+        .member-card:nth-child(2) .member-role {
+            color: #FFB3B3;
+        }
+
+        .member-card:nth-child(3) .member-overlay {
+            background: linear-gradient(180deg, rgba(124, 24, 8, 0.2) 0%, rgba(156, 44, 23, 0.9) 100%);
+        }
+
+        .member-card:nth-child(3) .member-role {
+            color: #FFB3B3;
+        }
+
+        .member-card:nth-child(4) .member-overlay {
+            background: linear-gradient(180deg, rgba(124, 24, 8, 0.2) 0%, rgba(156, 44, 23, 0.9) 100%);
+        }
+
+        .member-card:nth-child(4) .member-role {
+            color: #FFB3B3;
+        }
+
+        .member-card:nth-child(5) .member-overlay {
+            background: linear-gradient(180deg, rgba(124, 24, 8, 0.2) 0%, rgba(156, 44, 23, 0.9) 100%);
+        }
+
+        .member-card:nth-child(5) .member-role {
+            color: #FFB3B3;
+        }
+
+        .member-status {
+            display: none;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(156, 44, 23, 0.8);
+            text-decoration: none;
+            margin-bottom: 2rem;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            color: #9c2c17;
+            background: rgba(156, 44, 23, 0.1);
+        }
+
+        @media (max-width: 767px) {
+            .roster-hero-title {
+                font-size: 2rem;
+            }
+
+            .members-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <img src="assets/Ges-white.png" alt="Gascom Esport Logo" class="logo-img">
+                </div>
+                <div class="logo-text">Gascom Esport</div>
+            </div>
+            <nav>
+                <button class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item"><a href="/">Accueil</a></li>
+                    <li class="nav-item"><a href="/tournois">Tournois</a></li>
+                    <li class="nav-item"><a href="/equipe">Équipe</a></li>
+                    <li class="nav-item"><a href="/contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="roster-hero">
+        <div class="hero-particles">
+            <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+            <div class="particle" style="left: 20%; animation-delay: 1s;"></div>
+            <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
+            <div class="particle" style="left: 40%; animation-delay: 3s;"></div>
+            <div class="particle" style="left: 50%; animation-delay: 4s;"></div>
+            <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+            <div class="particle" style="left: 70%; animation-delay: 6s;"></div>
+            <div class="particle" style="left: 80%; animation-delay: 7s;"></div>
+            <div class="particle" style="left: 90%; animation-delay: 8s;"></div>
+        </div>
+        <div class="roster-hero-content">
+            <h1 class="roster-hero-title">Roster Féminin</h1>
+            <p class="roster-hero-subtitle">Madagascar</p>
+        </div>
+    </section>
+
+    <!-- Members Section -->
+    <section class="roster-members-section">
+        <div class="team-container">
+            <a href="/equipe" class="back-button">
+                <i class='bx bx-chevron-left'></i>
+                Retour à l'équipe
+            </a>
+
+            <div class="members-grid" id="membersGrid">
+                <!-- Les joueuses seront ajoutées ici -->
+                <div class="member-card" style="background-image: url('assets/Ges-white.png');">
+                    <div class="member-overlay"></div>
+                    <div class="member-content">
+                        <h3 class="member-name">Joueuse 1</h3>
+                        <p class="member-role">Rôle</p>
+                    </div>
+                </div>
+
+                <div class="member-card" style="background-image: url('assets/Ges-white.png');">
+                    <div class="member-overlay"></div>
+                    <div class="member-content">
+                        <h3 class="member-name">Joueuse 2</h3>
+                        <p class="member-role">Rôle</p>
+                    </div>
+                </div>
+
+                <div class="member-card" style="background-image: url('assets/Ges-white.png');">
+                    <div class="member-overlay"></div>
+                    <div class="member-content">
+                        <h3 class="member-name">Joueuse 3</h3>
+                        <p class="member-role">Rôle</p>
+                    </div>
+                </div>
+
+                <div class="member-card" style="background-image: url('assets/Ges-white.png');">
+                    <div class="member-overlay"></div>
+                    <div class="member-content">
+                        <h3 class="member-name">Joueuse 4</h3>
+                        <p class="member-role">Rôle</p>
+                    </div>
+                </div>
+
+                <div class="member-card" style="background-image: url('assets/Ges-white.png');">
+                    <div class="member-overlay"></div>
+                    <div class="member-content">
+                        <h3 class="member-name">Joueuse 5</h3>
+                        <p class="member-role">Rôle</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Gascom Esport</div>
+            <p class="footer-text">© 2025 Gascom - Tous droits réservés | Made in Madagascar 🇲🇬 - SHI</p>
+        </div>
+    </footer>
+
+    <script>
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(11, 11, 15, 0.98)';
+                header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+            } else {
+                header.style.background = 'rgba(11, 11, 15, 0.95)';
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // Hamburger menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        document.querySelectorAll('.nav-item a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                hamburger.classList.remove('active');
+            });
+        });
+
+        // Dynamic particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 8 + 's';
+            document.querySelector('.hero-particles').appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 12000);
+        }
+
+        setInterval(createParticle, 2000);
+    </script>
+</body>
+</html>

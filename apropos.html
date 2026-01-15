@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>À Propos - Gascom Esport</title>
+    <link rel="icon" type="image/png" href="assets/Ges-white.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        /* About Page Styles */
+        .about-hero {
+            height: 30vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding-top: 40px;
+        }
+
+        .about-hero-content {
+            text-align: center;
+            z-index: 10;
+        }
+
+        .about-hero-title {
+            font-family: 'Russo One', sans-serif;
+            font-size: 3rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #7c1808, #9c2c17);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .about-hero-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* About Content */
+        .about-content-section {
+            padding: 4rem 2rem;
+        }
+
+        .about-container {
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .about-block {
+            margin-bottom: 4rem;
+            padding: 2rem;
+            background: rgba(124, 24, 8, 0.05);
+            border-left: 4px solid #9c2c17;
+            border-radius: 8px;
+        }
+
+        .about-block h2 {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 2rem;
+            color: #FFB3B3;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .about-block h2 i {
+            font-size: 2.2rem;
+        }
+
+        .about-block p {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        .about-block p:last-child {
+            margin-bottom: 0;
+        }
+
+        .about-block ul {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .about-block li {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 0.8rem;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .about-block li:before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: #9c2c17;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .founder-section {
+            background: linear-gradient(135deg, rgba(124, 24, 8, 0.1), rgba(156, 44, 23, 0.05));
+            border: 2px solid rgba(156, 44, 23, 0.3);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            margin: 3rem 0;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .founder-photo {
+            flex: 0 0 280px;
+            height: 280px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(156, 44, 23, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed rgba(156, 44, 23, 0.5);
+        }
+
+        .founder-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .founder-content {
+            flex: 1;
+            text-align: left;
+        }
+
+        .founder-section h3 {
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.8rem;
+            color: #FFB3B3;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .founder-name {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1.4rem;
+            color: #9c2c17;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .founder-description {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+        }
+
+        @media (max-width: 1024px) {
+            .founder-section {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .founder-photo {
+                flex: 0 0 240px;
+                width: 240px;
+                height: 240px;
+                margin: 0 auto;
+            }
+
+            .founder-content {
+                text-align: center;
+            }
+
+            .founder-name {
+                text-align: center;
+            }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .stat-card {
+            background: rgba(156, 44, 23, 0.1);
+            border: 2px solid rgba(156, 44, 23, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Russo One', sans-serif;
+            font-size: 2.5rem;
+            color: #9c2c17;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 767px) {
+            .about-hero-title {
+                font-size: 2rem;
+            }
+
+            .about-block {
+                padding: 1.5rem;
+            }
+
+            .about-block h2 {
+                font-size: 1.5rem;
+            }
+
+            .founder-section {
+                padding: 2rem 1rem;
+            }
+
+            .stat-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <img src="assets/Ges-white.png" alt="Gascom Esport Logo" class="logo-img">
+                </div>
+                <div class="logo-text">Gascom Esport</div>
+            </div>
+            <nav>
+                <button class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item"><a href="/">Accueil</a></li>
+                    <li class="nav-item"><a href="/equipe">Équipe</a></li>
+                    <li class="nav-item"><a href="/tournois">Tournois</a></li>
+                    <li class="nav-item"><a href="/apropos" class="active">À Propos</a></li>
+             
+                    <li class="nav-item"><a href="/contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="about-hero">
+        <div class="hero-particles">
+            <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+            <div class="particle" style="left: 20%; animation-delay: 1s;"></div>
+            <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
+            <div class="particle" style="left: 40%; animation-delay: 3s;"></div>
+            <div class="particle" style="left: 50%; animation-delay: 4s;"></div>
+            <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+            <div class="particle" style="left: 70%; animation-delay: 6s;"></div>
+            <div class="particle" style="left: 80%; animation-delay: 7s;"></div>
+            <div class="particle" style="left: 90%; animation-delay: 8s;"></div>
+        </div>
+        <div class="about-hero-content">
+            <h1 class="about-hero-title">À Propos de Nous</h1>
+            <p class="about-hero-subtitle">Découvrez l'histoire de Gascom Esport</p>
+        </div>
+    </section>
+
+    <!-- About Content -->
+    <section class="about-content-section">
+        <div class="about-container">
+            <!-- Histoire -->
+            <div class="about-block">
+                <h2><i class='bx bxs-book-open'></i>Notre Histoire</h2>
+                <p>
+                    Gascom Esport est né d'une passion commune pour l'excellence dans le monde de l'eSport. Depuis sa création en 2020, 
+                    notre organisation a traversé de nombreux défis et célébré de nombreuses victoires. Nous avons toujours maintenu 
+                    les mêmes valeurs : l'engagement, la persévérance et le travail en équipe.
+                </p>
+                <p>
+                    À travers les années, Gascom a su se forger une réputation solide, participant à des tournois majeurs et 
+                    développant une communauté passionnée autour de Mobile Legends. Notre présence à chaque événement témoigne 
+                    de notre engagement inébranlable envers l'excellence.
+                </p>
+            </div>
+
+            <!-- Mission et Valeurs -->
+            <div class="about-block">
+                <h2><i class='bx bxs-target-lock'></i>Notre Mission</h2>
+                <p>
+                    Chez Gascom Esport, nous nous engageons à être les champions de l'eSport à Madagascar et au-delà. 
+                    Notre mission est de :
+                </p>
+                <ul>
+                    <li>Représenter avec fierté l'excellence eSport de Madagascar</li>
+                    <li>Cultiver un environnement de compétition sain et respectueux</li>
+                    <li>Inspirer la prochaine génération de joueurs professionnels</li>
+                    <li>Bâtir une communauté forte et solidaire</li>
+                    <li>Dominer les tournois nationaux et internationaux</li>
+                </ul>
+            </div>
+
+            <!-- Fondateur -->
+            <div class="founder-section">
+                <div class="founder-photo">
+                    <!-- Place pour ajouter une photo - remplacer le src avec ta photo -->
+                    <img src="assets/Ges-white.png" alt="Fondateur Gascom Esport">
+                </div>
+                <div class="founder-content">
+                    <h3>Fondateur</h3>
+                    <div class="founder-name">Iandy Razafindrakoto</div>
+                    <div class="founder-description">
+                        Visionnaire passionné par l'eSport, Iandy a fondé Gascom Esport avec un rêve simple : 
+                        créer une organisation capable de dominer la scène eSport mondiale. Son leadership et sa détermination 
+                        ont transformé Gascom en une force majeure du compétitif à Madagascar.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistiques -->
+            <h2 style="font-family: 'Russo One', sans-serif; font-size: 2rem; color: #FFB3B3; text-align: center; margin: 3rem 0 2rem;">
+                Nos Réalisations
+            </h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">5+</div>
+                    <div class="stat-label">Années d'Excellence</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number"></div>
+                    <div class="stat-label">Rosters Actifs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">20+</div>
+                    <div class="stat-label">Tournois Participés</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100+</div>
+                    <div class="stat-label">Membres Communauté</div>
+                </div>
+            </div>
+
+            <!-- Valeurs -->
+            <div class="about-block">
+                <h2><i class='bx bxs-heart'></i>Nos Valeurs</h2>
+                <ul>
+                    <li><strong>Passion :</strong> Nous aimons ce que nous faisons et cela se voit dans chaque match</li>
+                    <li><strong>Respect :</strong> Nous respectons nos adversaires, nos fans et nos partenaires</li>
+                    <li><strong>Unité :</strong> Ensemble, nous sommes plus forts. La cohésion d'équipe est notre force</li>
+                    <li><strong>Ambition :</strong> Nous rêvons grand et nous nous donnons les moyens de réussir</li>
+                    <li><strong>Intégrité :</strong> Nos actions reflètent nos principes, dans et hors des compétitions</li>
+                </ul>
+            </div>
+
+            <!-- Avenir -->
+            <div class="about-block">
+                <h2><i class='bx bxs-rocket'></i>Notre Avenir</h2>
+                <p>
+                    Gascom Esport ne cesse d'évoluer. Nous envisageons une expansion à de nouveaux jeux, le recrutement 
+                    de talents exceptionnels et la participation à des tournois de calibre mondial. Notre vision est claire : 
+                    faire de Gascom Esport une marque reconnue internationalement.
+                </p>
+                <p>
+                    Nous remercions tous ceux qui nous ont soutenu depuis le début et qui continuent à le faire. 
+                    Ensemble, nous continuerons à écrire l'histoire de l'eSport à Madagascar.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Gascom Esport</div>
+            <p class="footer-text">© 2025 Gascom - Tous droits réservés | Made in Madagascar 🇲🇬 - SHI</p>
+        </div>
+    </footer>
+
+    <script>
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(11, 11, 15, 0.98)';
+                header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+            } else {
+                header.style.background = 'rgba(11, 11, 15, 0.95)';
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // Hamburger menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        document.querySelectorAll('.nav-item a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                hamburger.classList.remove('active');
+            });
+        });
+
+        // Dynamic particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 8 + 's';
+            document.querySelector('.hero-particles').appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 12000);
+        }
+
+        setInterval(createParticle, 2000);
+    </script>
+</body>
+</html>

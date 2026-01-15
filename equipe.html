@@ -6,6 +6,7 @@
     <title>Notre Équipe - Gascom Esport</title>
     <link rel="icon" type="image/png" href="assets/Ges-white.png">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="rosters.css">
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -30,6 +31,7 @@
                     <li class="nav-item"><a href="/">Accueil</a></li>
                     <li class="nav-item"><a href="/tournois">Tournois</a></li>
                     <li class="nav-item"><a href="/equipe" class="active">Équipe</a></li>
+                    
                     <li class="nav-item"><a href="/contact">Contact</a></li>
                 </ul>
             </nav>
@@ -37,7 +39,7 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero" style="height: 30vh; padding-top: 40px;">
         <div class="hero-particles">
             <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
             <div class="particle" style="left: 20%; animation-delay: 1s;"></div>
@@ -55,49 +57,42 @@
         </div>
     </section>
 
-    <!-- Team Section -->
+    <!-- Rosters Section -->
     <section class="team-section">
         <div class="team-container">
-            <h2 class="team-title">Les Joueurs</h2>
-            <div class="team-grid">
-                <div class="member-card" style="background-image: url('télécharger.webp');">
-                    <div class="member-overlay"></div>
-                    <div class="member-content">
-                        <h3 class="member-name">Nganjin</h3>
-                        <p class="member-role">Mid Lane</p>
-                    </div>
+            <!-- Roster Féminin Madagascar -->
+            <div class="roster-item roster-item-1">
+                <div class="roster-image">
+                    <img src="assets/Ges-white.png" alt="Roster Féminin">
                 </div>
-
-                <div class="member-card" style="background-image: url('OIP (1).webp');">
-                    <div class="member-overlay"></div>
-                    <div class="member-content">
-                        <h3 class="member-name">Shi</h3>
-                        <p class="member-role">Jungle</p>
-                    </div>
+                <div class="roster-info">
+                    <h3 class="roster-title">Roster Féminin - Madagascar</h3>
+                    <p class="roster-description">Découvrez notre équipe féminine talentueuse basée à Madagascar. Nos joueuses compétentes dominent le champ de bataille avec stratégie et précision.</p>
+                    <button class="roster-btn" onclick="navigateToRoster('feminin')">Voir les membres</button>
                 </div>
+            </div>
 
-                <div class="member-card" style="background-image: url('OIP (2).webp');">
-                    <div class="member-overlay"></div>
-                    <div class="member-content">
-                        <h3 class="member-name">Sansa</h3>
-                        <p class="member-role">Gold</p>
-                    </div>
+            <!-- Roster Homme Madagascar -->
+            <div class="roster-item roster-item-2">
+                <div class="roster-image">
+                    <img src="assets/Ges-white.png" alt="Roster Masculin">
                 </div>
-
-                <div class="member-card" style="background-image: url('mazinab.jpg');">
-                    <div class="member-overlay"></div>
-                    <div class="member-content">
-                        <h3 class="member-name">Enryu</h3>
-                        <p class="member-role">Roam</p>
-                    </div>
+                <div class="roster-info">
+                    <h3 class="roster-title">Roster Masculin - Madagascar</h3>
+                    <p class="roster-description">Explorez notre équipe masculine basée à Madagascar. Nos champions expérimentés sont prêts à affronter les plus grands défis eSport.</p>
+                    <button class="roster-btn" onclick="navigateToRoster('masculin')">Voir les membres</button>
                 </div>
+            </div>
 
-                <div class="member-card" style="background-image: url('télécharger (1).webp');">
-                    <div class="member-overlay"></div>
-                    <div class="member-content">
-                        <h3 class="member-name">Maestrr</h3>
-                        <p class="member-role">Exp Laner</p>
-                    </div>
+            <!-- Roster Europe -->
+            <div class="roster-item roster-item-3">
+                <div class="roster-image">
+                    <img src="assets/Ges-white.png" alt="Roster Europe">
+                </div>
+                <div class="roster-info">
+                    <h3 class="roster-title">Roster Europe</h3>
+                    <p class="roster-description">Rencontrez notre division européenne avec les meilleurs joueurs du continent. Une équipe internationale prête à conquérir les tournois européens.</p>
+                    <button class="roster-btn" onclick="navigateToRoster('europe')">Voir les membres</button>
                 </div>
             </div>
         </div>
@@ -112,6 +107,17 @@
     </footer>
 
     <script>
+        // Navigate to roster page
+        function navigateToRoster(rosterType) {
+            const rosterPages = {
+                'feminin': '/roster-feminin',
+                'masculin': '/roster-masculin',
+                'europe': '/roster-europe'
+            };
+            
+            window.location.href = rosterPages[rosterType];
+        }
+
         // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
