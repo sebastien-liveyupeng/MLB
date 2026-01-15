@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galerie - Gascom Esport</title>
+    <link rel="icon" type="image/png" href="assets/Ges-white.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        /* Gallery Specific Styles */
+        .gallery-hero {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: linear-gradient(180deg, rgba(11, 11, 15, 0.8) 0%, rgba(11, 11, 15, 0.95) 100%);
+        }
+
+        .gallery-hero h1 {
+            font-family: 'Russo One', sans-serif;
+            font-size: 3rem;
+            color: #FFFFFF;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #9c2c17, #7c1808);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gallery-hero p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Filter Buttons */
+        .gallery-filters {
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            background: rgba(11, 11, 15, 0.5);
+        }
+
+        .filter-btn {
+            padding: 0.8rem 1.8rem;
+            background: rgba(156, 44, 23, 0.2);
+            border: 2px solid rgba(156, 44, 23, 0.5);
+            color: #FFFFFF;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-btn i {
+            font-size: 1.2rem;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: linear-gradient(135deg, #7c1808, #9c2c17);
+            border-color: #9c2c17;
+            transform: translateY(-2px);
+        }
+
+        /* Gallery Grid */
+        .gallery-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            cursor: pointer;
+            aspect-ratio: 4/3;
+            background: linear-gradient(135deg, rgba(156, 44, 23, 0.2) 0%, rgba(124, 24, 8, 0.2) 100%);
+            border: 1px solid rgba(156, 44, 23, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(156, 44, 23, 0.3);
+            border-color: rgba(156, 44, 23, 0.6);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Placeholder for images */
+        .gallery-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 2rem;
+        }
+
+        .gallery-placeholder i {
+            font-size: 3rem;
+            color: rgba(156, 44, 23, 0.6);
+        }
+
+        .gallery-placeholder span {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+            padding: 1.5rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        .gallery-overlay h3 {
+            color: #FFFFFF;
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .gallery-overlay .category {
+            color: #9c2c17;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 2rem;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 8px;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -3rem;
+            right: 0;
+            background: rgba(156, 44, 23, 0.8);
+            border: none;
+            color: #FFFFFF;
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .lightbox-close:hover {
+            background: #9c2c17;
+            transform: rotate(90deg);
+        }
+
+        /* Hide filtered items */
+        .gallery-item.hidden {
+            display: none;
+        }
+
+        /* Video Styles */
+        .gallery-item video {
+            cursor: pointer;
+            background: #000;
+        }
+
+        .gallery-item video::-webkit-media-controls-panel {
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        }
+
+        .gallery-item video::-webkit-media-controls-play-button,
+        .gallery-item video::-webkit-media-controls-timeline,
+        .gallery-item video::-webkit-media-controls-volume-slider,
+        .gallery-item video::-webkit-media-controls-fullscreen-button {
+            filter: brightness(1.2);
+        }
+
+        #lightboxVideo {
+            background: #000;
+        }
+
+        #lightboxVideo::-webkit-media-controls-panel {
+            background: linear-gradient(to top, rgba(156, 44, 23, 0.9), transparent);
+        }
+
+        /* Animations */
+        .gallery-item {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .gallery-item:nth-child(1) { animation-delay: 0.1s; }
+        .gallery-item:nth-child(2) { animation-delay: 0.2s; }
+        .gallery-item:nth-child(3) { animation-delay: 0.3s; }
+        .gallery-item:nth-child(4) { animation-delay: 0.4s; }
+        .gallery-item:nth-child(5) { animation-delay: 0.5s; }
+        .gallery-item:nth-child(6) { animation-delay: 0.6s; }
+
+        @media (max-width: 768px) {
+            .gallery-hero h1 {
+                font-size: 2rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1rem;
+            }
+
+            .gallery-filters {
+                padding: 1.5rem 1rem;
+            }
+
+            .filter-btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <img src="assets/Ges-white.png" alt="Gascom Esport Logo" class="logo-img">
+                </div>
+                <div class="logo-text">Gascom Esport</div>
+            </div>
+            <nav>
+                <button class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item"><a href="/">Accueil</a></li>
+                    <li class="nav-item"><a href="/equipe">Équipe</a></li>
+                    <li class="nav-item"><a href="/tournois">Tournois</a></li>
+                    <li class="nav-item"><a href="/galerie" class="active">Galerie</a></li>
+                    <li class="nav-item"><a href="/contact">Contact</a></li>
+                    <li class="nav-item"><a href="/apropos">A propos</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Gallery Hero -->
+    <section class="gallery-hero">
+        <h1>Notre Galerie</h1>
+        <p>Revivez nos plus beaux moments, victoires et événements à travers notre collection de photos</p>
+    </section>
+
+    <!-- Filter Buttons -->
+    <div class="gallery-filters">
+        <button class="filter-btn active" data-filter="all"><i class='bx bxs-grid-alt'></i> Tout Voir</button>
+        <button class="filter-btn" data-filter="victoires"><i class='bx bxs-trophy'></i> Victoires & Podiums</button>
+        <button class="filter-btn" data-filter="gespics"><i class='bx bxs-image-alt'></i> Ges Pics</button>
+        <button class="filter-btn" data-filter="backstage"><i class='bx bxs-camera'></i> Behind the Scene</button>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="gallery-container">
+        <div class="gallery-grid" id="galleryGrid">
+            
+            <!-- Victoires & Podiums -->
+            <div class="gallery-item" data-category="victoires">
+                <div class="gallery-placeholder">
+                    <i class='bx bxs-trophy'></i>
+                    <span>Victoire Tournoi #1</span>
+                </div>
+                <div class="gallery-overlay">
+                    <div class="category">Victoires</div>
+                    <h3>Premier Trophée 2021</h3>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="victoires">
+                <div class="gallery-placeholder">
+                    <i class='bx bxs-award'></i>
+                    <span>Podium Régional</span>
+                </div>
+                <div class="gallery-overlay">
+                    <div class="category">Victoires</div>
+                    <h3>Podium Championnat</h3>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="victoires">
+                <div class="gallery-placeholder">
+                    <i class='bx bxs-medal'></i>
+                    <span>Célébration Victoire</span>
+                </div>
+                <div class="gallery-overlay">
+                    <div class="category">Victoires</div>
+                    <h3>Moment de Gloire</h3>
+                </div>
+            </div>
+
+            <!-- Ges Pics -->
+            <div class="gallery-item" data-category="gespics">
+                <div class="gallery-placeholder">
+                    <i class='bx bxs-image-alt'></i>
+                    <span>Ges Photo #1</span>
+                </div>
+                <div class="gallery-overlay">
+                    <div class="category">Ges Pics</div>
+                    <h3>Gascom Esport Moment</h3>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="gespics">
+                <div class="gallery-placeholder">
+                    <i class='bx bxs-photo-album'></i>
+                    <span>Ges Photo #2</span>
+                </div>
+                <div class="gallery-overlay">
+                    <div class="category">Ges Pics</div>
+                    <h3>Team Gascom</h3>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="gespics">
+                <div class="gallery-placeholder">
+                    <i class='bx bxs-camera-plus'></i>
+                    <span>Ges Photo #3</span>
+                </div>
+                <div class="gallery-overlay">
+                    <div class="category">Ges Pics</div>
+                    <h3>Gascom Memories</h3>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="gespics">
+                <div class="gallery-placeholder">
+                    <i class='bx bxs-landscape'></i>
+                    <span>Ges Photo #4</span>
+                </div>
+                <div class="gallery-overlay">
+                    <div class="category">Ges Pics</div>
+                    <h3>Ges Collection</h3>
+                </div>
+            </div>
+
+            <!-- Behind the Scenes -->
+            <div class="gallery-item" data-category="backstage">
+                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/LcyuUU1hAwk?si=XQZy890vH7WkqJqX" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="border-radius: 12px;"></iframe>
+                <div class="gallery-overlay">
+                    <div class="category">Behind the Scene</div>
+                    <h3>Coulisses Entraînement</h3>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-content">
+            <button class="lightbox-close" id="lightboxClose">×</button>
+            <img src="" alt="" id="lightboxImage" style="display: none;">
+            <video controls id="lightboxVideo" style="display: none; max-width: 100%; max-height: 90vh; border-radius: 8px;">
+                <source src="" type="video/mp4">
+                Votre navigateur ne supporte pas la vidéo.
+            </video>
+            <iframe
+                id="lightboxFrame"
+                src=""
+                title="YouTube video player"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+                allowfullscreen
+                style="display: none; width: 100%; height: 70vh; border-radius: 8px;"
+                loading="lazy"
+                referrerpolicy="strict-origin-when-cross-origin">
+            </iframe>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Gascom Esport</div>
+            <p class="footer-text">© 2025 Gascom - Tous droits réservés | Made in Madagascar 🇲🇬 - SHI</p>
+        </div>
+    </footer>
+
+    <script>
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(11, 11, 15, 0.98)';
+                header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+            } else {
+                header.style.background = 'rgba(11, 11, 15, 0.95)';
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // Hamburger menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        document.querySelectorAll('.nav-item a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                hamburger.classList.remove('active');
+            });
+        });
+
+        // ===== GALLERY FILTER FUNCTIONALITY =====
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                btn.classList.add('active');
+
+                const filterValue = btn.getAttribute('data-filter');
+
+                galleryItems.forEach(item => {
+                    if (filterValue === 'all') {
+                        item.classList.remove('hidden');
+                    } else {
+                        if (item.getAttribute('data-category') === filterValue) {
+                            item.classList.remove('hidden');
+                        } else {
+                            item.classList.add('hidden');
+                        }
+                    }
+                });
+            });
+        });
+
+        // ===== LIGHTBOX FUNCTIONALITY =====
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImage = document.getElementById('lightboxImage');
+        const lightboxVideo = document.getElementById('lightboxVideo');
+        const lightboxFrame = document.getElementById('lightboxFrame');
+        const lightboxClose = document.getElementById('lightboxClose');
+
+        galleryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const img = item.querySelector('img');
+                const video = item.querySelector('video');
+                const iframe = item.querySelector('iframe');
+                
+                if (img) {
+                    lightboxImage.src = img.src;
+                    lightboxImage.style.display = 'block';
+                    lightboxVideo.style.display = 'none';
+                    lightboxFrame.style.display = 'none';
+                    lightbox.classList.add('active');
+                } else if (video) {
+                    const videoSrc = video.querySelector('source').src;
+                    lightboxVideo.querySelector('source').src = videoSrc;
+                    lightboxVideo.load();
+                    lightboxVideo.style.display = 'block';
+                    lightboxImage.style.display = 'none';
+                    lightboxFrame.style.display = 'none';
+                    lightbox.classList.add('active');
+                    lightboxVideo.play();
+                } else if (iframe) {
+                    const baseSrc = iframe.getAttribute('src');
+                    const separator = baseSrc.includes('?') ? '&' : '?';
+                    const autoplaySrc = `${baseSrc}${separator}autoplay=1&modestbranding=1&rel=0&playsinline=1`;
+                    lightboxFrame.src = autoplaySrc;
+                    lightboxFrame.style.display = 'block';
+                    lightboxImage.style.display = 'none';
+                    lightboxVideo.style.display = 'none';
+                    lightbox.classList.add('active');
+                }
+            });
+        });
+
+        lightboxClose.addEventListener('click', () => {
+            lightbox.classList.remove('active');
+            if (lightboxVideo.style.display === 'block') {
+                lightboxVideo.pause();
+            }
+            if (lightboxFrame.style.display === 'block') {
+                lightboxFrame.src = '';
+            }
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                lightbox.classList.remove('active');
+                if (lightboxVideo.style.display === 'block') {
+                    lightboxVideo.pause();
+                }
+                if (lightboxFrame.style.display === 'block') {
+                    lightboxFrame.src = '';
+                }
+            }
+        });
+
+        // Close lightbox with ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                lightbox.classList.remove('active');
+                if (lightboxVideo.style.display === 'block') {
+                    lightboxVideo.pause();
+                }
+                if (lightboxFrame.style.display === 'block') {
+                    lightboxFrame.src = '';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

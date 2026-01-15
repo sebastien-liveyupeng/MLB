@@ -6,208 +6,9 @@
     <title>Roster Europe - Gascom Esport</title>
     <link rel="icon" type="image/png" href="assets/Ges-white.png">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="roster-europe.css">
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <style>
-        /* Roster Page Styles */
-        .roster-hero {
-            height: 30vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            padding-top: 40px;
-        }
-
-        .roster-hero-content {
-            text-align: center;
-            z-index: 10;
-        }
-
-        .roster-hero-title {
-            font-family: 'Russo One', sans-serif;
-            font-size: 3rem;
-            font-weight: 400;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(45deg, #7c1808, #9c2c17);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .roster-hero-subtitle {
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        /* Members Grid */
-        .roster-members-section {
-            padding: 5rem 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .members-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2.5rem;
-            margin-top: 3rem;
-        }
-
-        /* Member Card Design - Modern & Clean */
-        .member-card {
-            position: relative;
-            height: 420px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
-            transform-style: preserve-3d;
-        }
-
-        .member-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-size: cover;
-            background-position: center;
-            z-index: 1;
-            filter: brightness(1.1) contrast(1.1) saturate(1.2);
-        }
-
-        .member-card:nth-child(1)::before {
-            background: linear-gradient(135deg, #2d1b4e 0%, #1a0f2e 100%);
-        }
-
-        .member-card:nth-child(2)::before {
-            background: linear-gradient(135deg, #0d4d4d 0%, #051f1f 100%);
-        }
-
-        .member-card:nth-child(3)::before {
-            background: linear-gradient(135deg, #4d3d0d 0%, #2a1f05 100%);
-        }
-
-        .member-card:nth-child(4)::before {
-            background: linear-gradient(135deg, #7c1808 0%, #4d0d05 100%);
-        }
-
-        .member-card:nth-child(5)::before {
-            background: linear-gradient(135deg, #1a3a52 0%, #0d1f2d 100%);
-        }
-
-        .member-card:hover {
-            transform: rotateY(12deg) rotateX(-8deg) translateZ(30px) scale(1.02);
-            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
-        }
-
-        @media (hover: none) {
-            .member-card:active {
-                transform: rotateY(12deg) rotateX(-8deg) translateZ(30px) scale(1.02);
-                box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
-            }
-        }
-
-        .member-overlay {
-            display: none;
-        }
-
-        .member-content {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            top: 0;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 3rem 2rem;
-            background: linear-gradient(180deg, 
-                rgba(0, 0, 0, 0) 0%,
-                rgba(0, 0, 0, 0.15) 50%,
-                rgba(0, 0, 0, 0.65) 100%);
-        }
-
-        .member-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
-        }
-
-        .member-role {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #FFD700;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 0.8rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .member-name {
-            font-family: 'Exo 2', sans-serif;
-            font-size: 2.2rem;
-            color: #FFFFFF;
-            margin: 0 0 0.5rem 0;
-            font-weight: 900;
-            letter-spacing: -0.5px;
-            line-height: 1.1;
-            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-        }
-
-        .member-pseudo {
-            font-family: 'Exo 2', sans-serif;
-            font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            font-style: italic;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .member-status {
-            display: none;
-        }
-
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: rgba(156, 44, 23, 0.8);
-            text-decoration: none;
-            margin-bottom: 2rem;
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-        }
-
-        @media (max-width: 767px) {
-            .roster-hero-title {
-                font-size: 2rem;
-            }
-
-            .members-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .member-card {
-                height: 350px;
-            }
-
-            .member-content {
-                padding: 2rem 1.5rem;
-            }
-
-            .member-name {
-                font-size: 1.8rem;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="bg-animation"></div>
@@ -266,22 +67,24 @@
             </a>
 
             <div class="members-grid" id="membersGrid">
-                <div class="member-card">
-                    <div class="member-icon">
-                        <i class='bx bx-user-circle'></i>
+                <div class="member-card stats-shi" data-stats="assets/SHI-STATS.jpg">
+                    <div class="stat-chip">
+                        <i class='bx bxs-bar-chart-alt-2'></i>
+                        <span>Stats</span>
                     </div>
                     <div class="member-content">
                         <div class="member-info">
-                            <span class="member-role">Mid Lane</span>
-                            <h3 class="member-name">Player 1</h3>
-                            <span class="member-pseudo">Pseudo</span>
+                            <span class="member-role">Jungle</span>
+                            <h3 class="member-name">SHI</h3>
+                            <span class="member-pseudo">SHI</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="member-card">
-                    <div class="member-icon">
-                        <i class='bx bx-user-circle'></i>
+                <div class="member-card" data-stats="assets/PLAYER2-STATS.jpg">
+                    <div class="stat-chip">
+                        <i class='bx bxs-bar-chart-alt-2'></i>
+                        <span>Stats</span>
                     </div>
                     <div class="member-content">
                         <div class="member-info">
@@ -292,9 +95,10 @@
                     </div>
                 </div>
 
-                <div class="member-card">
-                    <div class="member-icon">
-                        <i class='bx bx-user-circle'></i>
+                <div class="member-card" data-stats="assets/PLAYER3-STATS.jpg">
+                    <div class="stat-chip">
+                        <i class='bx bxs-bar-chart-alt-2'></i>
+                        <span>Stats</span>
                     </div>
                     <div class="member-content">
                         <div class="member-info">
@@ -305,7 +109,11 @@
                     </div>
                 </div>
 
-                <div class="member-card">
+                <div class="member-card" data-stats="assets/PLAYER4-STATS.jpg">
+                    <div class="stat-chip">
+                        <i class='bx bxs-bar-chart-alt-2'></i>
+                        <span>Stats</span>
+                    </div>
                     <div class="member-content">
                         <div class="member-info">
                             <span class="member-role">Roam</span>
@@ -315,7 +123,11 @@
                     </div>
                 </div>
 
-                <div class="member-card">
+                <div class="member-card" data-stats="assets/PLAYER5-STATS.jpg">
+                    <div class="stat-chip">
+                        <i class='bx bxs-bar-chart-alt-2'></i>
+                        <span>Stats</span>
+                    </div>
                     <div class="member-content">
                         <div class="member-info">
                             <span class="member-role">Exp Laner</span>
@@ -327,6 +139,26 @@
             </div>
         </div>
     </section>
+
+    <!-- Stats Modal -->
+    <div class="stats-modal-backdrop" id="statsModal">
+        <div class="stats-modal">
+            <button class="stats-modal-close" id="statsModalClose" aria-label="Fermer">×</button>
+            <div class="stats-modal-body">
+                <div class="stats-left">
+                    <div class="stats-avatar">
+                        <img src="assets/shi.webp" alt="Avatar" id="statsAvatar">
+                    </div>
+                    <div class="stats-badges" id="statsBadges"></div>
+                </div>
+                <div class="stats-right">
+                    <div class="stats-row" id="statsTopRow"></div>
+                    <div class="stat-box" id="statsWinrate"></div>
+                    <div class="heroes-list" id="heroesList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer>
@@ -380,6 +212,109 @@
         }
 
         setInterval(createParticle, 2000);
+
+        // ===== STATS MODAL =====
+        const statsModal = document.getElementById('statsModal');
+        const statsModalClose = document.getElementById('statsModalClose');
+        const statsAvatar = document.getElementById('statsAvatar');
+        const statsBadges = document.getElementById('statsBadges');
+        const statsTopRow = document.getElementById('statsTopRow');
+        const statsWinrate = document.getElementById('statsWinrate');
+        const heroesList = document.getElementById('heroesList');
+        const statCards = document.querySelectorAll('[data-stats]');
+
+        const playerData = {
+            SHI: {
+                wins: '4,490',
+                matches: '8,730',
+                server: '6757',
+                region: 'EU',
+                rank: 'Mythical Honor 47',
+                winrate: '51.43%',
+                heroes: [
+                    { name: 'Gusion', matches: 933, winrate: '54.55%' },
+                    { name: 'Franco', matches: 569, winrate: '54.13%' },
+                    { name: 'Hayabusa', matches: 543, winrate: '55.06%' }
+                ],
+                avatar: 'assets/shi.webp'
+            },
+            Player2: { wins: '-', matches: '-', server: '-', region: '-', rank: '-', winrate: '-', heroes: [], avatar: 'assets/shi.webp' },
+            Player3: { wins: '-', matches: '-', server: '-', region: '-', rank: '-', winrate: '-', heroes: [], avatar: 'assets/shi.webp' },
+            Player4: { wins: '-', matches: '-', server: '-', region: '-', rank: '-', winrate: '-', heroes: [], avatar: 'assets/shi.webp' },
+            Player5: { wins: '-', matches: '-', server: '-', region: '-', rank: '-', winrate: '-', heroes: [], avatar: 'assets/shi.webp' }
+        };
+
+        function renderStats(data) {
+            statsAvatar.src = data.avatar || 'assets/SHI-STATS.jpg';
+
+            statsBadges.innerHTML = `
+                <span class="badge"><i class='bx bxs-trophy'></i> ${data.rank || '-'}</span>
+                <span class="badge"><i class='bx bxs-flag-alt'></i> ${data.region || '-'}</span>
+            `;
+
+            statsTopRow.innerHTML = `
+                <div class="stat-box">
+                    <div class="stat-label">Wins</div>
+                    <div class="stat-value">${data.wins || '-'}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Matches</div>
+                    <div class="stat-value">${data.matches || '-'}</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Server</div>
+                    <div class="stat-value">${data.server || '-'}</div>
+                </div>
+            `;
+
+            statsWinrate.innerHTML = `
+                <div class="stat-label">Winrate</div>
+                <div class="stat-value">${data.winrate || '-'}</div>
+            `;
+
+            heroesList.innerHTML = data.heroes && data.heroes.length
+                ? data.heroes.map(h => `
+                    <div class="hero-item">
+                        <div class="hero-name">${h.name}</div>
+                        <div class="hero-meta">Matches: ${h.matches} · WR: ${h.winrate}</div>
+                    </div>
+                `).join('')
+                : '<div class="hero-item"><div class="hero-name">Aucun héros renseigné</div><div class="hero-meta">Ajoute des données pour ce joueur.</div></div>';
+        }
+
+        statCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const src = card.getAttribute('data-stats');
+                const playerName = card.querySelector('.member-name')?.textContent?.trim() || '';
+                const dataKey = playerData[playerName] ? playerName : 'SHI';
+                const data = playerData[dataKey];
+                renderStats(data);
+                statsModal.classList.add('active');
+            });
+        });
+
+        function closeStatsModal() {
+            statsModal.classList.remove('active');
+            statsAvatar.src = '';
+            statsTopRow.innerHTML = '';
+            statsWinrate.innerHTML = '';
+            heroesList.innerHTML = '';
+            statsBadges.innerHTML = '';
+        }
+
+        statsModalClose.addEventListener('click', closeStatsModal);
+
+        statsModal.addEventListener('click', (e) => {
+            if (e.target === statsModal) {
+                closeStatsModal();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && statsModal.classList.contains('active')) {
+                closeStatsModal();
+            }
+        });
     </script>
 </body>
 </html>
