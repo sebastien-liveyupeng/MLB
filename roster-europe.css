@@ -209,8 +209,9 @@
     box-shadow: 0 20px 80px rgba(0, 0, 0, 0.55);
     max-width: 900px;
     width: 100%;
-    overflow: hidden;
+    overflow: auto;
     position: relative;
+    max-height: 90vh;
 }
 
 .stats-modal-body {
@@ -321,6 +322,10 @@
 @media (max-width: 768px) {
     .stats-modal-body {
         grid-template-columns: 1fr;
+    }
+    
+    .stats-modal {
+        max-height: 85vh;
     }
 }
 
