@@ -79,7 +79,7 @@
 }
 
 .member-card:nth-child(3)::before {
-    background: url('assets/maestrr-avatar.webp') center/cover;
+    background: url('assets/maestr-pp.jpg') center/cover;
 }
 
 .member-card:nth-child(4)::before {
