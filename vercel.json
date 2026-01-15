@@ -6,6 +6,7 @@
     { "source": "/equipe", "destination": "/equipe.html" },
    { "source": "/roster-europe", "destination": "/roster-europe.html" },
      { "source": "/roster-feminin", "destination": "/roster-feminin.html" },
-       { "source": "/roster-masculin", "destination": "/roster-masculin.html" }
+       { "source": "/roster-masculin", "destination": "/roster-masculin.html" },
+        { "source": "/apropos", "destination": "/apropos.html" }
   ]
 }
