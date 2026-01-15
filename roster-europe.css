@@ -75,7 +75,7 @@
 }
 
 .member-card:nth-child(2)::before {
-    background: linear-gradient(135deg, #0d4d4d 0%, #051f1f 100%);
+    background: url('assets/sansa-avatar.webp') center/cover;
 }
 
 .member-card:nth-child(3)::before {
@@ -83,7 +83,7 @@
 }
 
 .member-card:nth-child(4)::before {
-    background: linear-gradient(135deg, #7c1808 0%, #4d0d05 100%);
+    background: url('assets/enryu.jpg') center/cover;
 }
 
 .member-card:nth-child(5)::before {
