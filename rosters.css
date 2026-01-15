@@ -34,6 +34,16 @@
     border-radius: 15px;
 }
 
+.roster-image i {
+    font-size: 12rem;
+    color: rgba(156, 44, 23, 0.7);
+    text-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+}
+
 .roster-info {
     flex: 1;
 }
