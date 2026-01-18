@@ -553,7 +553,7 @@
                     <h3> Riantsoalahatra</h3>
                     <p>@riantsoalahatra</p>
                     <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.5);">Suivez pour les derniers moments</p>
-                    <a href="https://www.tiktok.com/@riantsoalahatra" target="_blank" class="tiktok-live-btn" data-live="true" data-player="riantsoalahatra">Aller sur TikTok</a>
+                    <a href="https://www.tiktok.com/@riantsoalahatra" target="_blank" class="tiktok-live-btn" data-live="false" data-player="riantsoalahatra">Aller sur TikTok</a>
                 </div>
             </div>
         </div>
@@ -864,13 +864,14 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
                 });
             }
             
-            // Vérifier toutes les 60 secondes
+            // Vérifier toutes les 15 secondes pour un temps quasi-réel
             setInterval(() => {
                 updateLiveButtons();
                 setupButtonListeners();
-            }, 60000);
+            }, 15000);
         });
     </script>
+
 
     <!-- Modal Pas de Live -->
     <div id="noLiveModal" class="no-live-modal">
