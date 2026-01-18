@@ -314,6 +314,67 @@
             cursor: not-allowed;
         }
 
+        /* Modal Styles */
+        .no-live-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .no-live-modal.active {
+            display: flex;
+        }
+
+        .no-live-content {
+            background: linear-gradient(135deg, rgba(25, 25, 35, 0.95), rgba(50, 25, 20, 0.6));
+            border: 2px solid rgba(156, 44, 23, 0.6);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            max-width: 400px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(156, 44, 23, 0.4);
+        }
+
+        .no-live-content h2 {
+            font-family: 'Russo One', sans-serif;
+            font-size: 2rem;
+            color: #FF0000;
+            margin-bottom: 1rem;
+        }
+
+        .no-live-content p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .no-live-close {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: linear-gradient(135deg, #9c2c17, #7c1808);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .no-live-close:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(156, 44, 23, 0.4);
+        }
+
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.8; }
@@ -484,7 +545,7 @@
                     <h3> 44maestrr</h3>
                     <p>@44maestrr</p>
                     <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.5);">Suivez pour les derniers moments</p>
-                    <a href="https://www.tiktok.com/@44maestrr" target="_blank" class="tiktok-live-btn" data-live="true" data-player="44maestrr">Aller sur TikTok</a>
+                    <a href="https://www.tiktok.com/@44maestrr" target="_blank" class="tiktok-live-btn" data-live="false" data-player="44maestrr">Aller sur TikTok</a>
                 </div>
 
                 <!-- Joueur 2 -->
@@ -758,13 +819,72 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
             }
         }
 
-        // Initialiser au chargement
+        // Gestion du modal "Pas de live"
+        function showNoLiveModal() {
+            const modal = document.getElementById('noLiveModal');
+            modal.classList.add('active');
+        }
+
+        function closeNoLiveModal() {
+            const modal = document.getElementById('noLiveModal');
+            modal.classList.remove('active');
+        }
+
+        // Intercepter les clics sur les boutons offline
+        function setupButtonListeners() {
+            const buttons = document.querySelectorAll('.tiktok-live-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    if (btn.dataset.live === 'false') {
+                        e.preventDefault();
+                        showNoLiveModal();
+                    }
+                    // Si live, laisse le lien par défaut faire sa job
+                });
+            });
+        }
+
+        // Fermer le modal en cliquant sur le bouton Fermer
         document.addEventListener('DOMContentLoaded', () => {
             requestNotificationPermission();
             updateLiveButtons();
+            setupButtonListeners();
+            
+            const closeBtn = document.getElementById('closeNoLiveBtn');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeNoLiveModal);
+            }
+            
+            const modal = document.getElementById('noLiveModal');
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        closeNoLiveModal();
+                    }
+                });
+            }
+            
             // Vérifier toutes les 60 secondes
-            setInterval(updateLiveButtons, 60000);
+            setInterval(() => {
+                updateLiveButtons();
+                setupButtonListeners();
+            }, 60000);
         });
     </script>
+
+    <!-- Modal Pas de Live -->
+    <div id="noLiveModal" class="no-live-modal">
+        <div class="no-live-content">
+            <svg style="width: 60px; height: 60px; margin: 0 auto 1rem; display: block;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#FF6B6B" stroke-width="2"/>
+                <circle cx="35" cy="40" r="4" fill="#FF6B6B"/>
+                <circle cx="65" cy="40" r="4" fill="#FF6B6B"/>
+                <path d="M 35 60 Q 50 55 65 60" stroke="#FF6B6B" stroke-width="2" fill="none" stroke-linecap="round"/>
+            </svg>
+            <h2>Oops !</h2>
+            <p>Aucun live pour le moment...<br>Reviens plus tard ! </p>
+            <button id="closeNoLiveBtn" class="no-live-close">Fermer</button>
+        </div>
+    </div>
 </body>
 </html>
