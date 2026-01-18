@@ -701,15 +701,12 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
                 const player = btn.dataset.player;
                 
                 try {
-                    // Appeler l'API Vercel pour vérifier le statut live
                     const response = await fetch(`/api/check-tiktok-live?username=${player}`);
                     const data = await response.json();
                     const isLive = data.live === true;
                     
-                    // Mettre à jour l'attribut data-live
                     btn.dataset.live = isLive ? 'true' : 'false';
                     
-                    // Appliquer les styles
                     if (isLive) {
                         btn.classList.add('live');
                         btn.classList.remove('offline');
@@ -720,8 +717,7 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
                         btn.innerHTML = 'Aller sur TikTok';
                     }
                 } catch (error) {
-                    console.error(`Erreur lors de la vérification du statut de ${player}:`, error);
-                    // En cas d'erreur, afficher le statut par défaut
+                    console.error(`Erreur ${player}:`, error);
                     btn.classList.add('offline');
                     btn.classList.remove('live');
                     btn.innerHTML = 'Aller sur TikTok';
@@ -729,12 +725,11 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
             }
         }
 
-        // Initialiser les boutons au chargement
+        // Initialiser au chargement
         document.addEventListener('DOMContentLoaded', () => {
             updateLiveButtons();
-            
-            // Vérifier le statut toutes les 30 secondes
-            setInterval(updateLiveButtons, 30000);
+            // Vérifier toutes les 60 secondes
+            setInterval(updateLiveButtons, 60000);
         });
     </script>
 </body>
