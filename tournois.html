@@ -543,11 +543,23 @@
     <section class="tournaments-section">
         <div class="tournaments-container">
             <div class="tournaments-grid" id="tournamentsGrid">
-                <!-- Tournois Samedi 17h -->
+                <div class="empty-state">
+                    <div class="empty-state-icon">📅</div>
+                    <div class="empty-state-text">Aucun tournois à venir pour le moment. Revenez bientôt!</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tournois Participés Section -->
+    <section class="tournaments-section">
+        <div class="tournaments-container">
+            <h2 style="font-family: 'Russo One', sans-serif; font-size: 2.2rem; margin-bottom: 2rem; text-align: center; background: linear-gradient(45deg, #FF0000, #FFFFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Tournois Participés</h2>
+            <div class="tournaments-grid" id="participatedGrid">
                 <div class="tournament-item">
                     <div class="tournament-item-header">
                         <span class="tournament-badge">Mobile Legends</span>
-                        <span class="tournament-status upcoming">À VENIR</span>
+                        <span class="tournament-status completed">TERMINÉ</span>
                     </div>
                     <h3 class="tournament-item-name">Surge Europe</h3>
                     <div class="tournament-item-details">
@@ -555,14 +567,14 @@
                             <i class='bx bxs-calendar'></i>
                             <div class="tournament-detail-info">
                                 <span class="tournament-detail-label">Date</span>
-                                <span class="tournament-detail-value">17  Samedi</span>
+                                <span class="tournament-detail-value">17 Janvier 2025</span>
                             </div>
                         </div>
                         <div class="tournament-detail">
-                            <i class='bx bxs-time'></i>
+                            <i class='bx bxs-trophy'></i>
                             <div class="tournament-detail-info">
-                                <span class="tournament-detail-label">Heure</span>
-                                <span class="tournament-detail-value">17h00</span>
+                                <span class="tournament-detail-label">Résultat</span>
+                                <span class="tournament-detail-value">2e Match: Défaite</span>
                             </div>
                         </div>
                         <div class="tournament-detail">
@@ -573,23 +585,7 @@
                             </div>
                         </div>
                     </div>
-                    <p class="tournament-item-description">Préparez-vous pour une bataille épique! Gascom Esport en direct du tournoi Surge Europe. Venez nous supporter!</p>
-                    <button class="tournament-item-action" onclick="openLiveModal()">Regarder en Direct</button>
-                </div>
-
-                <!-- Ajoute tes autres tournois ici -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Tournois Participés Section -->
-    <section class="tournaments-section">
-        <div class="tournaments-container">
-            <h2 style="font-family: 'Russo One', sans-serif; font-size: 2.2rem; margin-bottom: 2rem; text-align: center; background: linear-gradient(45deg, #FF0000, #FFFFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Tournois Participés</h2>
-            <div class="tournaments-grid" id="participatedGrid">
-                <div class="empty-state">
-                    <div class="empty-state-icon">🏆</div>
-                    <div class="empty-state-text">Les résultats des tournois auxquels nous avons participé seront affichés ici. À bientôt!</div>
+                    <p class="tournament-item-description">Victoire en 1er match (BO1) 🎉 | Défaite en 2e match - Bonne performance globale!</p>
                 </div>
             </div>
         </div>
