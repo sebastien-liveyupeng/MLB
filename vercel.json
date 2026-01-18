@@ -7,6 +7,7 @@
    { "source": "/roster-europe", "destination": "/roster-europe.html" },
      { "source": "/roster-feminin", "destination": "/roster-feminin.html" },
        { "source": "/roster-masculin", "destination": "/roster-masculin.html" },
-        { "source": "/apropos", "destination": "/apropos.html" }
+        { "source": "/apropos", "destination": "/apropos.html" },
+          { "source": "/galerie", "destination": "/galerie.html" }
   ]
 }
