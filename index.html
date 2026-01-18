@@ -545,7 +545,7 @@
                     <h3> 44maestrr</h3>
                     <p>@44maestrr</p>
                     <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.5);">Suivez pour les derniers moments</p>
-                    <a href="https://www.tiktok.com/@44maestrr" target="_blank" class="tiktok-live-btn" data-live="false" data-player="44maestrr">Aller sur TikTok</a>
+                    <a href="https://www.tiktok.com/@44maestrr" target="_blank" class="tiktok-live-btn">Aller sur TikTok</a>
                 </div>
 
                 <!-- Joueur 2 -->
@@ -553,7 +553,7 @@
                     <h3> Riantsoalahatra</h3>
                     <p>@riantsoalahatra</p>
                     <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.5);">Suivez pour les derniers moments</p>
-                    <a href="https://www.tiktok.com/@riantsoalahatra" target="_blank" class="tiktok-live-btn" data-live="false" data-player="riantsoalahatra">Aller sur TikTok</a>
+                    <a href="https://www.tiktok.com/@riantsoalahatra" target="_blank" class="tiktok-live-btn">Aller sur TikTok</a>
                 </div>
             </div>
         </div>
@@ -753,139 +753,7 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
             offset: 100,
             once: true
         });
-
-        // Gestion des boutons TikTok Live avec notifications
-        const liveStatus = {}; // Garder le statut précédent
-        
-        async function updateLiveButtons() {
-            const buttons = document.querySelectorAll('.tiktok-live-btn');
-            
-            for (const btn of buttons) {
-                const player = btn.dataset.player;
-                
-                try {
-                    const response = await fetch(`/api/check-tiktok-live?username=${player}`);
-                    const data = await response.json();
-                    const isLive = data.live === true;
-                    
-                    btn.dataset.live = isLive ? 'true' : 'false';
-                    
-                    if (isLive) {
-                        btn.classList.add('live');
-                        btn.classList.remove('offline');
-                        btn.innerHTML = '🔴 EN DIRECT';
-                        
-                        // Notifier si le statut a changé (de offline à live)
-                        if (liveStatus[player] !== true) {
-                            notifyLive(player);
-                        }
-                        liveStatus[player] = true;
-                    } else {
-                        btn.classList.add('offline');
-                        btn.classList.remove('live');
-                        btn.innerHTML = 'Aller sur TikTok';
-                        liveStatus[player] = false;
-                    }
-                } catch (error) {
-                    console.error(`Erreur ${player}:`, error);
-                    btn.classList.add('offline');
-                    btn.classList.remove('live');
-                    btn.innerHTML = 'Aller sur TikTok';
-                    liveStatus[player] = false;
-                }
-            }
-        }
-
-        // Fonction pour envoyer une notification
-        function notifyLive(player) {
-            if ('Notification' in window && Notification.permission === 'granted') {
-                // Icône SVG moderne pour le live
-                const liveIcon = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><style>@keyframes pulse{0%{r:80}50%{r:85}100%{r:80}}</style></defs><circle cx="100" cy="100" r="80" fill="%23FF0000"/><circle cx="100" cy="100" r="75" fill="%23CC0000"/><polygon points="75,60 75,140 145,100" fill="white"/><text x="100" y="185" font-size="20" font-weight="bold" fill="%23FF0000" text-anchor="middle">LIVE</text></svg>';
-                
-                new Notification(`🔴 ${player} est EN DIRECT !`, {
-                    body: 'Cliquez pour regarder sur TikTok',
-                    icon: liveIcon,
-                    badge: liveIcon,
-                    tag: `live-${player}`,
-                    requireInteraction: true
-                });
-            }
-        }
-
-        // Demander la permission de notification au chargement
-        function requestNotificationPermission() {
-            if ('Notification' in window && Notification.permission === 'default') {
-                Notification.requestPermission();
-            }
-        }
-
-        // Gestion du modal "Pas de live"
-        function showNoLiveModal() {
-            const modal = document.getElementById('noLiveModal');
-            modal.classList.add('active');
-        }
-
-        function closeNoLiveModal() {
-            const modal = document.getElementById('noLiveModal');
-            modal.classList.remove('active');
-        }
-
-        // Intercepter les clics sur les boutons offline
-        function setupButtonListeners() {
-            const buttons = document.querySelectorAll('.tiktok-live-btn');
-            buttons.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    if (btn.dataset.live === 'false') {
-                        e.preventDefault();
-                        showNoLiveModal();
-                    }
-                    // Si live, laisse le lien par défaut faire sa job
-                });
-            });
-        }
-
-        // Fermer le modal en cliquant sur le bouton Fermer
-        document.addEventListener('DOMContentLoaded', () => {
-            requestNotificationPermission();
-            updateLiveButtons();
-            setupButtonListeners();
-            
-            const closeBtn = document.getElementById('closeNoLiveBtn');
-            if (closeBtn) {
-                closeBtn.addEventListener('click', closeNoLiveModal);
-            }
-            
-            const modal = document.getElementById('noLiveModal');
-            if (modal) {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        closeNoLiveModal();
-                    }
-                });
-            }
-            
-            // Vérifier toutes les 15 secondes pour un temps quasi-réel
-            setInterval(() => {
-                updateLiveButtons();
-                setupButtonListeners();
-            }, 15000);
-        });
     </script>
 
-
-    <!-- Modal Pas de Live -->
-    <div id="noLiveModal" class="no-live-modal">
-        <div class="no-live-content">
-            <svg style="width: 60px; height: 60px; margin: 0 auto 1rem; display: block;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="45" fill="none" stroke="#FF6B6B" stroke-width="2"/>
-                <circle cx="35" cy="40" r="4" fill="#FF6B6B"/>
-                <circle cx="65" cy="40" r="4" fill="#FF6B6B"/>
-                <path d="M 35 60 Q 50 55 65 60" stroke="#FF6B6B" stroke-width="2" fill="none" stroke-linecap="round"/>
-            </svg>
-            <h2>Oops !</h2>
-            <p>Aucun live pour le moment...<br>Reviens plus tard ! </p>
-            <button id="closeNoLiveBtn" class="no-live-close">Fermer</button>
-        </div>
-    </div>
 </body>
 </html>
