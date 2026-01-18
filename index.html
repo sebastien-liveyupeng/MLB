@@ -693,7 +693,9 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
             once: true
         });
 
-        // Gestion des boutons TikTok Live
+        // Gestion des boutons TikTok Live avec notifications
+        const liveStatus = {}; // Garder le statut précédent
+        
         async function updateLiveButtons() {
             const buttons = document.querySelectorAll('.tiktok-live-btn');
             
@@ -711,22 +713,50 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
                         btn.classList.add('live');
                         btn.classList.remove('offline');
                         btn.innerHTML = '🔴 EN DIRECT';
+                        
+                        // Notifier si le statut a changé (de offline à live)
+                        if (liveStatus[player] !== true) {
+                            notifyLive(player);
+                        }
+                        liveStatus[player] = true;
                     } else {
                         btn.classList.add('offline');
                         btn.classList.remove('live');
                         btn.innerHTML = 'Aller sur TikTok';
+                        liveStatus[player] = false;
                     }
                 } catch (error) {
                     console.error(`Erreur ${player}:`, error);
                     btn.classList.add('offline');
                     btn.classList.remove('live');
                     btn.innerHTML = 'Aller sur TikTok';
+                    liveStatus[player] = false;
                 }
+            }
+        }
+
+        // Fonction pour envoyer une notification
+        function notifyLive(player) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(`🎮 ${player} est EN DIRECT !`, {
+                    body: 'Cliquez pour regarder sur TikTok',
+                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23FF0000"/><text x="50" y="60" font-size="40" fill="white" text-anchor="middle">▶</text></svg>',
+                    tag: `live-${player}`,
+                    requireInteraction: true
+                });
+            }
+        }
+
+        // Demander la permission de notification au chargement
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
             }
         }
 
         // Initialiser au chargement
         document.addEventListener('DOMContentLoaded', () => {
+            requestNotificationPermission();
             updateLiveButtons();
             // Vérifier toutes les 60 secondes
             setInterval(updateLiveButtons, 60000);
