@@ -10,6 +10,33 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <style>
+        /* Tournaments Hero Logo Background */
+        .tournaments-hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background-image: url('assets/logo.svg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.5;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .tournaments-hero {
+            position: relative;
+        }
+
+        .tournaments-hero-content {
+            position: relative;
+            z-index: 10;
+        }
+
         /* Tournaments Page Styles */
         .tournaments-hero {
             height: 60vh;

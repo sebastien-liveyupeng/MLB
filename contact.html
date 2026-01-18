@@ -9,6 +9,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <style>
+        /* Contact Hero Logo Background */
+        .contact-hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background-image: url('assets/logo.svg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.5;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .contact-hero {
+            position: relative;
+        }
+
+        .contact-hero-content {
+            position: relative;
+            z-index: 10;
+        }
+
         /* Contact Page Styles */
         .contact-hero {
             height: 60vh;

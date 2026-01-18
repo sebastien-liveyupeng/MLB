@@ -222,6 +222,33 @@
         .scroll-animate:nth-child(2) { transition-delay: 0.2s; }
         .scroll-animate:nth-child(3) { transition-delay: 0.3s; }
         .scroll-animate:nth-child(4) { transition-delay: 0.4s; }
+
+        /* Hero Logo Background */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background-image: url('assets/logo.svg');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.5;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .hero {
+            position: relative;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
