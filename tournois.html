@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <style>
         /* Tournaments Page Styles */
         .tournaments-hero {
@@ -556,7 +557,7 @@
         <div class="tournaments-container">
             <h2 style="font-family: 'Russo One', sans-serif; font-size: 2.2rem; margin-bottom: 2rem; text-align: center; background: linear-gradient(45deg, #FF0000, #FFFFFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Tournois Participés</h2>
             <div class="tournaments-grid" id="participatedGrid">
-                <div class="tournament-item">
+                <div class="tournament-item" data-aos="fade-up" data-aos-delay="100">
                     <div class="tournament-item-header">
                         <span class="tournament-badge">Mobile Legends</span>
                         <span class="tournament-status completed">TERMINÉ</span>
@@ -665,6 +666,16 @@
         }
 
         setInterval(createParticle, 2000);
+    </script>
+
+    <!-- AOS Library -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            offset: 100,
+            once: true
+        });
     </script>
 </body>
 </html>

@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
     <style>
         /* Gallery Specific Styles */
         .gallery-hero {
@@ -341,7 +343,7 @@
         <div class="gallery-grid" id="galleryGrid">
             
             <!-- Victoires & Podiums -->
-            <div class="gallery-item" data-category="victoires">
+            <div class="gallery-item" data-category="victoires" data-aos="zoom-in">
                 <div class="gallery-placeholder">
                     <i class='bx bxs-trophy'></i>
                     <span>Victoire Tournoi #1</span>
@@ -352,7 +354,7 @@
                 </div>
             </div>
 
-            <div class="gallery-item" data-category="victoires">
+            <div class="gallery-item" data-category="victoires" data-aos="zoom-in" data-aos-delay="100">
                 <div class="gallery-placeholder">
                     <i class='bx bxs-award'></i>
                     <span>Podium Régional</span>
@@ -363,7 +365,7 @@
                 </div>
             </div>
 
-            <div class="gallery-item" data-category="victoires">
+            <div class="gallery-item" data-category="victoires" data-aos="zoom-in" data-aos-delay="200">
                 <div class="gallery-placeholder">
                     <i class='bx bxs-medal'></i>
                     <span>Célébration Victoire</span>
@@ -375,7 +377,7 @@
             </div>
 
             <!-- Ges Pics -->
-            <div class="gallery-item" data-category="gespics">
+            <div class="gallery-item" data-category="gespics" data-aos="zoom-in">
                 <div class="gallery-placeholder">
                     <i class='bx bxs-image-alt'></i>
                     <span>Ges Photo #1</span>
@@ -386,7 +388,7 @@
                 </div>
             </div>
 
-            <div class="gallery-item" data-category="gespics">
+            <div class="gallery-item" data-category="gespics" data-aos="zoom-in" data-aos-delay="100">
                 <div class="gallery-placeholder">
                     <i class='bx bxs-photo-album'></i>
                     <span>Ges Photo #2</span>
@@ -397,7 +399,7 @@
                 </div>
             </div>
 
-            <div class="gallery-item" data-category="gespics">
+            <div class="gallery-item" data-category="gespics" data-aos="zoom-in" data-aos-delay="200">
                 <div class="gallery-placeholder">
                     <i class='bx bxs-camera-plus'></i>
                     <span>Ges Photo #3</span>
@@ -408,7 +410,7 @@
                 </div>
             </div>
 
-            <div class="gallery-item" data-category="gespics">
+            <div class="gallery-item" data-category="gespics" data-aos="zoom-in" data-aos-delay="300">
                 <div class="gallery-placeholder">
                     <i class='bx bxs-landscape'></i>
                     <span>Ges Photo #4</span>
@@ -593,6 +595,27 @@
                     lightboxFrame.src = '';
                 }
             }
+        });
+    </script>
+
+    <!-- AOS Library -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <!-- GLightbox Library -->
+    <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            offset: 100,
+            once: true
+        });
+
+        // Initialize GLightbox Lightbox
+        const lightbox = GLightbox({
+            selector: '.glightbox',
+            touchNavigation: true,
+            loop: true,
+            autoplayVideos: true
         });
     </script>
 </body>
