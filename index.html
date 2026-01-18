@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <style>
         /* Roster Carousel Styles */
         .carousel-section {
@@ -223,6 +224,112 @@
         .scroll-animate:nth-child(3) { transition-delay: 0.3s; }
         .scroll-animate:nth-child(4) { transition-delay: 0.4s; }
 
+        /* TikTok Live Section Styles */
+        .tiktok-live-section {
+            padding: 5rem 2rem;
+            background: linear-gradient(180deg, rgba(11, 11, 15, 0.5) 0%, rgba(11, 11, 15, 0.8) 100%);
+        }
+
+        .tiktok-live-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tiktok-live-title {
+            text-align: center;
+            font-family: 'Russo One', sans-serif;
+            font-size: 2.5rem;
+            color: #FFFFFF;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #FF0000, #FFFFFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tiktok-live-subtitle {
+            text-align: center;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 3rem;
+        }
+
+        .tiktok-live-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .tiktok-live-item {
+            background: linear-gradient(135deg, rgba(25, 25, 35, 0.6), rgba(50, 25, 20, 0.4));
+            border: 2px solid rgba(156, 44, 23, 0.4);
+            border-radius: 15px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 60px rgba(156, 44, 23, 0.2);
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .tiktok-live-item h3 {
+            font-family: 'Russo One', sans-serif;
+            font-size: 1.3rem;
+            color: #FFFFFF;
+            margin-bottom: 0.5rem;
+        }
+
+        .tiktok-live-item p {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1rem;
+        }
+
+        .tiktok-live-btn {
+            display: inline-block;
+            padding: 0.7rem 1.8rem;
+            background: linear-gradient(135deg, #7c1808, #9c2c17);
+            color: #FFFFFF;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .tiktok-live-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(156, 44, 23, 0.4);
+        }
+
+        .tiktok-live-btn.live {
+            background: linear-gradient(135deg, #FF0000, #CC0000);
+            animation: pulse 2s infinite;
+        }
+
+        .tiktok-live-btn.offline {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        @media (max-width: 768px) {
+            .tiktok-live-title {
+                font-size: 1.8rem;
+            }
+
+            .tiktok-live-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+
         /* Hero Logo Background */
         .hero::before {
             content: '';
@@ -361,6 +468,32 @@
                 <button class="carousel-nav-btn" id="nextBtn" aria-label="Next">
                     <i class='bx bx-chevron-right'></i>
                 </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- TikTok Live Section -->
+    <section class="tiktok-live-section scroll-animate">
+        <div class="tiktok-live-container">
+            <h2 class="tiktok-live-title">Nos Lives TikTok 🔴</h2>
+            <p class="tiktok-live-subtitle">Suivez nos joueurs en direct et supportez Gascom Esport</p>
+            
+            <div class="tiktok-live-grid">
+                <!-- Joueur 1 -->
+                <div class="tiktok-live-item" data-aos="fade-up" data-aos-delay="100">
+                    <h3>🎮 44maestrr</h3>
+                    <p>@44maestrr</p>
+                    <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.5);">Suivez pour les derniers moments</p>
+                    <a href="https://www.tiktok.com/@44maestrr" target="_blank" class="tiktok-live-btn" data-live="false" data-player="44maestrr">Aller sur TikTok</a>
+                </div>
+
+                <!-- Joueur 2 -->
+                <div class="tiktok-live-item" data-aos="fade-up" data-aos-delay="200">
+                    <h3>🎮 Nganjin</h3>
+                    <p>@nganjin</p>
+                    <p style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.5);">Suivez pour les derniers moments</p>
+                    <a href="https://www.tiktok.com/@nganjin" target="_blank" class="tiktok-live-btn" data-live="false" data-player="nganjin">Aller sur TikTok</a>
+                </div>
             </div>
         </div>
     </section>
@@ -549,6 +682,60 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
         }
 
         setInterval(createParticle, 2000);
+    </script>
+
+    <!-- AOS Library -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            offset: 100,
+            once: true
+        });
+
+        // Gestion des boutons TikTok Live
+        async function updateLiveButtons() {
+            const buttons = document.querySelectorAll('.tiktok-live-btn');
+            
+            for (const btn of buttons) {
+                const player = btn.dataset.player;
+                
+                try {
+                    // Appeler l'API Vercel pour vérifier le statut live
+                    const response = await fetch(`/api/check-tiktok-live?username=${player}`);
+                    const data = await response.json();
+                    const isLive = data.live === true;
+                    
+                    // Mettre à jour l'attribut data-live
+                    btn.dataset.live = isLive ? 'true' : 'false';
+                    
+                    // Appliquer les styles
+                    if (isLive) {
+                        btn.classList.add('live');
+                        btn.classList.remove('offline');
+                        btn.innerHTML = '🔴 EN DIRECT';
+                    } else {
+                        btn.classList.add('offline');
+                        btn.classList.remove('live');
+                        btn.innerHTML = 'Aller sur TikTok';
+                    }
+                } catch (error) {
+                    console.error(`Erreur lors de la vérification du statut de ${player}:`, error);
+                    // En cas d'erreur, afficher le statut par défaut
+                    btn.classList.add('offline');
+                    btn.classList.remove('live');
+                    btn.innerHTML = 'Aller sur TikTok';
+                }
+            }
+        }
+
+        // Initialiser les boutons au chargement
+        document.addEventListener('DOMContentLoaded', () => {
+            updateLiveButtons();
+            
+            // Vérifier le statut toutes les 30 secondes
+            setInterval(updateLiveButtons, 30000);
+        });
     </script>
 </body>
 </html>
