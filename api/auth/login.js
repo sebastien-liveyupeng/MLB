@@ -59,6 +59,8 @@ module.exports = async function handler(req, res) {
     }
 
     console.log('Login successful for:', email);
+    console.log('User metadata:', data.user.user_metadata);
+    console.log('Username:', data.user.user_metadata?.username);
 
     return res.status(200).json({
       success: true,
