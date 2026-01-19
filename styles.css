@@ -2038,7 +2038,7 @@
         }
 
         .auth-nav {
-            display: flex !important;
+            display: flex;
             gap: 0.8rem;
             align-items: center;
         }

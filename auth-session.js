@@ -81,9 +81,9 @@ async function checkUserSession() {
 
     if (!token) {
         // Pas de token - afficher boutons de connexion/inscription
-        authNav.style.display = 'flex';
-        userNav.style.display = 'none';
-        if (usernameDisplayMobile) usernameDisplayMobile.style.display = 'none';
+        authNav.style.setProperty('display', 'flex', 'important');
+        userNav.style.setProperty('display', 'none', 'important');
+        if (usernameDisplayMobile) usernameDisplayMobile.style.setProperty('display', 'none', 'important');
         return;
     }
 
@@ -102,8 +102,8 @@ async function checkUserSession() {
             const username = data.user.user_metadata?.username || data.user.email;
 
             // Afficher l'utilisateur connecté
-            authNav.style.display = 'none';
-            userNav.style.display = 'flex';
+            authNav.style.setProperty('display', 'none', 'important');
+            userNav.style.setProperty('display', 'flex', 'important');
             
             // Mettre à jour le prénom dans la navbar desktop
             const usernameDisplay = document.getElementById('usernamDisplay');
@@ -113,7 +113,7 @@ async function checkUserSession() {
 
             // Mettre à jour le prénom sur mobile
             if (usernameDisplayMobile) {
-                usernameDisplayMobile.style.display = 'flex';
+                usernameDisplayMobile.style.setProperty('display', 'flex', 'important');
                 const usernameSpan = usernameDisplayMobile.querySelector('span');
                 if (usernameSpan) usernameSpan.textContent = username;
             }
@@ -124,14 +124,14 @@ async function checkUserSession() {
         } else {
             // Token invalide
             localStorage.removeItem('access_token');
-            authNav.style.display = 'flex';
-            userNav.style.display = 'none';
-            if (usernameDisplayMobile) usernameDisplayMobile.style.display = 'none';
+            authNav.style.setProperty('display', 'flex', 'important');
+            userNav.style.setProperty('display', 'none', 'important');
+            if (usernameDisplayMobile) usernameDisplayMobile.style.setProperty('display', 'none', 'important');
         }
     } catch (error) {
         console.error('Erreur lors de la vérification de session:', error);
-        authNav.style.display = 'flex';
-        userNav.style.display = 'none';
+        authNav.style.setProperty('display', 'flex', 'important');
+        userNav.style.setProperty('display', 'none', 'important');
     }
 }
 
