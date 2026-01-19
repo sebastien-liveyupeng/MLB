@@ -4,10 +4,11 @@
     { "source": "/tournois", "destination": "/tournois.html" },
     { "source": "/contact", "destination": "/contact.html" },
     { "source": "/equipe", "destination": "/equipe.html" },
-   { "source": "/roster-europe", "destination": "/roster-europe.html" },
-     { "source": "/roster-feminin", "destination": "/roster-feminin.html" },
-       { "source": "/roster-masculin", "destination": "/roster-masculin.html" },
-        { "source": "/apropos", "destination": "/apropos.html" },
-          { "source": "/galerie", "destination": "/galerie.html" }
+    { "source": "/roster-europe", "destination": "/roster-europe.html" },
+    { "source": "/roster-feminin", "destination": "/roster-feminin.html" },
+    { "source": "/roster-masculin", "destination": "/roster-masculin.html" },
+    { "source": "/apropos", "destination": "/apropos.html" },
+    { "source": "/galerie", "destination": "/galerie.html" },
+    { "source": "/auth", "destination": "/auth.html" }
   ]
 }

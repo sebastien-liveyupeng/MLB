@@ -1,0 +1,9 @@
+{
+  "name": "gascom-esports",
+  "version": "1.0.0",
+  "description": "Gascom Esports with Supabase",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.4",
+    "dotenv": "^17.2.3"
+  }
+}
