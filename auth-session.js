@@ -1,4 +1,5 @@
 // Gestion de la session utilisateur - Réutilisable sur toutes les pages
+// Version: 1.0 - Ready for production (2026-01-20)
 
 // Charger les modals HTML une seule fois
 async function loadAuthModals() {
