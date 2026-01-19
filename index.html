@@ -1486,7 +1486,14 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
                 const data = await response.json();
 
                 if (!response.ok) {
-                    document.getElementById('login-error-modal').textContent = data.error || 'Erreur de connexion';
+                    let errorMsg = data.error || 'Erreur de connexion';
+                    
+                    // Personnaliser le message d'erreur
+                    if (errorMsg.includes('Invalid login credentials')) {
+                        errorMsg = 'Oops ! Veuillez créer votre compte d\'abord.';
+                    }
+                    
+                    document.getElementById('login-error-modal').textContent = errorMsg;
                     return;
                 }
 
