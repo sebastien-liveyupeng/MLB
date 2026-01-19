@@ -561,7 +561,7 @@
         });
 
         // ===== LIGHTBOX FUNCTIONALITY =====
-        const lightbox = document.getElementById('lightbox');
+        const lightboxElement = document.getElementById('lightbox');
         const lightboxImage = document.getElementById('lightboxImage');
         const lightboxVideo = document.getElementById('lightboxVideo');
         const lightboxFrame = document.getElementById('lightboxFrame');
@@ -578,7 +578,7 @@
                     lightboxImage.style.display = 'block';
                     lightboxVideo.style.display = 'none';
                     lightboxFrame.style.display = 'none';
-                    lightbox.classList.add('active');
+                    lightboxElement.classList.add('active');
                 } else if (video) {
                     const videoSrc = video.querySelector('source').src;
                     lightboxVideo.querySelector('source').src = videoSrc;
@@ -586,7 +586,7 @@
                     lightboxVideo.style.display = 'block';
                     lightboxImage.style.display = 'none';
                     lightboxFrame.style.display = 'none';
-                    lightbox.classList.add('active');
+                    lightboxElement.classList.add('active');
                     lightboxVideo.play();
                 } else if (iframe) {
                     const baseSrc = iframe.getAttribute('src');
@@ -596,13 +596,13 @@
                     lightboxFrame.style.display = 'block';
                     lightboxImage.style.display = 'none';
                     lightboxVideo.style.display = 'none';
-                    lightbox.classList.add('active');
+                    lightboxElement.classList.add('active');
                 }
             });
         });
 
         lightboxClose.addEventListener('click', () => {
-            lightbox.classList.remove('active');
+            lightboxElement.classList.remove('active');
             if (lightboxVideo.style.display === 'block') {
                 lightboxVideo.pause();
             }
@@ -611,9 +611,9 @@
             }
         });
 
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) {
-                lightbox.classList.remove('active');
+        lightboxElement.addEventListener('click', (e) => {
+            if (e.target === lightboxElement) {
+                lightboxElement.classList.remove('active');
                 if (lightboxVideo.style.display === 'block') {
                     lightboxVideo.pause();
                 }
