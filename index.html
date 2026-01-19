@@ -1392,14 +1392,16 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
     <script>
         function toggleUserMenu() {
             const userMenu = document.getElementById('userMenu');
-            userMenu.classList.toggle('show');
+            if (userMenu) {
+                userMenu.classList.toggle('show');
+            }
         }
 
         // Fermer le menu quand on clique ailleurs
         document.addEventListener('click', function(event) {
             const userNav = document.getElementById('userNav');
             const userMenu = document.getElementById('userMenu');
-            if (!userNav.contains(event.target) && userMenu.classList.contains('show')) {
+            if (userNav && userMenu && !userNav.contains(event.target) && userMenu.classList.contains('show')) {
                 userMenu.classList.remove('show');
             }
         });
@@ -1433,95 +1435,6 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
 
         function closeSignupModal() {
             document.getElementById('signupModal').classList.remove('show');
-        }
-
-        async function handleLoginModal(event) {
-            event.preventDefault();
-            document.getElementById('login-error-modal').textContent = '';
-            document.getElementById('login-success-modal').textContent = '';
-
-            const email = document.getElementById('login-email-modal').value;
-            const password = document.getElementById('login-password-modal').value;
-
-            try {
-                const response = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    let errorMsg = data.error || 'Erreur de connexion';
-                    
-                    // Personnaliser le message d'erreur
-                    if (errorMsg.includes('Invalid login credentials')) {
-                        errorMsg = 'Oops ! Veuillez créer votre compte d\'abord.';
-                    }
-                    
-                    document.getElementById('login-error-modal').textContent = errorMsg;
-                    return;
-                }
-
-                // Stocker le token
-                localStorage.setItem('access_token', data.session.access_token);
-                
-                document.getElementById('login-success-modal').textContent = 'Connexion réussie ! Redirection...';
-                
-                setTimeout(() => {
-                    closeLoginModal();
-                    location.reload();
-                }, 1500);
-            } catch (error) {
-                document.getElementById('login-error-modal').textContent = 'Erreur serveur';
-                console.error('Login error:', error);
-            }
-        }
-
-        async function handleSignupModal(event) {
-            event.preventDefault();
-            document.getElementById('signup-error-modal').textContent = '';
-            document.getElementById('signup-success-modal').textContent = '';
-
-            const username = document.getElementById('signup-username-modal').value;
-            const email = document.getElementById('signup-email-modal').value;
-            const password = document.getElementById('signup-password-modal').value;
-            const confirmPassword = document.getElementById('signup-password-confirm-modal').value;
-
-            if (password !== confirmPassword) {
-                document.getElementById('signup-error-modal').textContent = 'Les mots de passe ne correspondent pas';
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/auth/signup', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password, username })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    document.getElementById('signup-error-modal').textContent = data.error || 'Erreur d\'inscription';
-                    return;
-                }
-
-                document.getElementById('signup-success-modal').textContent = 'Inscription réussie ! Vous pouvez vous connecter.';
-                
-                setTimeout(() => {
-                    closeSignupModal();
-                    document.getElementById('signup-username-modal').value = '';
-                    document.getElementById('signup-email-modal').value = '';
-                    document.getElementById('signup-password-modal').value = '';
-                    document.getElementById('signup-password-confirm-modal').value = '';
-                    openLoginModal();
-                }, 1500);
-            } catch (error) {
-                document.getElementById('signup-error-modal').textContent = 'Erreur serveur';
-                console.error('Signup error:', error);
-            }
         }
 
         // Fermer les modals en cliquant en dehors
