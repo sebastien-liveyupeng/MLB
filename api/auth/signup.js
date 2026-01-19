@@ -29,11 +29,15 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Email, password, and username required' });
   }
 
+  console.log('Signup attempt:', { email, username, passwordLength: password.length });
+
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY
     );
+
+    console.log('Creating user with metadata:', { username });
 
     const { data, error } = await supabase.auth.admin.createUser({
       email: email,
@@ -45,8 +49,12 @@ module.exports = async function handler(req, res) {
     });
 
     if (error) {
+      console.error('Supabase error:', error);
       return res.status(400).json({ error: error.message });
     }
+
+    console.log('User created:', { id: data.user.id, email: data.user.email });
+    console.log('User metadata after creation:', data.user.user_metadata);
 
     return res.status(201).json({
       success: true,
