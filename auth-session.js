@@ -134,6 +134,7 @@ async function checkUserSession() {
         if (usernameDisplayMobile) {
             usernameDisplayMobile.removeAttribute('style');
         }
+    }
 }
 
 // Fonction de déconnexion
