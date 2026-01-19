@@ -198,12 +198,11 @@ async function handleLoginModal(event) {
         // Stocker le token
         localStorage.setItem('access_token', data.session.access_token);
         
-        if (loginSuccessElement) loginSuccessElement.textContent = 'Connexion réussie ! Redirection...';
+        if (loginSuccessElement) loginSuccessElement.textContent = 'Connexion réussie !';
         
-        setTimeout(() => {
-            closeLoginModal();
-            location.reload();
-        }, 1500);
+        // Fermer la modal et mettre à jour l'affichage
+        closeLoginModal();
+        await checkUserSession();
     } catch (error) {
         if (loginErrorElement) loginErrorElement.textContent = 'Erreur serveur';
         console.error('Login error:', error);
