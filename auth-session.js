@@ -17,9 +17,19 @@ async function loadAuthModals() {
 
 // Appeler le chargement des modals au démarrage
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadAuthModals);
+    document.addEventListener('DOMContentLoaded', async function() {
+        console.log('DOMContentLoaded event fired');
+        await loadAuthModals();
+        console.log('Modals loaded');
+        checkUserSession();
+    });
 } else {
-    loadAuthModals();
+    console.log('Document already loaded');
+    (async () => {
+        await loadAuthModals();
+        console.log('Modals loaded');
+        checkUserSession();
+    })();
 }
 
 // Fonctions pour ouvrir/fermer les modals
@@ -73,6 +83,11 @@ async function checkUserSession() {
     const authNav = document.getElementById('authNav');
     const userNav = document.getElementById('userNav');
     const usernameDisplayMobile = document.getElementById('usernameDisplayMobile');
+
+    console.log('checkUserSession() appelée');
+    console.log('Token:', token ? 'Existe' : 'N\'existe pas');
+    console.log('authNav:', authNav);
+    console.log('userNav:', userNav);
 
     if (!authNav || !userNav) {
         console.log('Éléments de navigation manquants');
@@ -291,6 +306,3 @@ document.addEventListener('click', function(event) {
         }
     }
 });
-
-// Exécuter la vérification de session au chargement de la page
-document.addEventListener('DOMContentLoaded', checkUserSession);
