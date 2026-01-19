@@ -1001,9 +1001,19 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
         }
 
         .username-display-mobile {
-            display: none;
+            display: none !important;
             align-items: center;
             gap: 1rem;
+        }
+
+        @media (min-width: 769px) {
+            .username-display-mobile {
+                display: none !important;
+            }
+
+            .user-profile-btn {
+                display: flex !important;
+            }
         }
 
         .username-display-mobile span {
