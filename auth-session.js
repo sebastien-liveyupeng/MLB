@@ -118,11 +118,13 @@ async function checkUserSession() {
                 usernameNav.textContent = username;
             }
             
-            // Mettre à jour le prénom sur mobile - afficher le container et remplir le texte
+            // Mettre à jour le prénom sur mobile
             if (usernameDisplayMobile) {
                 usernameDisplayMobile.style.setProperty('display', 'flex', 'important');
                 const usernameMobileNav = document.getElementById('usernameMobileNav');
-                if (usernameMobileNav) usernameMobileNav.textContent = username;
+                if (usernameMobileNav) {
+                    usernameMobileNav.textContent = username;
+                }
             }
         } else {
             // Token invalide
