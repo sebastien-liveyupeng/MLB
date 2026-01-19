@@ -536,6 +536,10 @@
                     <span></span>
                     <span></span>
                 </button>
+                <div class="username-display-mobile" id="usernameDisplayMobile" style="display: none;">
+                    <span></span>
+                    <button class="logout-mobile-btn" onclick="handleLogout()"><i class='bx bx-log-out'></i></button>
+                </div>
                 <ul class="nav-menu" id="navMenu">
                     <li class="nav-item"><a href="/">Accueil</a></li>
                     <li class="nav-item"><a href="/equipe">Équipe</a></li>
@@ -544,14 +548,10 @@
                     <li class="nav-item"><a href="/contact">Contact</a></li>
                     <li class="nav-item"><a href="/apropos">A propos</a></li>
                     <li class="nav-item auth-nav" id="authNav">
-                        <button class="btn-connexion" id="btnConnexion">Connexion</button>
-                        <button class="btn-inscription" id="btnInscription">Inscription</button>
+                        <button class="auth-btn" onclick="openLoginModal()">Connexion</button>
+                        <button class="auth-btn" onclick="openSignupModal()">Inscription</button>
                     </li>
-                    <li class="nav-item user-nav" id="userNav" style="display: none; align-items: center; gap: 1rem;">
-                        <div class="username-display-mobile" id="usernameDisplayMobile" style="display: none;">
-                            <span></span>
-                            <button class="logout-mobile-btn" onclick="handleLogout()"><i class='bx bx-log-out'></i></button>
-                        </div>
+                    <li class="nav-item user-nav" id="userNav" style="display: none;">
                         <button class="user-profile-btn" id="userProfileBtn" onclick="toggleUserMenu()">
                             <span></span>
                             <i class='bx bx-chevron-down'></i>
