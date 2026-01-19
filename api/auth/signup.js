@@ -13,7 +13,17 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, password, username } = req.body;
+  // Parse body si c'est une string
+  let body = req.body;
+  if (typeof body === 'string') {
+    try {
+      body = JSON.parse(body);
+    } catch (e) {
+      return res.status(400).json({ error: 'Invalid JSON in request body' });
+    }
+  }
+
+  const { email, password, username } = body;
 
   if (!email || !password || !username) {
     return res.status(400).json({ error: 'Email, password, and username required' });
