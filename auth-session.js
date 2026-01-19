@@ -286,17 +286,5 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// Fermer le menu en cliquant ailleurs
-document.addEventListener('click', function(event) {
-    const userMenu = document.getElementById('userMenu');
-    const userProfileBtn = document.getElementById('userProfileBtn');
-    
-    if (userMenu && userProfileBtn) {
-        if (!userMenu.contains(event.target) && !userProfileBtn.contains(event.target)) {
-            userMenu.classList.remove('show');
-        }
-    }
-});
-
 // Exécuter la vérification de session au chargement de la page
 document.addEventListener('DOMContentLoaded', checkUserSession);
