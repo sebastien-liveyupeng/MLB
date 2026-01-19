@@ -83,7 +83,10 @@ async function checkUserSession() {
         // Pas de token - afficher boutons de connexion/inscription
         authNav.style.setProperty('display', 'flex', 'important');
         userNav.style.setProperty('display', 'none', 'important');
-        if (usernameDisplayMobile) usernameDisplayMobile.style.setProperty('display', 'none', 'important');
+        // Ne pas forcer display sur usernameDisplayMobile - laisser le CSS media query l'afficher/masquer
+        if (usernameDisplayMobile) {
+            usernameDisplayMobile.removeAttribute('style');
+        }
         return;
     }
 
@@ -111,28 +114,28 @@ async function checkUserSession() {
                 usernameDisplay.textContent = username;
             }
 
-            // Mettre à jour le prénom sur mobile
+            // Mettre à jour le prénom sur mobile - afficher le container et remplir le texte
             if (usernameDisplayMobile) {
                 usernameDisplayMobile.style.setProperty('display', 'flex', 'important');
-                const usernameSpan = usernameDisplayMobile.querySelector('span');
-                if (usernameSpan) usernameSpan.textContent = username;
+                const usernameMobileNav = document.getElementById('usernameMobileNav');
+                if (usernameMobileNav) usernameMobileNav.textContent = username;
             }
-
-            // Mettre à jour le bouton profil mobile
-            const usernameMobileNav = document.getElementById('usernameMobileNav');
-            if (usernameMobileNav) usernameMobileNav.textContent = username;
         } else {
             // Token invalide
             localStorage.removeItem('access_token');
             authNav.style.setProperty('display', 'flex', 'important');
             userNav.style.setProperty('display', 'none', 'important');
-            if (usernameDisplayMobile) usernameDisplayMobile.style.setProperty('display', 'none', 'important');
+            if (usernameDisplayMobile) {
+                usernameDisplayMobile.removeAttribute('style');
+            }
         }
     } catch (error) {
         console.error('Erreur lors de la vérification de session:', error);
         authNav.style.setProperty('display', 'flex', 'important');
         userNav.style.setProperty('display', 'none', 'important');
-    }
+        if (usernameDisplayMobile) {
+            usernameDisplayMobile.removeAttribute('style');
+        }
 }
 
 // Fonction de déconnexion
