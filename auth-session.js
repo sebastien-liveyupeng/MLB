@@ -73,28 +73,24 @@ function closeSignupModal() {
 
 // Gestion de la session utilisateur
 async function checkUserSession() {
-    const token = localStorage.getItem('access_token');
-    const authNav = document.getElementById('authNav');
-    const userNav = document.getElementById('userNav');
-    const usernameDisplayMobile = document.getElementById('usernameDisplayMobile');
-
-    if (!authNav || !userNav) {
-        console.log('Éléments de navigation manquants');
-        return;
-    }
-
-    if (!token) {
-        // Pas de token - afficher boutons de connexion/inscription
-        authNav.style.setProperty('display', 'flex', 'important');
-        userNav.style.setProperty('display', 'none', 'important');
-        // Ne pas forcer display sur usernameDisplayMobile - laisser le CSS media query l'afficher/masquer
-        if (usernameDisplayMobile) {
-            usernameDisplayMobile.removeAttribute('style');
-        }
-        return;
-    }
-
     try {
+        const token = localStorage.getItem('access_token');
+        const authNav = document.getElementById('authNav');
+        const userNav = document.getElementById('userNav');
+
+        // Vérification que les éléments de navigation existent
+        if (!authNav || !userNav) {
+            console.log('Éléments de navigation manquants');
+            return;
+        }
+
+        if (!token) {
+            // Pas de token - afficher boutons de connexion/inscription
+            authNav.style.setProperty('display', 'flex', 'important');
+            userNav.style.setProperty('display', 'none', 'important');
+            return;
+        }
+
         // Vérifier le token avec le serveur
         const response = await fetch('/api/auth/session', {
             method: 'GET',
@@ -112,13 +108,14 @@ async function checkUserSession() {
             authNav.style.setProperty('display', 'none', 'important');
             userNav.style.setProperty('display', 'flex', 'important');
             
-            // Mettre à jour le pseudo dans la navbar
+            // Mettre à jour le pseudo dans la navbar - avec vérification
             const usernameNav = document.getElementById('usernameNav');
             if (usernameNav) {
                 usernameNav.textContent = username;
             }
             
-            // Mettre à jour le prénom sur mobile
+            // Mettre à jour le prénom sur mobile - avec vérification
+            const usernameDisplayMobile = document.getElementById('usernameDisplayMobile');
             if (usernameDisplayMobile) {
                 usernameDisplayMobile.style.setProperty('display', 'flex', 'important');
                 const usernameMobileNav = document.getElementById('usernameMobileNav');
@@ -131,17 +128,13 @@ async function checkUserSession() {
             localStorage.removeItem('access_token');
             authNav.style.setProperty('display', 'flex', 'important');
             userNav.style.setProperty('display', 'none', 'important');
-            if (usernameDisplayMobile) {
-                usernameDisplayMobile.removeAttribute('style');
-            }
         }
     } catch (error) {
         console.error('Erreur lors de la vérification de session:', error);
-        authNav.style.setProperty('display', 'flex', 'important');
-        userNav.style.setProperty('display', 'none', 'important');
-        if (usernameDisplayMobile) {
-            usernameDisplayMobile.removeAttribute('style');
-        }
+        const authNav = document.getElementById('authNav');
+        const userNav = document.getElementById('userNav');
+        if (authNav) authNav.style.setProperty('display', 'flex', 'important');
+        if (userNav) userNav.style.setProperty('display', 'none', 'important');
     }
 }
 
