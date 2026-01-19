@@ -17,9 +17,12 @@ async function loadAuthModals() {
 
 // Appeler le chargement des modals au démarrage
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadAuthModals);
+    document.addEventListener('DOMContentLoaded', async () => {
+        await loadAuthModals();
+        checkUserSession();
+    });
 } else {
-    loadAuthModals();
+    loadAuthModals().then(() => checkUserSession());
 }
 
 // Fonctions pour ouvrir/fermer les modals
