@@ -1390,45 +1390,6 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
     </style>
 
     <script>
-        // Gestion de la session utilisateur
-        async function checkUserSession() {
-            try {
-                const token = localStorage.getItem('access_token');
-                if (!token) {
-                    document.getElementById('authNav').style.display = 'block';
-                    document.getElementById('userNav').style.display = 'none';
-                    document.getElementById('usernameDisplayMobile').style.display = 'none';
-                    return;
-                }
-
-                const response = await fetch('/api/auth/session', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (!response.ok) {
-                    localStorage.removeItem('access_token');
-                    document.getElementById('authNav').style.display = 'block';
-                    document.getElementById('userNav').style.display = 'none';
-                    document.getElementById('usernameDisplayMobile').style.display = 'none';
-                    return;
-                }
-
-                const data = await response.json();
-                document.getElementById('authNav').style.display = 'none';
-                document.getElementById('userNav').style.display = 'block';
-                document.getElementById('usernameDisplayMobile').style.display = 'flex';
-                document.getElementById('usernamDisplay').textContent = data.user.username || data.user.email;
-                document.getElementById('usernameMobileNav').textContent = data.user.username || data.user.email;
-            } catch (error) {
-                console.error('Session check error:', error);
-                document.getElementById('authNav').style.display = 'block';
-                document.getElementById('userNav').style.display = 'none';
-                document.getElementById('usernameDisplayMobile').style.display = 'none';
-            }
-        }
-
         function toggleUserMenu() {
             const userMenu = document.getElementById('userMenu');
             userMenu.classList.toggle('show');
@@ -1457,9 +1418,6 @@ Merci à tous ceux qui nous ont soutenu depuis le tout debut et qui continue a l
                 location.reload();
             }
         }
-
-        // Vérifier la session au chargement de la page
-        window.addEventListener('load', checkUserSession);
 
         function openLoginModal() {
             document.getElementById('loginModal').classList.add('show');
