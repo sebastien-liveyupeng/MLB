@@ -62,13 +62,34 @@ module.exports = async function handler(req, res) {
     console.log('User metadata:', data.user.user_metadata);
     console.log('Username:', data.user.user_metadata?.username);
 
+    let username = data.user.user_metadata?.username;
+    
+    // If no username in metadata, try to fetch from user_profiles table
+    if (!username) {
+      console.log('No username in metadata, checking user_profiles table...');
+      try {
+        const { data: profileData, error: profileError } = await supabase
+          .from('user_profiles')
+          .select('username')
+          .eq('id', data.user.id)
+          .single();
+        
+        if (!profileError && profileData) {
+          username = profileData.username;
+          console.log('Found username in user_profiles:', username);
+        }
+      } catch (e) {
+        console.log('Could not check user_profiles table:', e.message);
+      }
+    }
+
     return res.status(200).json({
       success: true,
       message: 'Connexion réussie',
       user: {
         id: data.user.id,
         email: data.user.email,
-        username: data.user.user_metadata?.username
+        username: username
       },
       session: {
         access_token: data.session.access_token,

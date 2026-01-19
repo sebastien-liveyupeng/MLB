@@ -56,6 +56,24 @@ module.exports = async function handler(req, res) {
     console.log('User created:', { id: data.user.id, email: data.user.email });
     console.log('User metadata after creation:', data.user.user_metadata);
 
+    // Also store username in user_profiles table as backup
+    try {
+      const { error: profileError } = await supabase
+        .from('user_profiles')
+        .insert({
+          id: data.user.id,
+          username: username
+        });
+      
+      if (profileError) {
+        console.log('Profile table insert note (may not exist yet):', profileError.message);
+      } else {
+        console.log('Username also stored in user_profiles table');
+      }
+    } catch (e) {
+      console.log('Could not insert into user_profiles (table may not exist)');
+    }
+
     return res.status(201).json({
       success: true,
       message: 'Utilisateur créé avec succès',
