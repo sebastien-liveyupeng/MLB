@@ -25,12 +25,15 @@ module.exports = async function handler(req, res) {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     );
 
+    console.log('Login attempt:', { email, supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'SET' : 'NOT SET' });
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password
     });
 
     if (error) {
+      console.error('Supabase auth error:', error);
       return res.status(401).json({ error: error.message });
     }
 
