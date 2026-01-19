@@ -102,7 +102,7 @@ async function checkUserSession() {
 
         if (response.ok) {
             const data = await response.json();
-            const username = data.user.user_metadata?.username || data.user.email;
+            const username = data.user.username || data.user.email;
 
             // Afficher l'utilisateur connecté
             authNav.style.setProperty('display', 'none', 'important');
