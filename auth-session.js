@@ -17,19 +17,9 @@ async function loadAuthModals() {
 
 // Appeler le chargement des modals au démarrage
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', async function() {
-        console.log('DOMContentLoaded event fired');
-        await loadAuthModals();
-        console.log('Modals loaded');
-        checkUserSession();
-    });
+    document.addEventListener('DOMContentLoaded', loadAuthModals);
 } else {
-    console.log('Document already loaded');
-    (async () => {
-        await loadAuthModals();
-        console.log('Modals loaded');
-        checkUserSession();
-    })();
+    loadAuthModals();
 }
 
 // Fonctions pour ouvrir/fermer les modals
@@ -84,11 +74,6 @@ async function checkUserSession() {
     const userNav = document.getElementById('userNav');
     const usernameDisplayMobile = document.getElementById('usernameDisplayMobile');
 
-    console.log('checkUserSession() appelée');
-    console.log('Token:', token ? 'Existe' : 'N\'existe pas');
-    console.log('authNav:', authNav);
-    console.log('userNav:', userNav);
-
     if (!authNav || !userNav) {
         console.log('Éléments de navigation manquants');
         return;
@@ -117,20 +102,12 @@ async function checkUserSession() {
 
         if (response.ok) {
             const data = await response.json();
-            console.log('Session data:', data);
             const username = data.user.user_metadata?.username || data.user.email;
-            console.log('Username to display:', username);
 
             // Afficher l'utilisateur connecté
             authNav.style.setProperty('display', 'none', 'important');
             userNav.style.setProperty('display', 'flex', 'important');
             
-            // Mettre à jour le prénom dans la navbar desktop
-            const usernameDisplay = document.getElementById('usernamDisplay');
-            if (usernameDisplay) {
-                usernameDisplay.textContent = username;
-            }
-
             // Mettre à jour le prénom sur mobile - afficher le container et remplir le texte
             if (usernameDisplayMobile) {
                 usernameDisplayMobile.style.setProperty('display', 'flex', 'important');
@@ -153,7 +130,6 @@ async function checkUserSession() {
         if (usernameDisplayMobile) {
             usernameDisplayMobile.removeAttribute('style');
         }
-    }
 }
 
 // Fonction de déconnexion
@@ -309,3 +285,6 @@ document.addEventListener('click', function(event) {
         }
     }
 });
+
+// Exécuter la vérification de session au chargement de la page
+document.addEventListener('DOMContentLoaded', checkUserSession);

@@ -350,7 +350,6 @@
                     </li>
                     <li class="nav-item user-nav" id="userNav" style="display: none;">
                         <button class="user-profile-btn" id="userProfileBtn" onclick="toggleUserMenu()">
-                            <span id="usernamDisplay"></span>
                             <i class='bx bx-chevron-down'></i>
                         </button>
                         <div class="user-menu" id="userMenu">
@@ -561,7 +560,7 @@
         });
 
         // ===== LIGHTBOX FUNCTIONALITY =====
-        const lightboxElement = document.getElementById('lightbox');
+        const lightbox = document.getElementById('lightbox');
         const lightboxImage = document.getElementById('lightboxImage');
         const lightboxVideo = document.getElementById('lightboxVideo');
         const lightboxFrame = document.getElementById('lightboxFrame');
@@ -578,7 +577,7 @@
                     lightboxImage.style.display = 'block';
                     lightboxVideo.style.display = 'none';
                     lightboxFrame.style.display = 'none';
-                    lightboxElement.classList.add('active');
+                    lightbox.classList.add('active');
                 } else if (video) {
                     const videoSrc = video.querySelector('source').src;
                     lightboxVideo.querySelector('source').src = videoSrc;
@@ -586,7 +585,7 @@
                     lightboxVideo.style.display = 'block';
                     lightboxImage.style.display = 'none';
                     lightboxFrame.style.display = 'none';
-                    lightboxElement.classList.add('active');
+                    lightbox.classList.add('active');
                     lightboxVideo.play();
                 } else if (iframe) {
                     const baseSrc = iframe.getAttribute('src');
@@ -596,13 +595,13 @@
                     lightboxFrame.style.display = 'block';
                     lightboxImage.style.display = 'none';
                     lightboxVideo.style.display = 'none';
-                    lightboxElement.classList.add('active');
+                    lightbox.classList.add('active');
                 }
             });
         });
 
         lightboxClose.addEventListener('click', () => {
-            lightboxElement.classList.remove('active');
+            lightbox.classList.remove('active');
             if (lightboxVideo.style.display === 'block') {
                 lightboxVideo.pause();
             }
@@ -611,9 +610,9 @@
             }
         });
 
-        lightboxElement.addEventListener('click', (e) => {
-            if (e.target === lightboxElement) {
-                lightboxElement.classList.remove('active');
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                lightbox.classList.remove('active');
                 if (lightboxVideo.style.display === 'block') {
                     lightboxVideo.pause();
                 }

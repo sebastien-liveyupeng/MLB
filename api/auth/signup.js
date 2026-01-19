@@ -13,31 +13,17 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Parse body si c'est une string
-  let body = req.body;
-  if (typeof body === 'string') {
-    try {
-      body = JSON.parse(body);
-    } catch (e) {
-      return res.status(400).json({ error: 'Invalid JSON in request body' });
-    }
-  }
-
-  const { email, password, username } = body;
+  const { email, password, username } = req.body;
 
   if (!email || !password || !username) {
     return res.status(400).json({ error: 'Email, password, and username required' });
   }
-
-  console.log('Signup attempt:', { email, username, passwordLength: password.length });
 
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY
     );
-
-    console.log('Creating user with metadata:', { username });
 
     const { data, error } = await supabase.auth.admin.createUser({
       email: email,
@@ -49,29 +35,7 @@ module.exports = async function handler(req, res) {
     });
 
     if (error) {
-      console.error('Supabase error:', error);
       return res.status(400).json({ error: error.message });
-    }
-
-    console.log('User created:', { id: data.user.id, email: data.user.email });
-    console.log('User metadata after creation:', data.user.user_metadata);
-
-    // Also store username in user_profiles table as backup
-    try {
-      const { error: profileError } = await supabase
-        .from('user_profiles')
-        .insert({
-          id: data.user.id,
-          username: username
-        });
-      
-      if (profileError) {
-        console.log('Profile table insert note (may not exist yet):', profileError.message);
-      } else {
-        console.log('Username also stored in user_profiles table');
-      }
-    } catch (e) {
-      console.log('Could not insert into user_profiles (table may not exist)');
     }
 
     return res.status(201).json({
