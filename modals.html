@@ -1,0 +1,338 @@
+<!-- Login Modal -->
+<div id="loginModal" class="auth-modal">
+    <div class="auth-modal-content">
+        <button class="auth-modal-close" onclick="closeLoginModal()">&times;</button>
+        <div class="auth-header">
+            <h2>Connexion</h2>
+            <p class="auth-subtitle">Accédez à votre compte Gascom</p>
+        </div>
+        <form onsubmit="handleLoginModal(event)">
+            <div class="form-group">
+                <label for="login-email-modal">
+                    <i class='bx bx-envelope'></i> Email
+                </label>
+                <input type="email" id="login-email-modal" placeholder="votre@email.com" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password-modal">
+                    <i class='bx bx-lock-alt'></i> Mot de passe
+                </label>
+                <input type="password" id="login-password-modal" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="auth-submit-btn">
+                <i class='bx bx-log-in'></i> Se connecter
+            </button>
+            <div id="login-error-modal" class="error"></div>
+            <div id="login-success-modal" class="success"></div>
+        </form>
+        <p class="auth-footer">Pas encore de compte ? <a href="#" onclick="openSignupModal(); closeLoginModal();">Inscrivez-vous</a></p>
+    </div>
+</div>
+
+<!-- Signup Modal -->
+<div id="signupModal" class="auth-modal">
+    <div class="auth-modal-content">
+        <button class="auth-modal-close" onclick="closeSignupModal()">&times;</button>
+        <div class="auth-header">
+            <h2>Inscription</h2>
+            <p class="auth-subtitle">Créez votre compte Gascom</p>
+        </div>
+        <form onsubmit="handleSignupModal(event)">
+            <div class="form-group">
+                <label for="signup-username-modal">
+                    <i class='bx bx-user'></i> Nom d'utilisateur
+                </label>
+                <input type="text" id="signup-username-modal" placeholder="votre_pseudo" required>
+            </div>
+            <div class="form-group">
+                <label for="signup-email-modal">
+                    <i class='bx bx-envelope'></i> Email
+                </label>
+                <input type="email" id="signup-email-modal" placeholder="votre@email.com" required>
+            </div>
+            <div class="form-group">
+                <label for="signup-password-modal">
+                    <i class='bx bx-lock-alt'></i> Mot de passe
+                </label>
+                <input type="password" id="signup-password-modal" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="auth-submit-btn">
+                <i class='bx bx-user-plus'></i> S'inscrire
+            </button>
+            <div id="signup-error-modal" class="error"></div>
+            <div id="signup-success-modal" class="success"></div>
+        </form>
+        <p class="auth-footer">Vous avez un compte ? <a href="#" onclick="openLoginModal(); closeSignupModal();">Connectez-vous</a></p>
+    </div>
+</div>
+
+<style>
+    /* Auth Modal Base */
+    .auth-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 10000;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(5px);
+    }
+
+    .auth-modal.show {
+        display: flex;
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(30px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .auth-modal-content {
+        background: linear-gradient(135deg, rgba(25, 25, 35, 0.95), rgba(50, 25, 20, 0.6));
+        border: 2px solid rgba(156, 44, 23, 0.6);
+        border-radius: 20px;
+        padding: 3rem 2.5rem;
+        width: 90%;
+        max-width: 420px;
+        position: relative;
+        box-shadow: 0 20px 60px rgba(156, 44, 23, 0.3);
+        animation: slideUp 0.4s ease;
+        backdrop-filter: blur(20px);
+    }
+
+    .auth-modal-close {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background: none;
+        border: none;
+        font-size: 2rem;
+        color: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .auth-modal-close:hover {
+        background: rgba(156, 44, 23, 0.4);
+        color: #ff6b35;
+        transform: rotate(90deg);
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .auth-header h2 {
+        font-family: 'Russo One', sans-serif;
+        font-size: 2rem;
+        color: #FFFFFF;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #ff6b35, #d94a1f);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .auth-subtitle {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .form-group label i {
+        font-size: 1.1rem;
+        color: #ff6b35;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.9rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid rgba(156, 44, 23, 0.3);
+        border-radius: 10px;
+        color: #FFFFFF;
+        font-family: 'Exo 2', sans-serif;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    .form-group input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #ff6b35;
+        box-shadow: 0 0 15px rgba(255, 107, 53, 0.2);
+    }
+
+    .auth-submit-btn {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #ff6b35, #d94a1f);
+        color: #FFFFFF;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+    }
+
+    .auth-submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(255, 107, 53, 0.3);
+    }
+
+    .auth-submit-btn:active {
+        transform: translateY(0);
+    }
+
+    .error {
+        color: #ff4757;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+        padding: 0.8rem 1rem;
+        background: rgba(255, 71, 87, 0.1);
+        border: 1px solid rgba(255, 71, 87, 0.3);
+        border-radius: 8px;
+        text-align: center;
+        display: none;
+    }
+
+    .error:not(:empty) {
+        display: block;
+    }
+
+    .success {
+        color: #2ed573;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+        padding: 0.8rem 1rem;
+        background: rgba(46, 213, 115, 0.1);
+        border: 1px solid rgba(46, 213, 115, 0.3);
+        border-radius: 8px;
+        text-align: center;
+        display: none;
+    }
+
+    .success:not(:empty) {
+        display: block;
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .auth-footer a {
+        color: #ff6b35;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .auth-footer a:hover {
+        color: #d94a1f;
+        text-decoration: underline;
+    }
+
+    /* Responsive Modal */
+    @media (max-width: 600px) {
+        .auth-modal-content {
+            width: 95%;
+            padding: 2rem 1.5rem;
+            max-width: 100%;
+        }
+
+        .auth-header h2 {
+            font-size: 1.6rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group input {
+            padding: 0.8rem 0.9rem;
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .auth-modal-content {
+            width: 98%;
+            padding: 1.8rem 1.2rem;
+            border-radius: 15px;
+        }
+
+        .auth-header h2 {
+            font-size: 1.4rem;
+        }
+
+        .auth-modal-close {
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            width: 35px;
+            height: 35px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+    }
+</style>

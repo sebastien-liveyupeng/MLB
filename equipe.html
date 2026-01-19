@@ -63,6 +63,25 @@
                     <li class="nav-item"><a href="/galerie">Galerie</a></li>
                     <li class="nav-item"><a href="/contact">Contact</a></li>
                     <li class="nav-item"><a href="/apropos">A propos</a></li>
+                    <li class="nav-item auth-nav" id="authNav">
+                        <button class="btn-connexion" id="btnConnexion">Connexion</button>
+                        <button class="btn-inscription" id="btnInscription">Inscription</button>
+                    </li>
+                    <li class="nav-item user-nav" id="userNav" style="display: none; align-items: center; gap: 1rem;">
+                        <div class="username-display-mobile" id="usernameDisplayMobile" style="display: none;">
+                            <span></span>
+                            <button class="logout-mobile-btn" onclick="handleLogout()"><i class='bx bx-log-out'></i></button>
+                        </div>
+                        <button class="user-profile-btn" id="userProfileBtn" onclick="toggleUserMenu()">
+                            <span></span>
+                            <i class='bx bx-chevron-down'></i>
+                        </button>
+                        <div class="user-menu" id="userMenu">
+                            <a href="/profile" class="user-menu-item">Mon Profil</a>
+                            <button class="user-menu-item" onclick="handleLogout()">Déconnexion</button>
+                        </div>
+                    </li>
+                </ul>
                 </ul>
             </nav>
         </div>
@@ -205,5 +224,6 @@
 
         setInterval(createParticle, 2000);
     </script>
+    <script src="/auth-session.js"></script>
 </body>
 </html>
