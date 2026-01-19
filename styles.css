@@ -2007,6 +2007,43 @@
             gap: 1rem;
         }
 
+        .username-display {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 600;
+            font-family: 'Exo 2', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            background: rgba(156, 44, 23, 0.15);
+        }
+
+        .logout-btn {
+            padding: 0.6rem 1.2rem;
+            background: linear-gradient(135deg, #7c1808, #9c2c17);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            font-family: 'Exo 2', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #9c2c17, #7c1808);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(156, 44, 23, 0.4);
+        }
+
+        .logout-btn:active {
+            transform: translateY(0);
+        }
+
         .username-display-mobile {
             display: none;
             align-items: center;

@@ -112,6 +112,12 @@ async function checkUserSession() {
             authNav.style.setProperty('display', 'none', 'important');
             userNav.style.setProperty('display', 'flex', 'important');
             
+            // Mettre à jour le pseudo dans la navbar
+            const usernameNav = document.getElementById('usernameNav');
+            if (usernameNav) {
+                usernameNav.textContent = username;
+            }
+            
             // Mettre à jour le prénom sur mobile - afficher le container et remplir le texte
             if (usernameDisplayMobile) {
                 usernameDisplayMobile.style.setProperty('display', 'flex', 'important');
