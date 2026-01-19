@@ -28,8 +28,10 @@ function openLoginModal() {
     if (loginModal) {
         loginModal.classList.add('show');
         // Effacer les champs
-        document.getElementById('login-email-modal').value = '';
-        document.getElementById('login-password-modal').value = '';
+        const emailInput = document.getElementById('login-email-modal');
+        const passwordInput = document.getElementById('login-password-modal');
+        if (emailInput) emailInput.value = '';
+        if (passwordInput) passwordInput.value = '';
         document.getElementById('login-error-modal').textContent = '';
         document.getElementById('login-success-modal').textContent = '';
     }
@@ -47,9 +49,12 @@ function openSignupModal() {
     if (signupModal) {
         signupModal.classList.add('show');
         // Effacer les champs
-        document.getElementById('signup-username-modal').value = '';
-        document.getElementById('signup-email-modal').value = '';
-        document.getElementById('signup-password-modal').value = '';
+        const usernameInput = document.getElementById('signup-username-modal');
+        const emailInput = document.getElementById('signup-email-modal');
+        const passwordInput = document.getElementById('signup-password-modal');
+        if (usernameInput) usernameInput.value = '';
+        if (emailInput) emailInput.value = '';
+        if (passwordInput) passwordInput.value = '';
         document.getElementById('signup-error-modal').textContent = '';
         document.getElementById('signup-success-modal').textContent = '';
     }
@@ -147,11 +152,19 @@ function toggleUserMenu() {
 // Gestion du login
 async function handleLoginModal(event) {
     event.preventDefault();
-    document.getElementById('login-error-modal').textContent = '';
-    document.getElementById('login-success-modal').textContent = '';
+    const loginErrorElement = document.getElementById('login-error-modal');
+    const loginSuccessElement = document.getElementById('login-success-modal');
+    
+    if (loginErrorElement) loginErrorElement.textContent = '';
+    if (loginSuccessElement) loginSuccessElement.textContent = '';
 
-    const email = document.getElementById('login-email-modal').value;
-    const password = document.getElementById('login-password-modal').value;
+    const emailInput = document.getElementById('login-email-modal');
+    const passwordInput = document.getElementById('login-password-modal');
+    
+    if (!emailInput || !passwordInput) return;
+    
+    const email = emailInput.value;
+    const password = passwordInput.value;
 
     try {
         const response = await fetch('/api/auth/login', {
@@ -170,21 +183,21 @@ async function handleLoginModal(event) {
                 errorMsg = 'Oops ! Veuillez créer votre compte d\'abord.';
             }
             
-            document.getElementById('login-error-modal').textContent = errorMsg;
+            if (loginErrorElement) loginErrorElement.textContent = errorMsg;
             return;
         }
 
         // Stocker le token
         localStorage.setItem('access_token', data.session.access_token);
         
-        document.getElementById('login-success-modal').textContent = 'Connexion réussie ! Redirection...';
+        if (loginSuccessElement) loginSuccessElement.textContent = 'Connexion réussie ! Redirection...';
         
         setTimeout(() => {
             closeLoginModal();
             location.reload();
         }, 1500);
     } catch (error) {
-        document.getElementById('login-error-modal').textContent = 'Erreur serveur';
+        if (loginErrorElement) loginErrorElement.textContent = 'Erreur serveur';
         console.error('Login error:', error);
     }
 }
@@ -192,26 +205,35 @@ async function handleLoginModal(event) {
 // Gestion de l'inscription
 async function handleSignupModal(event) {
     event.preventDefault();
-    document.getElementById('signup-error-modal').textContent = '';
-    document.getElementById('signup-success-modal').textContent = '';
+    const signupErrorElement = document.getElementById('signup-error-modal');
+    const signupSuccessElement = document.getElementById('signup-success-modal');
+    
+    if (signupErrorElement) signupErrorElement.textContent = '';
+    if (signupSuccessElement) signupSuccessElement.textContent = '';
 
-    const username = document.getElementById('signup-username-modal').value;
-    const email = document.getElementById('signup-email-modal').value;
-    const password = document.getElementById('signup-password-modal').value;
+    const usernameInput = document.getElementById('signup-username-modal');
+    const emailInput = document.getElementById('signup-email-modal');
+    const passwordInput = document.getElementById('signup-password-modal');
+    
+    if (!usernameInput || !emailInput || !passwordInput) return;
+    
+    const username = usernameInput.value;
+    const email = emailInput.value;
+    const password = passwordInput.value;
 
     // Validation simple
     if (!username || username.length < 3) {
-        document.getElementById('signup-error-modal').textContent = 'Le nom d\'utilisateur doit avoir au moins 3 caractères';
+        if (signupErrorElement) signupErrorElement.textContent = 'Le nom d\'utilisateur doit avoir au moins 3 caractères';
         return;
     }
 
     if (!email || !email.includes('@')) {
-        document.getElementById('signup-error-modal').textContent = 'Veuillez entrer une adresse email valide';
+        if (signupErrorElement) signupErrorElement.textContent = 'Veuillez entrer une adresse email valide';
         return;
     }
 
     if (!password || password.length < 6) {
-        document.getElementById('signup-error-modal').textContent = 'Le mot de passe doit avoir au moins 6 caractères';
+        if (signupErrorElement) signupErrorElement.textContent = 'Le mot de passe doit avoir au moins 6 caractères';
         return;
     }
 
@@ -225,18 +247,18 @@ async function handleSignupModal(event) {
         const data = await response.json();
 
         if (!response.ok) {
-            document.getElementById('signup-error-modal').textContent = data.error || 'Erreur lors de l\'inscription';
+            if (signupErrorElement) signupErrorElement.textContent = data.error || 'Erreur lors de l\'inscription';
             return;
         }
 
-        document.getElementById('signup-success-modal').textContent = 'Inscription réussie ! Vous pouvez maintenant vous connecter.';
+        if (signupSuccessElement) signupSuccessElement.textContent = 'Inscription réussie ! Vous pouvez maintenant vous connecter.';
         
         setTimeout(() => {
             closeSignupModal();
             openLoginModal();
         }, 2000);
     } catch (error) {
-        document.getElementById('signup-error-modal').textContent = 'Erreur serveur';
+        if (signupErrorElement) signupErrorElement.textContent = 'Erreur serveur';
         console.error('Signup error:', error);
     }
 }
