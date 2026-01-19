@@ -13,29 +13,40 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  console.log('Raw req.body:', req.body, 'Type:', typeof req.body);
+
   // Parse body si c'est une string
   let body = req.body;
   if (typeof body === 'string') {
     try {
       body = JSON.parse(body);
     } catch (e) {
+      console.error('JSON parse error:', e);
       return res.status(400).json({ error: 'Invalid JSON in request body' });
     }
   }
 
-  const { email, password } = body;
+  console.log('Parsed body:', body);
+
+  const { email, password } = body || {};
+
+  console.log('Email:', email, 'Password:', password ? '***' : 'undefined');
 
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password required' });
   }
 
   try {
+    console.log('Creating Supabase client...');
+    console.log('NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? 'SET' : 'NOT SET');
+    console.log('NEXT_PUBLIC_SUPABASE_ANON_KEY:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'SET' : 'NOT SET');
+
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     );
 
-    console.log('Login attempt:', { email, supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'SET' : 'NOT SET' });
+    console.log('Attempting login with email:', email);
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
@@ -46,6 +57,8 @@ module.exports = async function handler(req, res) {
       console.error('Supabase auth error:', error);
       return res.status(401).json({ error: error.message });
     }
+
+    console.log('Login successful for:', email);
 
     return res.status(200).json({
       success: true,
@@ -61,7 +74,7 @@ module.exports = async function handler(req, res) {
       }
     });
   } catch (error) {
-    console.error('Login error:', error.message, error);
+    console.error('Login error:', error.message, error.stack);
     return res.status(500).json({ 
       error: 'Internal server error',
       details: error.message 
