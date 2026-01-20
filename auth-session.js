@@ -34,10 +34,13 @@ function openLoginModal() {
         // Effacer les champs
         const emailInput = document.getElementById('login-email-modal');
         const passwordInput = document.getElementById('login-password-modal');
+        const errorElement = document.getElementById('login-error-modal');
+        const successElement = document.getElementById('login-success-modal');
+        
         if (emailInput) emailInput.value = '';
         if (passwordInput) passwordInput.value = '';
-        document.getElementById('login-error-modal').textContent = '';
-        document.getElementById('login-success-modal').textContent = '';
+        if (errorElement) errorElement.textContent = '';
+        if (successElement) successElement.textContent = '';
     }
 }
 
@@ -56,11 +59,14 @@ function openSignupModal() {
         const usernameInput = document.getElementById('signup-username-modal');
         const emailInput = document.getElementById('signup-email-modal');
         const passwordInput = document.getElementById('signup-password-modal');
+        const errorElement = document.getElementById('signup-error-modal');
+        const successElement = document.getElementById('signup-success-modal');
+        
         if (usernameInput) usernameInput.value = '';
         if (emailInput) emailInput.value = '';
         if (passwordInput) passwordInput.value = '';
-        document.getElementById('signup-error-modal').textContent = '';
-        document.getElementById('signup-success-modal').textContent = '';
+        if (errorElement) errorElement.textContent = '';
+        if (successElement) successElement.textContent = '';
     }
 }
 
