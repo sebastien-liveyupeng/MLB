@@ -124,7 +124,7 @@ async function checkUserSession() {
                 }
             }
         } else {
-            // Token invalide
+            // Token invalide ou réponse non-ok
             localStorage.removeItem('access_token');
             authNav.style.setProperty('display', 'flex', 'important');
             userNav.style.setProperty('display', 'none', 'important');
@@ -133,8 +133,12 @@ async function checkUserSession() {
         console.error('Erreur lors de la vérification de session:', error);
         const authNav = document.getElementById('authNav');
         const userNav = document.getElementById('userNav');
-        if (authNav) authNav.style.setProperty('display', 'flex', 'important');
-        if (userNav) userNav.style.setProperty('display', 'none', 'important');
+        if (authNav) {
+            authNav.style.setProperty('display', 'flex', 'important');
+        }
+        if (userNav) {
+            userNav.style.setProperty('display', 'none', 'important');
+        }
     }
 }
 
@@ -158,13 +162,19 @@ async function handleLoginModal(event) {
     const loginErrorElement = document.getElementById('login-error-modal');
     const loginSuccessElement = document.getElementById('login-success-modal');
     
-    if (loginErrorElement) loginErrorElement.textContent = '';
-    if (loginSuccessElement) loginSuccessElement.textContent = '';
+    if (loginErrorElement) {
+        loginErrorElement.textContent = '';
+    }
+    if (loginSuccessElement) {
+        loginSuccessElement.textContent = '';
+    }
 
     const emailInput = document.getElementById('login-email-modal');
     const passwordInput = document.getElementById('login-password-modal');
     
-    if (!emailInput || !passwordInput) return;
+    if (!emailInput || !passwordInput) {
+        return;
+    }
     
     const email = emailInput.value;
     const password = passwordInput.value;
@@ -186,20 +196,28 @@ async function handleLoginModal(event) {
                 errorMsg = 'Oops ! Veuillez créer votre compte d\'abord.';
             }
             
-            if (loginErrorElement) loginErrorElement.textContent = errorMsg;
+            if (loginErrorElement) {
+                loginErrorElement.textContent = errorMsg;
+            }
             return;
         }
 
         // Stocker le token
-        localStorage.setItem('access_token', data.session.access_token);
+        if (data.session && data.session.access_token) {
+            localStorage.setItem('access_token', data.session.access_token);
+        }
         
-        if (loginSuccessElement) loginSuccessElement.textContent = 'Connexion réussie !';
+        if (loginSuccessElement) {
+            loginSuccessElement.textContent = 'Connexion réussie !';
+        }
         
         // Fermer la modal et mettre à jour l'affichage
         closeLoginModal();
         await checkUserSession();
     } catch (error) {
-        if (loginErrorElement) loginErrorElement.textContent = 'Erreur serveur';
+        if (loginErrorElement) {
+            loginErrorElement.textContent = 'Erreur serveur';
+        }
         console.error('Login error:', error);
     }
 }
