@@ -11,42 +11,75 @@
     <style>
         /* Chat Page Styles */
         .chat-container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 2rem;
-            min-height: 100vh;
+            min-height: calc(100vh - 80px);
         }
 
         .chat-header {
             text-align: center;
             margin-bottom: 3rem;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(156, 44, 23, 0.2) 0%, rgba(124, 24, 8, 0.15) 100%);
+            border: 2px solid rgba(156, 44, 23, 0.4);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 107, 53, 0.05) 0%, rgba(217, 74, 31, 0.05) 100%);
+            pointer-events: none;
         }
 
         .chat-header h1 {
             font-family: 'Russo One', sans-serif;
-            font-size: 2.5rem;
+            font-size: 3rem;
             color: #FFFFFF;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(45deg, #ff6b35, #d94a1f);
+            margin-bottom: 0.8rem;
+            background: linear-gradient(135deg, #ff6b35 0%, #d94a1f 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .chat-header h1 i {
+            font-size: 3.2rem;
+            color: #ff6b35;
         }
 
         .chat-header p {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
         }
 
         .chat-wrapper {
-            background: linear-gradient(135deg, rgba(156, 44, 23, 0.1) 0%, rgba(124, 24, 8, 0.1) 100%);
-            border: 1px solid rgba(156, 44, 23, 0.3);
+            background: linear-gradient(135deg, rgba(25, 25, 35, 0.6) 0%, rgba(50, 25, 20, 0.4) 100%);
+            border: 2px solid rgba(156, 44, 23, 0.4);
             border-radius: 16px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             height: 600px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 12px 40px rgba(156, 44, 23, 0.2);
+            backdrop-filter: blur(10px);
         }
 
         /* Messages Area */
@@ -178,10 +211,11 @@
         /* Input Area */
         .chat-input-area {
             padding: 1.5rem;
-            border-top: 1px solid rgba(156, 44, 23, 0.3);
-            background: rgba(11, 11, 15, 0.5);
+            border-top: 2px solid rgba(156, 44, 23, 0.3);
+            background: linear-gradient(180deg, rgba(11, 11, 15, 0.3) 0%, rgba(50, 25, 20, 0.2) 100%);
             display: flex;
             gap: 0.8rem;
+            backdrop-filter: blur(5px);
         }
 
         .chat-input {
@@ -236,41 +270,75 @@
         /* Auth Required Message */
         .chat-auth-required {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 1rem;
-            padding: 2rem;
-            background: rgba(156, 44, 23, 0.1);
-            border: 2px dashed rgba(156, 44, 23, 0.3);
-            border-radius: 12px;
-            color: rgba(255, 255, 255, 0.7);
+            gap: 2rem;
+            padding: 4rem 3rem;
+            background: linear-gradient(135deg, rgba(25, 25, 35, 0.6) 0%, rgba(50, 25, 20, 0.4) 100%);
+            border: 2px dashed rgba(255, 107, 53, 0.5);
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.8);
             text-align: center;
+            backdrop-filter: blur(10px);
+            min-height: 400px;
         }
 
         .chat-auth-required i {
-            font-size: 2rem;
+            font-size: 4rem;
             color: #ff6b35;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .chat-auth-required div {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
         }
 
         .chat-auth-required div p {
-            margin: 0.5rem 0;
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .chat-auth-required div p:last-of-type {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 400;
         }
 
         .chat-auth-required button {
-            margin-top: 1rem;
-            background: linear-gradient(135deg, #ff6b35, #d94a1f);
+            background: linear-gradient(135deg, #ff6b35 0%, #d94a1f 100%);
             color: white;
             border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 8px;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: 700;
+            font-size: 1rem;
             transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
         }
 
         .chat-auth-required button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 53, 0.4);
+        }
+
+        .chat-auth-required button:active {
+            transform: translateY(-1px);
         }
 
         /* Loading State */
@@ -376,8 +444,8 @@
     <!-- Main Chat Content -->
     <div class="chat-container">
         <div class="chat-header">
-            <h1>Chat Gascom</h1>
-            <p>Connectez-vous pour participer aux discussions</p>
+            <h1 class="hero-title">Chat Gascom</h1>
+            <p class="hero-subtitle">Connectez-vous pour participer aux discussions de l'élite</p>
         </div>
 
         <div id="chatContent">
