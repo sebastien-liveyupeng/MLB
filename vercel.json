@@ -9,6 +9,7 @@
     { "source": "/roster-masculin", "destination": "/roster-masculin.html" },
     { "source": "/apropos", "destination": "/apropos.html" },
     { "source": "/galerie", "destination": "/galerie.html" },
+    { "source": "/chat", "destination": "/chat.html" },
     { "source": "/auth", "destination": "/auth.html" }
   ]
 }
