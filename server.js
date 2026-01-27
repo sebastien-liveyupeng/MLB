@@ -6,13 +6,6 @@ require('dotenv').config({ path: '.env.local' });
 
 const PORT = 3002;
 
-// Simple in-memory session store (utilise une vraie DB en prod!)
-const sessions = {};
-
-function generateSessionId() {
-  return require('crypto').randomBytes(32).toString('hex');
-}
-
 const server = http.createServer((req, res) => {
   const parsedUrl = url.parse(req.url, true);
   let pathname = parsedUrl.pathname;
@@ -87,15 +80,6 @@ const server = http.createServer((req, res) => {
   });
 });
 
-function getSessionIdFromCookie(req) {
-  const cookieHeader = req.headers.cookie || '';
-  const cookies = cookieHeader.split(';').reduce((acc, cookie) => {
-    const [name, value] = cookie.trim().split('=');
-    acc[name] = value;
-    return acc;
-  }, {});
-  return cookies.sessionId;
-}
 
 async function handleSignup(req, res) {
   if (req.method !== 'POST') {
@@ -196,25 +180,19 @@ async function handleLogin(req, res) {
         return;
       }
 
-      // Créer une session sécurisée
-      const sessionId = generateSessionId();
-      sessions[sessionId] = {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        success: true,
+        message: 'Connexion réussie',
         user: {
           id: data.user.id,
           email: data.user.email,
           username: data.user.user_metadata?.username
         },
-        createdAt: Date.now(),
-        expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 jours
-      };
-
-      // Envoyer le sessionId dans un cookie HTTP-only
-      res.setHeader('Set-Cookie', `sessionId=${sessionId}; Path=/; HttpOnly; SameSite=Strict; Max-Age=604800`);
-      
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({
-        success: true,
-        message: 'Connexion réussie'
+        session: {
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token
+        }
       }));
     } catch (error) {
       console.error('Login error:', error);
@@ -231,12 +209,8 @@ function handleLogout(req, res) {
     return;
   }
 
-  const sessionId = getSessionIdFromCookie(req);
-  if (sessionId) {
-    delete sessions[sessionId];
-  }
-
-  res.setHeader('Set-Cookie', 'sessionId=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0');
+  // Le logout côté client se fait en supprimant le token du localStorage
+  // Cette route ne fait que confirmer
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({
     success: true,
@@ -245,30 +219,56 @@ function handleLogout(req, res) {
 }
 
 function handleSessionCheck(req, res) {
-  const sessionId = getSessionIdFromCookie(req);
-  
-  if (!sessionId || !sessions[sessionId]) {
-    res.writeHead(401, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'Not authenticated' }));
+  if (req.method !== 'GET') {
+    res.writeHead(405, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Method not allowed' }));
     return;
   }
 
-  const session = sessions[sessionId];
-  
-  // Vérifier l'expiration
-  if (session.expiresAt < Date.now()) {
-    delete sessions[sessionId];
-    res.setHeader('Set-Cookie', 'sessionId=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0');
-    res.writeHead(401, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'Session expired' }));
-    return;
-  }
+  try {
+    // Pour le frontend, on stocke la session côté client avec le token
+    // Cette route vérifie juste que l'utilisateur existe via le token Bearer
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Not authenticated' }));
+      return;
+    }
 
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify({
-    authenticated: true,
-    user: session.user
-  }));
+    const token = authHeader.substring(7);
+    const { createClient } = require('@supabase/supabase-js');
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    );
+
+    // Vérifier le token avec Supabase
+    // getUser utilise le token JWT pour vérifier l'authentification
+    (async () => {
+      const { data: { user }, error } = await supabase.auth.getUser(token);
+      
+      if (error || !user) {
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Session invalid' }));
+        return;
+      }
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        authenticated: true,
+        user: {
+          id: user.id,
+          email: user.email,
+          username: user.user_metadata?.username
+        }
+      }));
+    })();
+  } catch (error) {
+    console.error('Session error:', error);
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Internal server error' }));
+  }
 }
 
 server.listen(PORT, () => {

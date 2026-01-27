@@ -130,7 +130,8 @@ async function checkUserSession() {
                 }
             }
         } else {
-            // Token invalide ou réponse non-ok
+            // Token invalide ou réponse non-ok - supprimer le token
+            console.log('Session check failed, clearing token');
             localStorage.removeItem('access_token');
             authNav.style.setProperty('display', 'flex', 'important');
             userNav.style.setProperty('display', 'none', 'important');
