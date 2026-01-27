@@ -287,29 +287,37 @@ function handleProfile(req, res) {
 
       const token = authHeader.substring(7);
       const { createClient } = require('@supabase/supabase-js');
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-      );
-
+      
       (async () => {
-        const { data: { user }, error } = await supabase.auth.getUser(token);
+        try {
+          const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+          );
 
-        if (error || !user) {
-          res.writeHead(401, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Session invalid' }));
-          return;
-        }
+          const { data: { user }, error } = await supabase.auth.getUser(token);
 
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          success: true,
-          user: {
-            id: user.id,
-            email: user.email,
-            username: user.user_metadata?.username || ''
+          if (error || !user) {
+            console.error('Auth error:', error);
+            res.writeHead(401, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Session invalid' }));
+            return;
           }
-        }));
+
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            success: true,
+            user: {
+              id: user.id,
+              email: user.email,
+              username: user.user_metadata?.username || ''
+            }
+          }));
+        } catch (err) {
+          console.error('Profile error:', err);
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Internal server error' }));
+        }
       })();
     } catch (error) {
       console.error('Profile fetch error:', error);
@@ -353,6 +361,7 @@ function handleProfile(req, res) {
         const { data: { user }, error: getUserError } = await supabase.auth.getUser(token);
 
         if (getUserError || !user) {
+          console.error('User fetch error:', getUserError);
           res.writeHead(401, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ error: 'Session invalid' }));
           return;
@@ -360,12 +369,18 @@ function handleProfile(req, res) {
 
         // Si on change le mot de passe, d'abord vérifier le mot de passe actuel
         if (newPassword && newPassword.trim()) {
-          const { error: signInError } = await supabase.auth.signInWithPassword({
+          const supabaseSignIn = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+          );
+
+          const { error: signInError } = await supabaseSignIn.auth.signInWithPassword({
             email: user.email,
             password: currentPassword || ''
           });
 
           if (signInError) {
+            console.error('SignIn error:', signInError);
             res.writeHead(401, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Mot de passe actuel incorrect' }));
             return;
