@@ -2016,15 +2016,15 @@
             letter-spacing: 1px;
             padding: 0.6rem 1.3rem;
             border-radius: 8px;
-            background: linear-gradient(135deg, rgba(156, 44, 23, 0.25), rgba(255, 107, 53, 0.15));
-            border: 1.5px solid rgba(255, 107, 53, 0.4);
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.15), rgba(217, 74, 31, 0.1));
+            border: 1.5px solid #ff6b35;
             display: flex;
             align-items: center;
             gap: 0.6rem;
             position: relative;
             overflow: hidden;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
         }
 
@@ -2033,7 +2033,7 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.2), transparent);
             transform: translateX(-100%);
             animation: shimmer 2s infinite;
         }
@@ -2056,10 +2056,10 @@
         }
 
         .username-display:hover {
-            background: linear-gradient(135deg, rgba(156, 44, 23, 0.4), rgba(255, 107, 53, 0.25));
-            border-color: rgba(255, 107, 53, 0.6);
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.25), rgba(217, 74, 31, 0.18));
+            border-color: #ff6b35;
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(255, 107, 53, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            box-shadow: 0 6px 16px rgba(255, 107, 53, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15);
         }
 
         .username-display:active {
@@ -2068,9 +2068,9 @@
 
         .logout-btn {
             padding: 0.65rem 1.4rem;
-            background: linear-gradient(135deg, #ff4757, #d94a1f);
+            background: linear-gradient(135deg, #ff6b35, #d94a1f);
             color: #FFFFFF;
-            border: 1.5px solid rgba(255, 71, 87, 0.3);
+            border: 1.5px solid rgba(255, 107, 53, 0.4);
             border-radius: 8px;
             font-weight: 700;
             font-family: 'Exo 2', sans-serif;
@@ -2084,7 +2084,7 @@
             gap: 0.5rem;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(255, 71, 87, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
         }
 
@@ -2104,10 +2104,10 @@
         }
 
         .logout-btn:hover {
-            background: linear-gradient(135deg, #ff6b35, #ff4757);
-            border-color: rgba(255, 107, 53, 0.5);
+            background: linear-gradient(135deg, #ff8a5b, #ff6b35);
+            border-color: rgba(255, 107, 53, 0.6);
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 71, 87, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
         }
 
         .logout-btn:active {
@@ -2137,12 +2137,12 @@
             text-transform: uppercase;
             letter-spacing: 0.8px;
             padding: 0.5rem 0.8rem;
-            background: linear-gradient(135deg, rgba(156, 44, 23, 0.25), rgba(255, 107, 53, 0.15));
-            border: 1px solid rgba(255, 107, 53, 0.3);
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.15), rgba(217, 74, 31, 0.1));
+            border: 1px solid #ff6b35;
             border-radius: 6px;
             display: inline-block;
             position: relative;
-            box-shadow: 0 2px 6px rgba(255, 107, 53, 0.15);
+            box-shadow: 0 2px 6px rgba(255, 107, 53, 0.2);
         }
 
         .username-display-mobile span::after {
@@ -2159,8 +2159,8 @@
         }
 
         .logout-mobile-btn {
-            background: linear-gradient(135deg, rgba(255, 71, 87, 0.2), rgba(255, 107, 53, 0.1));
-            border: 1.5px solid rgba(255, 71, 87, 0.3);
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(217, 74, 31, 0.1));
+            border: 1.5px solid #ff6b35;
             color: #ff6b35;
             font-size: 1.2rem;
             cursor: pointer;
@@ -2170,17 +2170,17 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 8px rgba(255, 71, 87, 0.15);
+            box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
             backdrop-filter: blur(10px);
             position: relative;
         }
 
         .logout-mobile-btn:hover {
             color: #FFFFFF;
-            background: linear-gradient(135deg, rgba(255, 71, 87, 0.3), rgba(255, 107, 53, 0.2));
-            border-color: rgba(255, 107, 53, 0.5);
+            background: linear-gradient(135deg, #ff6b35, #d94a1f);
+            border-color: #ff6b35;
             transform: scale(1.15) rotate(5deg);
-            box-shadow: 0 6px 16px rgba(255, 71, 87, 0.3);
+            box-shadow: 0 6px 16px rgba(255, 107, 53, 0.35);
         }
 
         .logout-mobile-btn:active {
