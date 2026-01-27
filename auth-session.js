@@ -114,20 +114,16 @@ async function checkUserSession() {
             authNav.style.setProperty('display', 'none', 'important');
             userNav.style.setProperty('display', 'flex', 'important');
             
-            // Mettre à jour le pseudo dans la navbar - avec vérification
+            // Mettre à jour le pseudo dans la navbar
             const usernameNav = document.getElementById('usernameNav');
             if (usernameNav) {
                 usernameNav.textContent = username;
             }
             
-            // Mettre à jour le prénom sur mobile - avec vérification
-            const usernameDisplayMobile = document.getElementById('usernameDisplayMobile');
-            if (usernameDisplayMobile) {
-                usernameDisplayMobile.style.setProperty('display', 'flex', 'important');
-                const usernameMobileNav = document.getElementById('usernameMobileNav');
-                if (usernameMobileNav) {
-                    usernameMobileNav.textContent = username;
-                }
+            // Mettre à jour le pseudo sur mobile aussi
+            const usernameMobileNav = document.getElementById('usernameMobileNav');
+            if (usernameMobileNav) {
+                usernameMobileNav.textContent = username;
             }
         } else {
             // Token invalide ou réponse non-ok - supprimer le token
