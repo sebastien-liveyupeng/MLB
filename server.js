@@ -333,7 +333,16 @@ function handleProfile(req, res) {
         }
 
         const token = authHeader.substring(7);
-        const { username, email, currentPassword, newPassword } = JSON.parse(body);
+        let body_data;
+        try {
+          body_data = JSON.parse(body);
+        } catch (e) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Invalid JSON' }));
+          return;
+        }
+
+        const { username, email, currentPassword, newPassword } = body_data;
 
         const { createClient } = require('@supabase/supabase-js');
         const supabase = createClient(
@@ -350,10 +359,10 @@ function handleProfile(req, res) {
         }
 
         // Si on change le mot de passe, d'abord vérifier le mot de passe actuel
-        if (newPassword) {
+        if (newPassword && newPassword.trim()) {
           const { error: signInError } = await supabase.auth.signInWithPassword({
             email: user.email,
-            password: currentPassword
+            password: currentPassword || ''
           });
 
           if (signInError) {
@@ -363,32 +372,37 @@ function handleProfile(req, res) {
           }
         }
 
-        // Préparer les données à mettre à jour
-        const updateData = {
+        // Préparer les updates
+        const supabaseAdmin = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.SUPABASE_SERVICE_ROLE_KEY
+        );
+
+        const updatePayload = {
           user_metadata: {
             username: username || user.user_metadata?.username
           }
         };
 
-        // Si un nouvel email est fourni et qu'il est différent
+        // Si un nouveau mot de passe
+        if (newPassword && newPassword.trim()) {
+          updatePayload.password = newPassword;
+        }
+
+        // Si un nouvel email
         if (email && email !== user.email) {
-          updateData.email = email;
+          updatePayload.email = email;
         }
 
-        // Si un nouveau mot de passe est fourni
-        if (newPassword) {
-          updateData.password = newPassword;
-        }
-
-        // Mettre à jour l'utilisateur
-        const { data, error: updateError } = await supabase.auth.admin.updateUserById(
+        const { data, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
           user.id,
-          updateData
+          updatePayload
         );
 
         if (updateError) {
+          console.error('Update error:', updateError);
           res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: updateError.message }));
+          res.end(JSON.stringify({ error: updateError.message || 'Erreur lors de la mise à jour' }));
           return;
         }
 
@@ -405,7 +419,7 @@ function handleProfile(req, res) {
       } catch (error) {
         console.error('Profile update error:', error);
         res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Internal server error' }));
+        res.end(JSON.stringify({ error: 'Internal server error: ' + error.message }));
       }
     });
   } else {
