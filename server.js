@@ -290,12 +290,16 @@ function handleProfile(req, res) {
       
       (async () => {
         try {
+          // Use service role key to verify the token
           const supabase = createClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL,
-            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+            process.env.SUPABASE_SERVICE_ROLE_KEY
           );
 
-          const { data: { user }, error } = await supabase.auth.getUser(token);
+          const { data: { user }, error } = await supabase.auth.admin.getUserById(
+            // Extract user ID from token JWT
+            JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()).sub
+          );
 
           if (error || !user) {
             console.error('Auth error:', error);
@@ -315,8 +319,8 @@ function handleProfile(req, res) {
           }));
         } catch (err) {
           console.error('Profile error:', err);
-          res.writeHead(500, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Internal server error' }));
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Invalid token' }));
         }
       })();
     } catch (error) {
@@ -353,12 +357,25 @@ function handleProfile(req, res) {
         const { username, email, currentPassword, newPassword } = body_data;
 
         const { createClient } = require('@supabase/supabase-js');
-        const supabase = createClient(
+        
+        // Extract user ID from token
+        let userId;
+        try {
+          const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+          userId = decodedToken.sub;
+        } catch (e) {
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Invalid token format' }));
+          return;
+        }
+
+        const supabaseAdmin = createClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL,
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+          process.env.SUPABASE_SERVICE_ROLE_KEY
         );
 
-        const { data: { user }, error: getUserError } = await supabase.auth.getUser(token);
+        // Get current user
+        const { data: { user }, error: getUserError } = await supabaseAdmin.auth.admin.getUserById(userId);
 
         if (getUserError || !user) {
           console.error('User fetch error:', getUserError);
@@ -388,11 +405,6 @@ function handleProfile(req, res) {
         }
 
         // Préparer les updates
-        const supabaseAdmin = createClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL,
-          process.env.SUPABASE_SERVICE_ROLE_KEY
-        );
-
         const updatePayload = {
           user_metadata: {
             username: username || user.user_metadata?.username
