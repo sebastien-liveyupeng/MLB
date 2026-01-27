@@ -19,12 +19,22 @@ module.exports = async function handler(req, res) {
       }
 
       const token = authHeader.substring(7);
+      
+      // Extract user ID from token
+      let userId;
+      try {
+        const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+        userId = decodedToken.sub;
+      } catch (e) {
+        return res.status(401).json({ error: 'Invalid token format' });
+      }
+
       const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        process.env.SUPABASE_SERVICE_ROLE_KEY
       );
 
-      const { data: { user }, error } = await supabase.auth.getUser(token);
+      const { data: { user }, error } = await supabase.auth.admin.getUserById(userId);
 
       if (error || !user) {
         return res.status(401).json({ error: 'Session invalid' });
@@ -58,6 +68,15 @@ module.exports = async function handler(req, res) {
 
       const token = authHeader.substring(7);
       
+      // Extract user ID from token
+      let userId;
+      try {
+        const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+        userId = decodedToken.sub;
+      } catch (e) {
+        return res.status(401).json({ error: 'Invalid token format' });
+      }
+      
       let body = req.body;
       if (typeof body === 'string') {
         try {
@@ -71,10 +90,10 @@ module.exports = async function handler(req, res) {
 
       const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        process.env.SUPABASE_SERVICE_ROLE_KEY
       );
 
-      const { data: { user }, error: getUserError } = await supabase.auth.getUser(token);
+      const { data: { user }, error: getUserError } = await supabase.auth.admin.getUserById(userId);
 
       if (getUserError || !user) {
         return res.status(401).json({ error: 'Session invalid' });
