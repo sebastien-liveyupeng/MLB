@@ -385,7 +385,8 @@
         </div>
     </div>
 
-    <!-- Modals -->
+    <!-- Auth Modals -->
+    <!-- Login Modal -->
     <div id="loginModal" class="auth-modal">
         <div class="auth-modal-content">
             <button class="auth-modal-close" onclick="closeLoginModal()">&times;</button>
@@ -416,6 +417,7 @@
         </div>
     </div>
 
+    <!-- Signup Modal -->
     <div id="signupModal" class="auth-modal">
         <div class="auth-modal-content">
             <button class="auth-modal-close" onclick="closeSignupModal()">&times;</button>
@@ -452,8 +454,49 @@
         </div>
     </div>
 
+    <!-- Profile Modal -->
+    <div id="profileModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <button class="auth-modal-close" onclick="closeProfileModal()">&times;</button>
+            <div class="auth-header">
+                <h2>Mon Profil</h2>
+                <p class="auth-subtitle">Gérez vos informations</p>
+            </div>
+            <form onsubmit="handleProfileUpdate(event)">
+                <div class="form-group">
+                    <label for="profile-username">
+                        <i class='bx bx-user'></i> Nom d'utilisateur
+                    </label>
+                    <input type="text" id="profile-username" placeholder="Votre pseudo" autocomplete="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="profile-email">
+                        <i class='bx bx-envelope'></i> Email
+                    </label>
+                    <input type="email" id="profile-email" placeholder="votre@email.com" autocomplete="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="profile-current-password">
+                        <i class='bx bx-lock-alt'></i> Mot de passe actuel
+                    </label>
+                    <input type="password" id="profile-current-password" placeholder="••••••••" autocomplete="current-password">
+                </div>
+                <div class="form-group">
+                    <label for="profile-new-password">
+                        <i class='bx bx-lock'></i> Nouveau mot de passe (optionnel)
+                    </label>
+                    <input type="password" id="profile-new-password" placeholder="••••••••" autocomplete="new-password">
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <i class='bx bx-save'></i> Sauvegarder
+                </button>
+                <div id="profile-error" class="error"></div>
+                <div id="profile-success" class="success"></div>
+            </form>
+        </div>
+    </div>
+
     <script src="auth-session.js"></script>
-    <script src="modals.html" type="text/html"></script>
     <script>
         // Chat functionality
         let currentUser = null;
