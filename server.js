@@ -36,6 +36,9 @@ const server = http.createServer((req, res) => {
     } else if (apiPath === 'auth/session') {
       handleSessionCheck(req, res);
       return;
+    } else if (apiPath === 'auth/profile') {
+      handleProfile(req, res);
+      return;
     }
   }
 
@@ -268,6 +271,124 @@ function handleSessionCheck(req, res) {
     console.error('Session error:', error);
     res.writeHead(500, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'Internal server error' }));
+  }
+}
+
+function handleProfile(req, res) {
+  if (req.method === 'GET') {
+    try {
+      const authHeader = req.headers.authorization;
+      
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Not authenticated' }));
+        return;
+      }
+
+      const token = authHeader.substring(7);
+      const { createClient } = require('@supabase/supabase-js');
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      );
+
+      (async () => {
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+
+        if (error || !user) {
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Session invalid' }));
+          return;
+        }
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: true,
+          user: {
+            id: user.id,
+            email: user.email,
+            username: user.user_metadata?.username || '',
+            bio: user.user_metadata?.bio || '',
+            avatar_url: user.user_metadata?.avatar_url || ''
+          }
+        }));
+      })();
+    } catch (error) {
+      console.error('Profile fetch error:', error);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Internal server error' }));
+    }
+  } else if (req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+      try {
+        const authHeader = req.headers.authorization;
+        
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Not authenticated' }));
+          return;
+        }
+
+        const token = authHeader.substring(7);
+        const { username, bio, avatar_url } = JSON.parse(body);
+
+        const { createClient } = require('@supabase/supabase-js');
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        );
+
+        const { data: { user }, error: getUserError } = await supabase.auth.getUser(token);
+
+        if (getUserError || !user) {
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Session invalid' }));
+          return;
+        }
+
+        const user_metadata = {
+          username: username || user.user_metadata?.username,
+          bio: bio || user.user_metadata?.bio || '',
+          avatar_url: avatar_url || user.user_metadata?.avatar_url || ''
+        };
+
+        const { data, error } = await supabase.auth.admin.updateUserById(
+          user.id,
+          { user_metadata }
+        );
+
+        if (error) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: error.message }));
+          return;
+        }
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: true,
+          message: 'Profil mis à jour avec succès',
+          user: {
+            id: data.user.id,
+            email: data.user.email,
+            username: data.user.user_metadata?.username,
+            bio: data.user.user_metadata?.bio,
+            avatar_url: data.user.user_metadata?.avatar_url
+          }
+        }));
+      } catch (error) {
+        console.error('Profile update error:', error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Internal server error' }));
+      }
+    });
+  } else {
+    res.writeHead(405, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Method not allowed' }));
   }
 }
 

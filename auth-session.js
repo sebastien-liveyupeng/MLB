@@ -300,5 +300,121 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// Exécuter la vérification de session au chargement de la page
-document.addEventListener('DOMContentLoaded', checkUserSession);
+// Gestion du profil utilisateur
+function openProfileModal() {
+    const profileModal = document.getElementById('profileModal');
+    if (profileModal) {
+        // Charger les données du profil actuel
+        loadProfileData();
+        profileModal.classList.add('show');
+    }
+}
+
+function closeProfileModal() {
+    const profileModal = document.getElementById('profileModal');
+    if (profileModal) {
+        profileModal.classList.remove('show');
+        // Effacer les messages d'erreur/succès
+        const errorElement = document.getElementById('profile-error');
+        const successElement = document.getElementById('profile-success');
+        if (errorElement) errorElement.textContent = '';
+        if (successElement) successElement.textContent = '';
+    }
+}
+
+async function loadProfileData() {
+    try {
+        const token = localStorage.getItem('access_token');
+        if (!token) return;
+
+        const response = await fetch('/api/auth/profile', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            document.getElementById('profile-username').value = data.user.username || '';
+            document.getElementById('profile-bio').value = data.user.bio || '';
+            document.getElementById('profile-avatar').value = data.user.avatar_url || '';
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement du profil:', error);
+    }
+}
+
+async function handleProfileUpdate(event) {
+    event.preventDefault();
+    
+    const errorElement = document.getElementById('profile-error');
+    const successElement = document.getElementById('profile-success');
+    
+    if (errorElement) errorElement.textContent = '';
+    if (successElement) successElement.textContent = '';
+
+    const username = document.getElementById('profile-username').value;
+    const bio = document.getElementById('profile-bio').value;
+    const avatar_url = document.getElementById('profile-avatar').value;
+
+    if (!username || username.length < 3) {
+        if (errorElement) errorElement.textContent = 'Le nom d\'utilisateur doit avoir au moins 3 caractères';
+        return;
+    }
+
+    try {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            if (errorElement) errorElement.textContent = 'Vous n\'êtes pas connecté';
+            return;
+        }
+
+        const response = await fetch('/api/auth/profile', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, bio, avatar_url })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            if (errorElement) errorElement.textContent = data.error || 'Erreur lors de la mise à jour';
+            return;
+        }
+
+        if (successElement) successElement.textContent = 'Profil mis à jour avec succès!';
+        
+        // Mettre à jour le pseudo affiché dans la navbar
+        const usernameNav = document.getElementById('usernameNav');
+        if (usernameNav) {
+            usernameNav.textContent = username;
+        }
+        
+        const usernameMobileNav = document.getElementById('usernameMobileNav');
+        if (usernameMobileNav) {
+            usernameMobileNav.textContent = username;
+        }
+
+        // Fermer la modal après 1.5 secondes
+        setTimeout(() => {
+            closeProfileModal();
+        }, 1500);
+    } catch (error) {
+        if (errorElement) errorElement.textContent = 'Erreur serveur';
+        console.error('Profile update error:', error);
+    }
+}
+
+// Fermer la modal de profil en cliquant en dehors
+document.addEventListener('click', function(event) {
+    const profileModal = document.getElementById('profileModal');
+    if (profileModal && event.target === profileModal) {
+        closeProfileModal();
+    }
+});
+

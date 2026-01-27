@@ -336,3 +336,55 @@
         }
     }
 </style>
+<!-- Profile Modal -->
+<div id="profileModal" class="auth-modal">
+    <div class="auth-modal-content">
+        <button class="auth-modal-close" onclick="closeProfileModal()">&times;</button>
+        <div class="auth-header">
+            <h2>Mon Profil</h2>
+            <p class="auth-subtitle">Gérez vos informations</p>
+        </div>
+        <form onsubmit="handleProfileUpdate(event)">
+            <div class="form-group">
+                <label for="profile-username">
+                    <i class='bx bx-user'></i> Nom d'utilisateur
+                </label>
+                <input type="text" id="profile-username" placeholder="Votre pseudo" required>
+            </div>
+            <div class="form-group">
+                <label for="profile-bio">
+                    <i class='bx bx-message'></i> Biographie
+                </label>
+                <textarea id="profile-bio" placeholder="Dites quelque chose sur vous..." rows="3" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(156, 44, 23, 0.3); border-radius: 10px; color: #FFFFFF; font-family: 'Exo 2', sans-serif; resize: vertical;"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="profile-avatar">
+                    <i class='bx bx-image'></i> URL Avatar
+                </label>
+                <input type="url" id="profile-avatar" placeholder="https://...">
+            </div>
+            <button type="submit" class="auth-submit-btn">
+                <i class='bx bx-save'></i> Sauvegarder
+            </button>
+            <div id="profile-error" class="error"></div>
+            <div id="profile-success" class="success"></div>
+        </form>
+    </div>
+</div>
+
+<style>
+    #profileModal textarea {
+        color: #FFFFFF;
+    }
+
+    #profileModal textarea::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+    }
+
+    #profileModal textarea:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #ff6b35;
+        box-shadow: 0 0 15px rgba(255, 107, 53, 0.2);
+    }
+</style>
