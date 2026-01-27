@@ -338,8 +338,10 @@ async function loadProfileData() {
         if (response.ok) {
             const data = await response.json();
             document.getElementById('profile-username').value = data.user.username || '';
-            document.getElementById('profile-bio').value = data.user.bio || '';
-            document.getElementById('profile-avatar').value = data.user.avatar_url || '';
+            document.getElementById('profile-email').value = data.user.email || '';
+            // Vider les champs de mot de passe
+            document.getElementById('profile-current-password').value = '';
+            document.getElementById('profile-new-password').value = '';
         }
     } catch (error) {
         console.error('Erreur lors du chargement du profil:', error);
@@ -356,11 +358,28 @@ async function handleProfileUpdate(event) {
     if (successElement) successElement.textContent = '';
 
     const username = document.getElementById('profile-username').value;
-    const bio = document.getElementById('profile-bio').value;
-    const avatar_url = document.getElementById('profile-avatar').value;
+    const email = document.getElementById('profile-email').value;
+    const currentPassword = document.getElementById('profile-current-password').value;
+    const newPassword = document.getElementById('profile-new-password').value;
 
     if (!username || username.length < 3) {
         if (errorElement) errorElement.textContent = 'Le nom d\'utilisateur doit avoir au moins 3 caractères';
+        return;
+    }
+
+    if (!email || !email.includes('@')) {
+        if (errorElement) errorElement.textContent = 'Veuillez entrer une adresse email valide';
+        return;
+    }
+
+    // Si on veut changer le mot de passe, il faut l'ancien
+    if (newPassword && !currentPassword) {
+        if (errorElement) errorElement.textContent = 'Veuillez entrer votre mot de passe actuel pour le modifier';
+        return;
+    }
+
+    if (newPassword && newPassword.length < 6) {
+        if (errorElement) errorElement.textContent = 'Le nouveau mot de passe doit avoir au moins 6 caractères';
         return;
     }
 
@@ -377,7 +396,12 @@ async function handleProfileUpdate(event) {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username, bio, avatar_url })
+            body: JSON.stringify({ 
+                username, 
+                email,
+                currentPassword,
+                newPassword
+            })
         });
 
         const data = await response.json();

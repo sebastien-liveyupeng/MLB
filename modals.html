@@ -352,16 +352,22 @@
                 <input type="text" id="profile-username" placeholder="Votre pseudo" required>
             </div>
             <div class="form-group">
-                <label for="profile-bio">
-                    <i class='bx bx-message'></i> Biographie
+                <label for="profile-email">
+                    <i class='bx bx-envelope'></i> Email
                 </label>
-                <textarea id="profile-bio" placeholder="Dites quelque chose sur vous..." rows="3" style="width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(156, 44, 23, 0.3); border-radius: 10px; color: #FFFFFF; font-family: 'Exo 2', sans-serif; resize: vertical;"></textarea>
+                <input type="email" id="profile-email" placeholder="votre@email.com" required>
             </div>
             <div class="form-group">
-                <label for="profile-avatar">
-                    <i class='bx bx-image'></i> URL Avatar
+                <label for="profile-current-password">
+                    <i class='bx bx-lock-alt'></i> Mot de passe actuel
                 </label>
-                <input type="url" id="profile-avatar" placeholder="https://...">
+                <input type="password" id="profile-current-password" placeholder="••••••••">
+            </div>
+            <div class="form-group">
+                <label for="profile-new-password">
+                    <i class='bx bx-lock'></i> Nouveau mot de passe (optionnel)
+                </label>
+                <input type="password" id="profile-new-password" placeholder="••••••••">
             </div>
             <button type="submit" class="auth-submit-btn">
                 <i class='bx bx-save'></i> Sauvegarder

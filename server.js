@@ -307,9 +307,7 @@ function handleProfile(req, res) {
           user: {
             id: user.id,
             email: user.email,
-            username: user.user_metadata?.username || '',
-            bio: user.user_metadata?.bio || '',
-            avatar_url: user.user_metadata?.avatar_url || ''
+            username: user.user_metadata?.username || ''
           }
         }));
       })();
@@ -335,7 +333,7 @@ function handleProfile(req, res) {
         }
 
         const token = authHeader.substring(7);
-        const { username, bio, avatar_url } = JSON.parse(body);
+        const { username, email, currentPassword, newPassword } = JSON.parse(body);
 
         const { createClient } = require('@supabase/supabase-js');
         const supabase = createClient(
@@ -351,20 +349,46 @@ function handleProfile(req, res) {
           return;
         }
 
-        const user_metadata = {
-          username: username || user.user_metadata?.username,
-          bio: bio || user.user_metadata?.bio || '',
-          avatar_url: avatar_url || user.user_metadata?.avatar_url || ''
+        // Si on change le mot de passe, d'abord vérifier le mot de passe actuel
+        if (newPassword) {
+          const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: user.email,
+            password: currentPassword
+          });
+
+          if (signInError) {
+            res.writeHead(401, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Mot de passe actuel incorrect' }));
+            return;
+          }
+        }
+
+        // Préparer les données à mettre à jour
+        const updateData = {
+          user_metadata: {
+            username: username || user.user_metadata?.username
+          }
         };
 
-        const { data, error } = await supabase.auth.admin.updateUserById(
+        // Si un nouvel email est fourni et qu'il est différent
+        if (email && email !== user.email) {
+          updateData.email = email;
+        }
+
+        // Si un nouveau mot de passe est fourni
+        if (newPassword) {
+          updateData.password = newPassword;
+        }
+
+        // Mettre à jour l'utilisateur
+        const { data, error: updateError } = await supabase.auth.admin.updateUserById(
           user.id,
-          { user_metadata }
+          updateData
         );
 
-        if (error) {
+        if (updateError) {
           res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: error.message }));
+          res.end(JSON.stringify({ error: updateError.message }));
           return;
         }
 
@@ -375,9 +399,7 @@ function handleProfile(req, res) {
           user: {
             id: data.user.id,
             email: data.user.email,
-            username: data.user.user_metadata?.username,
-            bio: data.user.user_metadata?.bio,
-            avatar_url: data.user.user_metadata?.avatar_url
+            username: data.user.user_metadata?.username
           }
         }));
       } catch (error) {
