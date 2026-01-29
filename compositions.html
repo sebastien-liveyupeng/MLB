@@ -133,6 +133,22 @@
             display: flex;
             flex-direction: column;
             gap: 0.9rem;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .role-search {
+            margin-bottom: 0.75rem;
+        }
+
+        .role-search input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #FFFFFF;
+            padding: 0.6rem 0.8rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
         }
 
         .scroll-btn {
@@ -861,6 +877,15 @@
                 if (!target) return;
                 target.innerHTML = '';
 
+                const searchWrapper = document.createElement('div');
+                searchWrapper.className = 'role-search';
+
+                const searchInput = document.createElement('input');
+                searchInput.type = 'text';
+                searchInput.placeholder = `Rechercher ${role}...`;
+
+                searchWrapper.appendChild(searchInput);
+
                 const scrollContainer = document.createElement('div');
                 scrollContainer.className = 'role-scroll';
 
@@ -933,49 +958,60 @@
             }
 
             container.innerHTML = '';
-            users.forEach(user => {
-                const label = document.createElement('label');
-                label.className = 'member-chip';
+                const renderRoleHeroes = (list) => {
+                    scrollContainer.innerHTML = '';
+                    list.forEach(hero => {
+                        const label = document.createElement('label');
+                        label.className = 'hero-card';
 
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.value = user.id;
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.dataset.role = role;
+                        checkbox.value = hero;
 
-                const icon = document.createElement('i');
-                icon.className = 'bx bx-user';
+                        const avatar = document.createElement('div');
+                        avatar.className = 'hero-avatar';
 
-                const name = document.createElement('span');
-                name.textContent = user.username;
+                        const image = document.createElement('img');
+                        image.src = getHeroImage(hero);
+                        image.alt = hero;
 
-                label.appendChild(checkbox);
-                label.appendChild(icon);
-                label.appendChild(name);
-                container.appendChild(label);
-            });
-        }
+                        const initials = document.createElement('span');
+                        initials.className = 'hero-initials';
+                        initials.textContent = getHeroInitials(hero);
+                        initials.style.display = 'none';
 
-        function renderFriendCards(container, users, emptyMessage, actionRenderer) {
-            if (!Array.isArray(users) || users.length === 0) {
-                container.innerHTML = `<div class="empty-state">${emptyMessage}</div>`;
-                return;
-            }
+                        image.addEventListener('error', () => {
+                            image.style.display = 'none';
+                            initials.style.display = 'inline';
+                        });
 
-            container.innerHTML = '';
-            users.forEach(user => {
-                const card = document.createElement('div');
-                card.className = 'friend-card';
+                        avatar.appendChild(image);
+                        avatar.appendChild(initials);
 
-                const info = document.createElement('div');
-                info.className = 'friend-info';
+                        const name = document.createElement('span');
+                        name.className = 'hero-name';
+                        name.textContent = hero;
 
-                const name = document.createElement('span');
-                name.textContent = user.username || 'Membre';
+                        label.appendChild(checkbox);
+                        label.appendChild(avatar);
+                        label.appendChild(name);
+                        scrollContainer.appendChild(label);
+                    });
+                };
 
+                renderRoleHeroes(heroes);
+
+                searchInput.addEventListener('input', () => {
+                    const query = searchInput.value.trim().toLowerCase();
+                    const filtered = heroes.filter(hero => hero.toLowerCase().includes(query));
+                    renderRoleHeroes(filtered);
+                });
                 const email = document.createElement('small');
+                target.appendChild(searchWrapper);
                 email.textContent = user.email || '';
 
-                info.appendChild(name);
-                info.appendChild(email);
+                target.appendChild(scrollContainer);
 
                 const actions = document.createElement('div');
                 actions.className = 'friend-actions';
