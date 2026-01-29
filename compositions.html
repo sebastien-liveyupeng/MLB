@@ -543,6 +543,18 @@
             saveStatus.className = 'status ' + (type || '');
         }
 
+        async function readResponsePayload(response) {
+            const text = await response.text();
+            if (!text) {
+                return {};
+            }
+            try {
+                return JSON.parse(text);
+            } catch (error) {
+                return { error: text };
+            }
+        }
+
         function readHeroes() {
             const checks = document.querySelectorAll('#heroTable input[data-role]:checked');
             const heroes = [];
@@ -861,9 +873,10 @@
                     return;
                 }
 
-                const data = await response.json();
+                const data = await readResponsePayload(response);
                 if (!response.ok) {
-                    setStatus(data.error || 'Erreur lors de la sauvegarde.', 'error');
+                    const fallback = `Erreur lors de la sauvegarde (${response.status}).`;
+                    setStatus(data.error || data.message || fallback, 'error');
                     return;
                 }
 

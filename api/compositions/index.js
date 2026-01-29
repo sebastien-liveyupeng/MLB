@@ -25,7 +25,13 @@ module.exports = async function handler(req, res) {
   }
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    return res.status(500).json({ error: 'Supabase env variables missing' });
+    return res.status(500).json({
+      error: 'Supabase env variables missing',
+      details: {
+        NEXT_PUBLIC_SUPABASE_URL: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
+        SUPABASE_SERVICE_ROLE_KEY: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY)
+      }
+    });
   }
 
   const supabase = createClient(
@@ -112,7 +118,10 @@ module.exports = async function handler(req, res) {
       });
     } catch (error) {
       console.error('Compositions fetch error:', error);
-      return res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({
+        error: 'Internal server error',
+        details: error?.message || 'Unknown error'
+      });
     }
   }
 
@@ -237,7 +246,10 @@ module.exports = async function handler(req, res) {
       });
     } catch (error) {
       console.error('Compositions save error:', error);
-      return res.status(500).json({ error: 'Internal server error' });
+      return res.status(500).json({
+        error: 'Internal server error',
+        details: error?.message || 'Unknown error'
+      });
     }
   }
 
