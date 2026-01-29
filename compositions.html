@@ -81,7 +81,7 @@
         .roles-table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed;
+            table-layout: auto;
         }
 
         .roles-table th,
@@ -92,8 +92,9 @@
         }
 
         .roles-table td {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
             gap: 0.9rem;
         }
 
@@ -130,6 +131,7 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             margin-bottom: 0;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            width: 100%;
         }
 
         .hero-card:hover {
