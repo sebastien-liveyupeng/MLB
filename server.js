@@ -70,7 +70,8 @@ const server = http.createServer((req, res) => {
     '/galerie': '/galerie.html',
     '/auth': '/auth.html',
     '/profil': '/profil.html',
-    '/profils': '/profils.html'
+    '/profils': '/profils.html',
+    '/mon-profil': '/mon-profil.html'
   };
 
   if (rewrites[pathname]) {

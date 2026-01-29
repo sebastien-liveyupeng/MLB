@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil - Gascom Esport</title>
+    <link rel="icon" type="image/png" href="assets/Ges-white.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        :root {
+            --accent: #ff6b35;
+            --accent-strong: #d94a1f;
+            --text-primary: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+            --panel-bg: linear-gradient(135deg, rgba(18, 18, 28, 0.9), rgba(42, 20, 16, 0.78));
+            --panel-border: rgba(156, 44, 23, 0.45);
+            --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        body {
+            background: #0b0b0f;
+            color: var(--text-primary);
+            padding-top: 92px;
+        }
+
+        .profile-page {
+            max-width: 720px;
+            margin: 2rem auto 4rem;
+            padding: 0 1.5rem;
+        }
+
+        .profile-panel {
+            background: var(--panel-bg);
+            border: 2px solid var(--panel-border);
+            border-radius: 20px;
+            padding: 2.2rem;
+            box-shadow: var(--shadow-strong);
+        }
+
+        .profile-panel h1 {
+            font-family: 'Russo One', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-panel p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.3rem;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group label i {
+            font-size: 1.05rem;
+            color: #ff6b35;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(156, 44, 23, 0.3);
+            border-radius: 10px;
+            color: #FFFFFF;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #ff6b35;
+            box-shadow: 0 0 15px rgba(255, 107, 53, 0.2);
+        }
+
+        .avatar-preview {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 0.6rem;
+        }
+
+        .avatar-preview img {
+            width: 96px;
+            height: 96px;
+            border-radius: 18px;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .avatar-hint {
+            display: block;
+            margin-top: 0.35rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+        }
+
+        .auth-submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #ff6b35, #d94a1f);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .auth-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(255, 107, 53, 0.3);
+        }
+
+        .error,
+        .success {
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        .error {
+            color: #ff4757;
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+        }
+
+        .success {
+            color: #2ed573;
+            background: rgba(46, 213, 115, 0.1);
+            border: 1px solid rgba(46, 213, 115, 0.3);
+        }
+
+        .error:not(:empty),
+        .success:not(:empty) {
+            display: block;
+        }
+
+        .login-hint {
+            background: rgba(255, 107, 53, 0.08);
+            border: 1px solid rgba(255, 107, 53, 0.35);
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <img src="assets/Ges-white.png" alt="Gascom Esport Logo" class="logo-img">
+                </div>
+                <div class="logo-text">Gascom Esport</div>
+            </div>
+            <nav>
+                <button class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="username-display-mobile" id="usernameDisplayMobile" style="display: none;">
+                    <span></span>
+                    <button class="logout-mobile-btn" onclick="handleLogout()"><i class='bx bx-log-out'></i></button>
+                </div>
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item"><a href="/">Accueil</a></li>
+                    <li class="nav-item"><a href="/equipe">Équipe</a></li>
+                    <li class="nav-item"><a href="/compositions">Compositions</a></li>
+                    <li class="nav-item"><a href="/tournois">Tournois</a></li>
+                    <li class="nav-item"><a href="/galerie">Galerie</a></li>
+                    <li class="nav-item"><a href="/contact">Contact</a></li>
+                    <li class="nav-item"><a href="/apropos">A propos</a></li>
+                    <li class="nav-item"><a href="/profils">Profils</a></li>
+                    <li class="nav-item"><a href="/chat"><i class='bx bx-message'></i> Chat</a></li>
+                    <li class="nav-item auth-nav" id="authNav">
+                        <button class="auth-btn" onclick="openLoginModal()">Connexion</button>
+                        <button class="auth-btn" onclick="openSignupModal()">Inscription</button>
+                    </li>
+                    <li class="nav-item user-nav" id="userNav" style="display: none;">
+                        <span class="username-display" id="usernameNav"></span>
+                        <a class="logout-btn" href="/mon-profil" title="Mon Profil" style="background: transparent; border: none; color: #FFFFFF; cursor: pointer; padding: 0.5rem; font-size: 1.2rem; text-decoration: none;">
+                            <i class='bx bx-user-circle'></i>
+                        </a>
+                        <button class="logout-btn" onclick="handleLogout()">Déconnexion</button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="profile-page">
+        <div class="profile-panel">
+            <h1>Mon Profil</h1>
+            <p>Modifie tes informations personnelles et ta photo.</p>
+            <div id="loginHint" class="login-hint" style="display: none;">
+                Connecte-toi pour modifier ton profil.
+            </div>
+            <form onsubmit="handleProfileUpdate(event)">
+                <div class="form-group">
+                    <label for="profile-username">
+                        <i class='bx bx-user'></i> Nom d'utilisateur
+                    </label>
+                    <input type="text" id="profile-username" placeholder="Votre pseudo" autocomplete="username" required>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <i class='bx bx-image-alt'></i> Photo de profil
+                    </label>
+                    <div class="avatar-preview">
+                        <img id="profile-avatar-preview" src="" alt="Avatar sélectionné">
+                    </div>
+                    <input type="url" id="profile-avatar-custom" placeholder="URL d'une image (optionnel)">
+                    <input type="file" id="profile-avatar-file" accept="image/*">
+                    <small class="avatar-hint">Choisis une image depuis ta galerie.</small>
+                </div>
+                <div class="form-group">
+                    <label for="profile-bio">
+                        <i class='bx bx-edit'></i> Bio
+                    </label>
+                    <textarea id="profile-bio" rows="3" placeholder="Parle un peu de toi..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="profile-email">
+                        <i class='bx bx-envelope'></i> Email
+                    </label>
+                    <input type="email" id="profile-email" placeholder="votre@email.com" autocomplete="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="profile-current-password">
+                        <i class='bx bx-lock-alt'></i> Mot de passe actuel
+                    </label>
+                    <input type="password" id="profile-current-password" placeholder="••••••••" autocomplete="current-password">
+                </div>
+                <div class="form-group">
+                    <label for="profile-new-password">
+                        <i class='bx bx-lock'></i> Nouveau mot de passe (optionnel)
+                    </label>
+                    <input type="password" id="profile-new-password" placeholder="••••••••" autocomplete="new-password">
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <i class='bx bx-save'></i> Sauvegarder
+                </button>
+                <div id="profile-error" class="error"></div>
+                <div id="profile-success" class="success"></div>
+            </form>
+        </div>
+    </main>
+
+    <script src="auth-session.js"></script>
+    <script>
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        if (hamburger && navMenu) {
+            hamburger.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                hamburger.classList.toggle('active');
+            });
+
+            document.querySelectorAll('.nav-item a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navMenu.classList.remove('active');
+                    hamburger.classList.remove('active');
+                });
+            });
+        }
+
+        async function initProfilePage() {
+            const token = getStoredToken();
+            const loginHint = document.getElementById('loginHint');
+
+            if (!token) {
+                if (loginHint) loginHint.style.display = 'block';
+                return;
+            }
+
+            if (loginHint) loginHint.style.display = 'none';
+            await loadProfileData();
+
+            const customInput = document.getElementById('profile-avatar-custom');
+            if (customInput && !customInput.dataset.bound) {
+                customInput.addEventListener('input', () => {
+                    const value = customInput.value.trim();
+                    if (value) {
+                        setSelectedAvatar(value);
+                    }
+                });
+                customInput.dataset.bound = 'true';
+            }
+
+            const fileInput = document.getElementById('profile-avatar-file');
+            if (fileInput && !fileInput.dataset.bound) {
+                fileInput.addEventListener('change', async () => {
+                    const file = fileInput.files && fileInput.files[0];
+                    if (!file) return;
+                    await uploadAvatarFile(file);
+                });
+                fileInput.dataset.bound = 'true';
+            }
+        }
+
+        initProfilePage();
+    </script>
+</body>
+</html>

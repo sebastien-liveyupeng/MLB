@@ -13,6 +13,7 @@
     { "source": "/chat", "destination": "/chat.html" },
     { "source": "/auth", "destination": "/auth.html" },
     { "source": "/profil", "destination": "/profil.html" },
-    { "source": "/profils", "destination": "/profils.html" }
+    { "source": "/profils", "destination": "/profils.html" },
+    { "source": "/mon-profil", "destination": "/mon-profil.html" }
   ]
 }
