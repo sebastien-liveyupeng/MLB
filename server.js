@@ -3,6 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const url = require('url');
 const friendsHandler = require('./api/friends');
+const userProfileHandler = require('./api/users/profile');
+const userAvatarHandler = require('./api/users/avatar');
 require('dotenv').config({ path: '.env.local' });
 
 const PORT = 3002;
@@ -10,6 +12,7 @@ const PORT = 3002;
 const server = http.createServer((req, res) => {
   const parsedUrl = url.parse(req.url, true);
   let pathname = parsedUrl.pathname;
+  req.query = parsedUrl.query || {};
 
   // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -49,6 +52,12 @@ const server = http.createServer((req, res) => {
     } else if (apiPath === 'users') {
       handleUsers(req, res);
       return;
+    } else if (apiPath === 'users/profile') {
+      userProfileHandler(req, res);
+      return;
+    } else if (apiPath === 'users/avatar') {
+      userAvatarHandler(req, res);
+      return;
     } else if (apiPath === 'friends') {
       friendsHandler(req, res);
       return;
@@ -67,7 +76,8 @@ const server = http.createServer((req, res) => {
     '/roster-masculin': '/roster-masculin.html',
     '/apropos': '/apropos.html',
     '/galerie': '/galerie.html',
-    '/auth': '/auth.html'
+    '/auth': '/auth.html',
+    '/profil': '/profil.html'
   };
 
   if (rewrites[pathname]) {
@@ -91,6 +101,7 @@ const server = http.createServer((req, res) => {
     if (ext === '.json') contentType = 'application/json';
     if (ext === '.avif') contentType = 'image/avif';
     if (ext === '.png') contentType = 'image/png';
+    if (ext === '.svg') contentType = 'image/svg+xml';
 
     res.writeHead(200, { 'Content-Type': contentType });
     res.end(data);

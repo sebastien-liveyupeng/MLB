@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil utilisateur - Gascom Esport</title>
+    <link rel="icon" type="image/png" href="assets/Ges-white.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        :root {
+            --accent: #ff6b35;
+            --accent-strong: #d94a1f;
+            --text-primary: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+            --panel-bg: linear-gradient(135deg, rgba(18, 18, 28, 0.9), rgba(42, 20, 16, 0.78));
+            --panel-border: rgba(156, 44, 23, 0.45);
+            --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        body {
+            background: #0b0b0f;
+            color: var(--text-primary);
+        }
+
+        .profile-wrapper {
+            max-width: 820px;
+            margin: 3rem auto 4rem;
+            padding: 0 1.5rem;
+        }
+
+        .profile-card {
+            background: var(--panel-bg);
+            border: 2px solid var(--panel-border);
+            border-radius: 20px;
+            padding: 2.2rem;
+            box-shadow: var(--shadow-strong);
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 1.6rem;
+            align-items: center;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .profile-name {
+            font-family: 'Russo One', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .profile-bio {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .profile-status {
+            margin-top: 1.5rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        @media (max-width: 680px) {
+            .profile-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .profile-avatar {
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <div class="profile-wrapper">
+        <div class="profile-card" id="profileCard" style="display: none;">
+            <div class="profile-avatar">
+                <img id="profileAvatar" src="" alt="Avatar utilisateur">
+            </div>
+            <div>
+                <div class="profile-name" id="profileName"></div>
+                <div class="profile-bio" id="profileBio"></div>
+            </div>
+        </div>
+        <div class="profile-status" id="profileStatus">Chargement du profil...</div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const userId = params.get('id');
+        const username = params.get('u');
+        const status = document.getElementById('profileStatus');
+        const card = document.getElementById('profileCard');
+
+        async function loadProfile() {
+            if (!userId && !username) {
+                status.textContent = 'Profil introuvable.';
+                return;
+            }
+
+            const query = userId ? `id=${encodeURIComponent(userId)}` : `username=${encodeURIComponent(username)}`;
+
+            try {
+                const response = await fetch(`/api/users/profile?${query}`);
+                const data = await response.json();
+
+                if (!response.ok || !data?.user) {
+                    status.textContent = data?.error || 'Profil introuvable.';
+                    return;
+                }
+
+                document.getElementById('profileName').textContent = data.user.username || 'Membre';
+                document.getElementById('profileBio').textContent = data.user.bio || 'Aucune bio pour le moment.';
+
+                const avatar = document.getElementById('profileAvatar');
+                if (data.user.avatar_url) {
+                    avatar.src = data.user.avatar_url;
+                } else {
+                    avatar.src = '/assets/avatars/avatar-1.svg';
+                }
+
+                status.textContent = '';
+                card.style.display = 'grid';
+            } catch (error) {
+                status.textContent = 'Impossible de charger le profil.';
+                console.error(error);
+            }
+        }
+
+        loadProfile();
+    </script>
+</body>
+</html>

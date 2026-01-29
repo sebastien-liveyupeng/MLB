@@ -11,6 +11,7 @@
     { "source": "/apropos", "destination": "/apropos.html" },
     { "source": "/galerie", "destination": "/galerie.html" },
     { "source": "/chat", "destination": "/chat.html" },
-    { "source": "/auth", "destination": "/auth.html" }
+    { "source": "/auth", "destination": "/auth.html" },
+    { "source": "/profil", "destination": "/profil.html" }
   ]
 }

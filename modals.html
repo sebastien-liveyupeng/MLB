@@ -198,11 +198,32 @@
         transition: all 0.3s ease;
     }
 
+    .form-group textarea {
+        width: 100%;
+        padding: 0.9rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid rgba(156, 44, 23, 0.3);
+        border-radius: 10px;
+        color: #FFFFFF;
+        font-family: 'Exo 2', sans-serif;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        resize: vertical;
+        min-height: 90px;
+    }
+
     .form-group input::placeholder {
         color: rgba(255, 255, 255, 0.3);
     }
 
     .form-group input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #ff6b35;
+        box-shadow: 0 0 15px rgba(255, 107, 53, 0.2);
+    }
+
+    .form-group textarea:focus {
         outline: none;
         background: rgba(255, 255, 255, 0.08);
         border-color: #ff6b35;
@@ -290,6 +311,22 @@
         text-decoration: underline;
     }
 
+    .ghost-btn {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        color: rgba(255, 255, 255, 0.85);
+        padding: 0.45rem 0.8rem;
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+    }
+
+    .ghost-btn:hover {
+        border-color: #ff6b35;
+        color: #ff6b35;
+    }
+
     /* Responsive Modal */
     @media (max-width: 600px) {
         .auth-modal-content {
@@ -352,6 +389,25 @@
                 <input type="text" id="profile-username" placeholder="Votre pseudo" autocomplete="username" required>
             </div>
             <div class="form-group">
+                <label>
+                    <i class='bx bx-image-alt'></i> Photo de profil
+                </label>
+                <div class="avatar-picker" id="avatarPicker"></div>
+                <div class="avatar-preview">
+                    <img id="profile-avatar-preview" src="" alt="Avatar sélectionné">
+                </div>
+                <input type="hidden" id="profile-avatar-url">
+                <input type="url" id="profile-avatar-custom" placeholder="URL d'une image (optionnel)">
+                <input type="file" id="profile-avatar-file" accept="image/*">
+                <small class="avatar-hint">Choisis une image depuis ta galerie.</small>
+            </div>
+            <div class="form-group">
+                <label for="profile-bio">
+                    <i class='bx bx-edit'></i> Bio
+                </label>
+                <textarea id="profile-bio" rows="3" placeholder="Parle un peu de toi..."></textarea>
+            </div>
+            <div class="form-group">
                 <label for="profile-email">
                     <i class='bx bx-envelope'></i> Email
                 </label>
@@ -372,6 +428,10 @@
             <button type="submit" class="auth-submit-btn">
                 <i class='bx bx-save'></i> Sauvegarder
             </button>
+            <div class="profile-public-link">
+                <a id="profile-public-link" href="/profil" target="_blank" rel="noopener">Voir mon profil public</a>
+                <button type="button" id="copyProfileLinkBtn" class="ghost-btn">Copier le lien</button>
+            </div>
             <div id="profile-error" class="error"></div>
             <div id="profile-success" class="success"></div>
         </form>
@@ -392,5 +452,76 @@
         background: rgba(255, 255, 255, 0.08);
         border-color: #ff6b35;
         box-shadow: 0 0 15px rgba(255, 107, 53, 0.2);
+    }
+
+    #profileModal .avatar-picker {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+        gap: 0.6rem;
+        margin-bottom: 0.6rem;
+    }
+
+    #profileModal .avatar-picker button {
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 0.3rem;
+        cursor: pointer;
+        transition: border 0.2s ease, transform 0.2s ease;
+    }
+
+    #profileModal .avatar-picker button.selected {
+        border-color: #ff6b35;
+        transform: translateY(-2px);
+    }
+
+    #profileModal .avatar-picker img {
+        width: 100%;
+        height: 64px;
+        object-fit: cover;
+        border-radius: 10px;
+        display: block;
+    }
+
+    #profileModal .avatar-preview {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 0.6rem;
+    }
+
+    #profileModal .avatar-preview img {
+        width: 80px;
+        height: 80px;
+        border-radius: 16px;
+        object-fit: cover;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    #profileModal #profile-avatar-file {
+        margin-top: 0.4rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    #profileModal .avatar-hint {
+        display: block;
+        margin-top: 0.35rem;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.8rem;
+    }
+
+    #profileModal .profile-public-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.6rem;
+        margin-top: 0.6rem;
+    }
+
+    #profileModal .profile-public-link a {
+        color: #ff6b35;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 0.9rem;
     }
 </style>

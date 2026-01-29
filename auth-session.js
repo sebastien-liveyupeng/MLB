@@ -325,12 +325,146 @@ document.addEventListener('click', function(event) {
 });
 
 // Gestion du profil utilisateur
+const defaultAvatars = [
+    '/assets/avatars/avatar-1.svg',
+    '/assets/avatars/avatar-2.svg',
+    '/assets/avatars/avatar-3.svg',
+    '/assets/avatars/avatar-4.svg',
+    '/assets/avatars/avatar-5.svg',
+    '/assets/avatars/avatar-6.svg'
+];
+
+function setSelectedAvatar(url) {
+    const hiddenInput = document.getElementById('profile-avatar-url');
+    const preview = document.getElementById('profile-avatar-preview');
+    if (hiddenInput) {
+        hiddenInput.value = url || '';
+    }
+    if (preview) {
+        preview.src = url || '';
+        preview.style.display = url ? 'block' : 'none';
+    }
+
+    const picker = document.getElementById('avatarPicker');
+    if (picker) {
+        picker.querySelectorAll('button').forEach(btn => {
+            btn.classList.toggle('selected', btn.dataset.avatar === url);
+        });
+    }
+}
+
+function buildAvatarPicker(selectedUrl) {
+    const picker = document.getElementById('avatarPicker');
+    if (!picker) return;
+
+    picker.innerHTML = '';
+    defaultAvatars.forEach(url => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.dataset.avatar = url;
+
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = 'Avatar';
+
+        button.appendChild(img);
+        button.addEventListener('click', () => {
+            const customInput = document.getElementById('profile-avatar-custom');
+            if (customInput) customInput.value = '';
+            setSelectedAvatar(url);
+        });
+
+        picker.appendChild(button);
+    });
+
+    setSelectedAvatar(selectedUrl || defaultAvatars[0]);
+}
+
 function openProfileModal() {
     const profileModal = document.getElementById('profileModal');
     if (profileModal) {
         // Charger les données du profil actuel
+        buildAvatarPicker();
+        const customInput = document.getElementById('profile-avatar-custom');
+        if (customInput && !customInput.dataset.bound) {
+            customInput.addEventListener('input', () => {
+                const value = customInput.value.trim();
+                if (value) {
+                    setSelectedAvatar(value);
+                } else {
+                    const current = document.getElementById('profile-avatar-url')?.value || defaultAvatars[0];
+                    setSelectedAvatar(current);
+                }
+            });
+            customInput.dataset.bound = 'true';
+        }
+        const fileInput = document.getElementById('profile-avatar-file');
+        if (fileInput && !fileInput.dataset.bound) {
+            fileInput.addEventListener('change', async () => {
+                const file = fileInput.files && fileInput.files[0];
+                if (!file) return;
+                await uploadAvatarFile(file);
+            });
+            fileInput.dataset.bound = 'true';
+        }
         loadProfileData();
         profileModal.classList.add('show');
+    }
+}
+
+async function uploadAvatarFile(file) {
+    const errorElement = document.getElementById('profile-error');
+    const successElement = document.getElementById('profile-success');
+    if (errorElement) errorElement.textContent = '';
+    if (successElement) successElement.textContent = '';
+
+    if (!file.type.startsWith('image/')) {
+        if (errorElement) errorElement.textContent = 'Fichier non supporté.';
+        return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+        if (errorElement) errorElement.textContent = 'Image trop lourde (max 2MB).';
+        return;
+    }
+
+    const token = getStoredToken();
+    if (!token) {
+        if (errorElement) errorElement.textContent = 'Vous n\'êtes pas connecté.';
+        return;
+    }
+
+    const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error('File read error'));
+        reader.readAsDataURL(file);
+    });
+
+    try {
+        const response = await fetch('/api/users/avatar', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                dataUrl,
+                fileName: file.name
+            })
+        });
+
+        const data = await response.json();
+        if (!response.ok || !data.avatar_url) {
+            if (errorElement) errorElement.textContent = data.error || 'Upload impossible.';
+            return;
+        }
+
+        setSelectedAvatar(data.avatar_url);
+        if (successElement) successElement.textContent = 'Photo chargée.';
+    } catch (error) {
+        if (errorElement) errorElement.textContent = 'Erreur lors de l\'upload.';
+        console.error('Upload avatar error:', error);
     }
 }
 
@@ -363,6 +497,32 @@ async function loadProfileData() {
             const data = await response.json();
             document.getElementById('profile-username').value = data.user.username || '';
             document.getElementById('profile-email').value = data.user.email || '';
+            const bioField = document.getElementById('profile-bio');
+            if (bioField) bioField.value = data.user.bio || '';
+
+            const avatarUrl = data.user.avatar_url || '';
+            buildAvatarPicker(avatarUrl);
+            setSelectedAvatar(avatarUrl || defaultAvatars[0]);
+
+            const publicLink = document.getElementById('profile-public-link');
+            if (publicLink && data.user.id) {
+                publicLink.href = `/profil?id=${encodeURIComponent(data.user.id)}`;
+            }
+
+            const copyBtn = document.getElementById('copyProfileLinkBtn');
+            if (copyBtn && data.user.id) {
+                copyBtn.onclick = async () => {
+                    const url = `${location.origin}/profil?id=${encodeURIComponent(data.user.id)}`;
+                    try {
+                        await navigator.clipboard.writeText(url);
+                        const successElement = document.getElementById('profile-success');
+                        if (successElement) successElement.textContent = 'Lien copié dans le presse-papiers.';
+                    } catch (err) {
+                        const errorElement = document.getElementById('profile-error');
+                        if (errorElement) errorElement.textContent = 'Impossible de copier le lien.';
+                    }
+                };
+            }
             // Vider les champs de mot de passe
             document.getElementById('profile-current-password').value = '';
             document.getElementById('profile-new-password').value = '';
@@ -383,6 +543,10 @@ async function handleProfileUpdate(event) {
 
     const username = document.getElementById('profile-username').value;
     const email = document.getElementById('profile-email').value;
+    const bio = document.getElementById('profile-bio')?.value || '';
+    const avatarHidden = document.getElementById('profile-avatar-url')?.value || '';
+    const avatarCustom = document.getElementById('profile-avatar-custom')?.value || '';
+    const avatar_url = avatarCustom || avatarHidden;
     const currentPassword = document.getElementById('profile-current-password').value;
     const newPassword = document.getElementById('profile-new-password').value;
 
@@ -423,6 +587,8 @@ async function handleProfileUpdate(event) {
             body: JSON.stringify({ 
                 username, 
                 email,
+                bio,
+                avatar_url,
                 currentPassword,
                 newPassword
             })

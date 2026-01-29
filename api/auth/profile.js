@@ -86,7 +86,7 @@ module.exports = async function handler(req, res) {
         }
       }
 
-      const { username, bio, avatar_url } = body || {};
+      const { username, bio, avatar_url, email, newPassword } = body || {};
 
       const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -102,16 +102,26 @@ module.exports = async function handler(req, res) {
       // Préparer les métadonnées utilisateur
       const user_metadata = {
         username: username || user.user_metadata?.username,
-        bio: bio || user.user_metadata?.bio || '',
+        bio: typeof bio === 'string' ? bio : (user.user_metadata?.bio || ''),
         avatar_url: avatar_url || user.user_metadata?.avatar_url || ''
       };
+
+      const updatePayload = {
+        user_metadata
+      };
+
+      if (email && email !== user.email) {
+        updatePayload.email = email;
+      }
+
+      if (newPassword) {
+        updatePayload.password = newPassword;
+      }
 
       // Mettre à jour l'utilisateur
       const { data, error: updateError } = await supabase.auth.admin.updateUserById(
         user.id,
-        {
-          user_metadata: user_metadata
-        }
+        updatePayload
       );
 
       if (updateError) {
