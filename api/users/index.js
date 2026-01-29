@@ -69,7 +69,8 @@ module.exports = async function handler(req, res) {
           id: user.id,
           username: user.user_metadata?.username || user.email?.split('@')[0] || 'Membre',
           bio: user.user_metadata?.bio || '',
-          avatar_url: user.user_metadata?.avatar_url || ''
+          avatar_url: user.user_metadata?.avatar_url || '',
+          lanes: user.user_metadata?.lanes || []
         }
       });
     }

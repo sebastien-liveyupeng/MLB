@@ -125,6 +125,43 @@
             font-size: 0.8rem;
         }
 
+        .lane-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 0.8rem;
+        }
+
+        .lane-option {
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 0.6rem;
+            cursor: pointer;
+            transition: border 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .lane-option img {
+            width: 54px;
+            height: 54px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .lane-option.selected {
+            border-color: #ff6b35;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.25);
+        }
+
         .auth-submit-btn {
             width: 100%;
             padding: 1rem;
@@ -263,6 +300,33 @@
                         <i class='bx bx-edit'></i> Bio
                     </label>
                     <textarea id="profile-bio" rows="3" placeholder="Parle un peu de toi..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <i class='bx bx-joystick'></i> Tes lanes (2 max)
+                    </label>
+                    <div class="lane-grid" id="laneGrid">
+                        <button type="button" class="lane-option" data-lane="exp">
+                            <img src="assets/lane/exp.jpg" alt="EXP">
+                            EXP
+                        </button>
+                        <button type="button" class="lane-option" data-lane="gold">
+                            <img src="assets/lane/gold.jpg" alt="Gold">
+                            Gold
+                        </button>
+                        <button type="button" class="lane-option" data-lane="roamer">
+                            <img src="assets/lane/roamer.jpg" alt="Roamer">
+                            Roamer
+                        </button>
+                        <button type="button" class="lane-option" data-lane="jungler">
+                            <img src="assets/lane/jungler.webp" alt="Jungler">
+                            Jungler
+                        </button>
+                        <button type="button" class="lane-option" data-lane="mid">
+                            <img src="assets/lane/mid.webp" alt="Mid">
+                            Mid
+                        </button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="profile-email">

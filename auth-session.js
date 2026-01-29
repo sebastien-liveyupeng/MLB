@@ -333,6 +333,36 @@ function setSelectedAvatar(url) {
     }
 }
 
+function setupLaneSelection(initialLanes = []) {
+    const laneGrid = document.getElementById('laneGrid');
+    if (!laneGrid) return;
+
+    const options = Array.from(laneGrid.querySelectorAll('.lane-option'));
+    options.forEach(option => {
+        option.classList.toggle('selected', initialLanes.includes(option.dataset.lane));
+        option.addEventListener('click', () => {
+            const selected = options.filter(btn => btn.classList.contains('selected'));
+            if (option.classList.contains('selected')) {
+                option.classList.remove('selected');
+                return;
+            }
+            if (selected.length >= 2) {
+                const first = selected[0];
+                first.classList.remove('selected');
+            }
+            option.classList.add('selected');
+        });
+    });
+}
+
+function getSelectedLanes() {
+    const laneGrid = document.getElementById('laneGrid');
+    if (!laneGrid) return null;
+    return Array.from(laneGrid.querySelectorAll('.lane-option.selected'))
+        .map(btn => btn.dataset.lane)
+        .slice(0, 2);
+}
+
 function openProfileModal() {
     const profileModal = document.getElementById('profileModal');
     if (profileModal) {
@@ -455,6 +485,9 @@ async function loadProfileData() {
             const avatarUrl = data.user.avatar_url || '';
             setSelectedAvatar(avatarUrl);
 
+            const lanes = Array.isArray(data.user.lanes) ? data.user.lanes : [];
+            setupLaneSelection(lanes);
+
             // Vider les champs de mot de passe
             document.getElementById('profile-current-password').value = '';
             document.getElementById('profile-new-password').value = '';
@@ -478,6 +511,7 @@ async function handleProfileUpdate(event) {
     const bio = document.getElementById('profile-bio')?.value || '';
     const avatarCustom = document.getElementById('profile-avatar-custom')?.value || '';
     const avatar_url = avatarCustom || document.getElementById('profile-avatar-preview')?.src || '';
+    const lanes = getSelectedLanes();
     const currentPassword = document.getElementById('profile-current-password').value;
     const newPassword = document.getElementById('profile-new-password').value;
 
@@ -509,20 +543,26 @@ async function handleProfileUpdate(event) {
             return;
         }
 
+        const payload = {
+            username,
+            email,
+            bio,
+            avatar_url,
+            currentPassword,
+            newPassword
+        };
+
+        if (lanes) {
+            payload.lanes = lanes;
+        }
+
         const response = await fetch('/api/auth/profile', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ 
-                username, 
-                email,
-                bio,
-                avatar_url,
-                currentPassword,
-                newPassword
-            })
+            body: JSON.stringify(payload)
         });
 
         const data = await response.json();

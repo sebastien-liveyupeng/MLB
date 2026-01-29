@@ -87,6 +87,32 @@
             text-align: center;
         }
 
+        .profile-lanes {
+            display: flex;
+            gap: 0.6rem;
+            margin-top: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .lane-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.7rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .lane-chip img {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+
         @media (max-width: 680px) {
             .profile-card {
                 grid-template-columns: 1fr;
@@ -152,6 +178,7 @@
             <div>
                 <div class="profile-name" id="profileName"></div>
                 <div class="profile-bio" id="profileBio"></div>
+                <div class="profile-lanes" id="profileLanes"></div>
             </div>
         </div>
         <div class="profile-status" id="profileStatus">Chargement du profil...</div>
@@ -216,6 +243,30 @@
                     initials.textContent = displayName.split(' ').map(part => part[0]).join('').slice(0, 2).toUpperCase();
                     avatar.appendChild(initials);
                 }
+
+                const lanesContainer = document.getElementById('profileLanes');
+                const lanes = Array.isArray(data.user.lanes) ? data.user.lanes : [];
+                const laneMeta = {
+                    exp: { label: 'EXP', icon: 'assets/lane/exp.jpg' },
+                    gold: { label: 'Gold', icon: 'assets/lane/gold.jpg' },
+                    roamer: { label: 'Roamer', icon: 'assets/lane/roamer.jpg' },
+                    jungler: { label: 'Jungler', icon: 'assets/lane/jungler.webp' },
+                    mid: { label: 'Mid', icon: 'assets/lane/mid.webp' }
+                };
+
+                lanesContainer.innerHTML = '';
+                lanes.slice(0, 2).forEach(lane => {
+                    const meta = laneMeta[lane];
+                    if (!meta) return;
+                    const chip = document.createElement('span');
+                    chip.className = 'lane-chip';
+                    const icon = document.createElement('img');
+                    icon.src = meta.icon;
+                    icon.alt = meta.label;
+                    chip.appendChild(icon);
+                    chip.appendChild(document.createTextNode(meta.label));
+                    lanesContainer.appendChild(chip);
+                });
 
                 status.textContent = '';
                 card.style.display = 'grid';

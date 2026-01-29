@@ -48,6 +48,7 @@ module.exports = async function handler(req, res) {
           username: user.user_metadata?.username || '',
           bio: user.user_metadata?.bio || '',
           avatar_url: user.user_metadata?.avatar_url || '',
+          lanes: user.user_metadata?.lanes || [],
           updated_at: user.updated_at
         }
       });
@@ -86,7 +87,7 @@ module.exports = async function handler(req, res) {
         }
       }
 
-      const { username, bio, avatar_url, email, newPassword } = body || {};
+      const { username, bio, avatar_url, email, newPassword, lanes } = body || {};
 
       const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -103,7 +104,8 @@ module.exports = async function handler(req, res) {
       const user_metadata = {
         username: username || user.user_metadata?.username,
         bio: typeof bio === 'string' ? bio : (user.user_metadata?.bio || ''),
-        avatar_url: avatar_url || user.user_metadata?.avatar_url || ''
+        avatar_url: avatar_url || user.user_metadata?.avatar_url || '',
+        lanes: Array.isArray(lanes) ? lanes.slice(0, 2) : (user.user_metadata?.lanes || [])
       };
 
       const updatePayload = {
