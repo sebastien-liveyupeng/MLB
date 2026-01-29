@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compositions d'équipe - Gascom Esport</title>
+    <link rel="icon" type="image/png" href="assets/Ges-white.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        .composition-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem 4rem;
+        }
+
+        .composition-hero {
+            text-align: center;
+            padding: 3rem 1rem 2rem;
+        }
+
+        .composition-hero h1 {
+            font-family: 'Russo One', sans-serif;
+            font-size: 2.8rem;
+            color: #FFFFFF;
+            margin-bottom: 0.6rem;
+        }
+
+        .composition-hero p {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 1.05rem;
+        }
+
+        .composition-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 2rem;
+        }
+
+        @media (min-width: 992px) {
+            .composition-grid {
+                grid-template-columns: 1.2fr 1fr;
+            }
+        }
+
+        .panel {
+            background: linear-gradient(135deg, rgba(25, 25, 35, 0.75) 0%, rgba(50, 25, 20, 0.55) 100%);
+            border: 2px solid rgba(156, 44, 23, 0.4);
+            border-radius: 18px;
+            padding: 1.8rem;
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .panel h2 {
+            font-size: 1.4rem;
+            color: #FFFFFF;
+            margin-bottom: 1.2rem;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .field label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+        }
+
+        .field input,
+        .field select {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #FFFFFF;
+            padding: 0.75rem 0.9rem;
+            border-radius: 10px;
+            font-size: 0.95rem;
+        }
+
+        .field select option {
+            color: #0b0b0f;
+        }
+
+        .hero-row {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .hero-row input,
+        .hero-row select {
+            width: 100%;
+        }
+
+        .toggle-share {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .toggle-share input {
+            transform: scale(1.2);
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #ff6b35, #d94a1f);
+            color: #FFFFFF;
+            border: none;
+            padding: 0.85rem 1.6rem;
+            border-radius: 999px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .action-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .action-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(255, 107, 53, 0.3);
+        }
+
+        .status {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .status.success {
+            color: #7cff98;
+        }
+
+        .status.error {
+            color: #ff8a80;
+        }
+
+        .composition-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .composition-card {
+            background: rgba(11, 11, 15, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 1.2rem;
+        }
+
+        .composition-card h3 {
+            color: #FFFFFF;
+            font-size: 1.15rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .composition-meta {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 0.85rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .composition-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            background: rgba(255, 107, 53, 0.2);
+            color: #ffb59e;
+        }
+
+        .composition-heroes {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.9rem;
+        }
+
+        .empty-state {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95rem;
+            text-align: center;
+            padding: 2rem 1rem;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+        }
+
+        .login-hint {
+            background: rgba(255, 107, 53, 0.08);
+            border: 1px solid rgba(255, 107, 53, 0.35);
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <img src="assets/Ges-white.png" alt="Gascom Esport Logo" class="logo-img">
+                </div>
+                <div class="logo-text">Gascom Esport</div>
+            </div>
+            <nav>
+                <button class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="username-display-mobile" id="usernameDisplayMobile" style="display: none;">
+                    <span></span>
+                    <button class="logout-mobile-btn" onclick="handleLogout()"><i class='bx bx-log-out'></i></button>
+                </div>
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item"><a href="/">Accueil</a></li>
+                    <li class="nav-item"><a href="/equipe">Équipe</a></li>
+                    <li class="nav-item"><a href="/compositions" class="active">Compositions</a></li>
+                    <li class="nav-item"><a href="/tournois">Tournois</a></li>
+                    <li class="nav-item"><a href="/galerie">Galerie</a></li>
+                    <li class="nav-item"><a href="/contact">Contact</a></li>
+                    <li class="nav-item"><a href="/apropos">A propos</a></li>
+                    <li class="nav-item"><a href="/chat"><i class='bx bx-message'></i> Chat</a></li>
+                    <li class="nav-item auth-nav" id="authNav">
+                        <button class="auth-btn" onclick="openLoginModal()">Connexion</button>
+                        <button class="auth-btn" onclick="openSignupModal()">Inscription</button>
+                    </li>
+                    <li class="nav-item user-nav" id="userNav" style="display: none;">
+                        <span class="username-display" id="usernameNav"></span>
+                        <button class="logout-btn" onclick="openProfileModal()" title="Mon Profil" style="background: transparent; border: none; color: #FFFFFF; cursor: pointer; padding: 0.5rem; font-size: 1.2rem;">
+                            <i class='bx bx-user-circle'></i>
+                        </button>
+                        <button class="logout-btn" onclick="handleLogout()">Déconnexion</button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="composition-hero">
+        <h1>Compositions d'équipe</h1>
+        <p>Crée, sauvegarde et partage tes compositions Mobile Legends avec l'équipe connectée.</p>
+    </section>
+
+    <section class="composition-container">
+        <div class="composition-grid">
+            <div class="panel">
+                <h2>Créer une composition</h2>
+                <div id="loginHint" class="login-hint" style="display: none;">
+                    Connecte-toi pour sauvegarder et voir les compositions partagées.
+                </div>
+                <div class="field">
+                    <label for="compositionName">Nom de la composition</label>
+                    <input id="compositionName" type="text" placeholder="Ex: Draft tournoi Semaine 1">
+                </div>
+                <div class="toggle-share">
+                    <input type="checkbox" id="compositionShared">
+                    <label for="compositionShared">Partager avec les membres connectés</label>
+                </div>
+                <div id="heroRows">
+                    <div class="hero-row">
+                        <input type="text" placeholder="Nom du héros">
+                        <select>
+                            <option value="">Rôle</option>
+                            <option value="Tank">Tank</option>
+                            <option value="Fighter">Fighter</option>
+                            <option value="Assassin">Assassin</option>
+                            <option value="Mage">Mage</option>
+                            <option value="Marksman">Marksman</option>
+                            <option value="Support">Support</option>
+                        </select>
+                    </div>
+                    <div class="hero-row">
+                        <input type="text" placeholder="Nom du héros">
+                        <select>
+                            <option value="">Rôle</option>
+                            <option value="Tank">Tank</option>
+                            <option value="Fighter">Fighter</option>
+                            <option value="Assassin">Assassin</option>
+                            <option value="Mage">Mage</option>
+                            <option value="Marksman">Marksman</option>
+                            <option value="Support">Support</option>
+                        </select>
+                    </div>
+                    <div class="hero-row">
+                        <input type="text" placeholder="Nom du héros">
+                        <select>
+                            <option value="">Rôle</option>
+                            <option value="Tank">Tank</option>
+                            <option value="Fighter">Fighter</option>
+                            <option value="Assassin">Assassin</option>
+                            <option value="Mage">Mage</option>
+                            <option value="Marksman">Marksman</option>
+                            <option value="Support">Support</option>
+                        </select>
+                    </div>
+                    <div class="hero-row">
+                        <input type="text" placeholder="Nom du héros">
+                        <select>
+                            <option value="">Rôle</option>
+                            <option value="Tank">Tank</option>
+                            <option value="Fighter">Fighter</option>
+                            <option value="Assassin">Assassin</option>
+                            <option value="Mage">Mage</option>
+                            <option value="Marksman">Marksman</option>
+                            <option value="Support">Support</option>
+                        </select>
+                    </div>
+                    <div class="hero-row">
+                        <input type="text" placeholder="Nom du héros">
+                        <select>
+                            <option value="">Rôle</option>
+                            <option value="Tank">Tank</option>
+                            <option value="Fighter">Fighter</option>
+                            <option value="Assassin">Assassin</option>
+                            <option value="Mage">Mage</option>
+                            <option value="Marksman">Marksman</option>
+                            <option value="Support">Support</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="action-btn" id="saveCompositionBtn">Sauvegarder</button>
+                <div id="saveStatus" class="status"></div>
+            </div>
+
+            <div class="panel">
+                <h2>Compositions sauvegardées</h2>
+                <div id="compositionList" class="composition-list"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Gascom Esport</div>
+            <p class="footer-text">© 2025 Gascom - Tous droits réservés | Made in Madagascar 🇲🇬 - SHI</p>
+        </div>
+    </footer>
+
+    <script>
+        const saveButton = document.getElementById('saveCompositionBtn');
+        const saveStatus = document.getElementById('saveStatus');
+        const compositionList = document.getElementById('compositionList');
+        const loginHint = document.getElementById('loginHint');
+
+        function getToken() {
+            return localStorage.getItem('access_token');
+        }
+
+        function setStatus(message, type) {
+            saveStatus.textContent = message || '';
+            saveStatus.className = 'status ' + (type || '');
+        }
+
+        function readHeroes() {
+            const rows = document.querySelectorAll('.hero-row');
+            const heroes = [];
+
+            rows.forEach(row => {
+                const nameInput = row.querySelector('input');
+                const roleSelect = row.querySelector('select');
+                const name = nameInput.value.trim();
+                const role = roleSelect.value.trim();
+
+                if (name && role) {
+                    heroes.push({ name, role });
+                }
+            });
+
+            return heroes;
+        }
+
+        function renderEmpty(message) {
+            compositionList.innerHTML = `<div class="empty-state">${message}</div>`;
+        }
+
+        function renderCompositions(compositions) {
+            if (!Array.isArray(compositions) || compositions.length === 0) {
+                renderEmpty('Aucune composition pour le moment.');
+                return;
+            }
+
+            compositionList.innerHTML = '';
+
+            compositions.forEach(compo => {
+                const card = document.createElement('div');
+                card.className = 'composition-card';
+
+                const title = document.createElement('h3');
+                title.textContent = compo.name;
+
+                const meta = document.createElement('div');
+                meta.className = 'composition-meta';
+                const owner = compo.owner_username || 'Membre';
+                const created = compo.created_at ? new Date(compo.created_at).toLocaleString('fr-FR') : '';
+                meta.textContent = `Par ${owner}${created ? ' • ' + created : ''}`;
+
+                const badge = document.createElement('span');
+                badge.className = 'composition-badge';
+                badge.innerHTML = compo.is_shared ? `<i class='bx bx-share'></i> Partagée` : `<i class='bx bx-lock'></i> Privée`;
+
+                const heroes = document.createElement('div');
+                heroes.className = 'composition-heroes';
+                (compo.heroes || []).forEach(hero => {
+                    const line = document.createElement('div');
+                    line.textContent = `${hero.name} — ${hero.role}`;
+                    heroes.appendChild(line);
+                });
+
+                card.appendChild(title);
+                card.appendChild(meta);
+                card.appendChild(badge);
+                card.appendChild(heroes);
+                compositionList.appendChild(card);
+            });
+        }
+
+        async function loadCompositions() {
+            const token = getToken();
+            if (!token) {
+                renderEmpty('Connecte-toi pour voir les compositions partagées.');
+                return;
+            }
+
+            compositionList.dataset.loaded = 'true';
+
+            try {
+                const response = await fetch('/api/compositions', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    renderEmpty('Impossible de charger les compositions.');
+                    return;
+                }
+
+                const data = await response.json();
+                renderCompositions(data.compositions || []);
+            } catch (error) {
+                renderEmpty('Erreur serveur lors du chargement.');
+                console.error(error);
+            }
+        }
+
+        async function saveComposition() {
+            setStatus('', '');
+            const token = getToken();
+            if (!token) {
+                setStatus('Connecte-toi pour sauvegarder.', 'error');
+                return;
+            }
+
+            const name = document.getElementById('compositionName').value.trim();
+            const heroes = readHeroes();
+            const isShared = document.getElementById('compositionShared').checked;
+
+            if (!name) {
+                setStatus('Ajoute un nom pour la composition.', 'error');
+                return;
+            }
+
+            if (heroes.length === 0) {
+                setStatus('Ajoute au moins un héros avec son rôle.', 'error');
+                return;
+            }
+
+            saveButton.disabled = true;
+
+            try {
+                const response = await fetch('/api/compositions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        name,
+                        heroes,
+                        is_shared: isShared
+                    })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    setStatus(data.error || 'Erreur lors de la sauvegarde.', 'error');
+                    return;
+                }
+
+                setStatus('Composition sauvegardée !', 'success');
+                document.getElementById('compositionName').value = '';
+                document.getElementById('compositionShared').checked = false;
+                document.querySelectorAll('.hero-row input').forEach(input => input.value = '');
+                document.querySelectorAll('.hero-row select').forEach(select => select.value = '');
+                await loadCompositions();
+            } catch (error) {
+                console.error(error);
+                setStatus('Erreur serveur lors de la sauvegarde.', 'error');
+            } finally {
+                saveButton.disabled = false;
+            }
+        }
+
+        saveButton.addEventListener('click', saveComposition);
+
+        function updateAuthState() {
+            if (getToken()) {
+                loginHint.style.display = 'none';
+                saveButton.disabled = false;
+                return true;
+            }
+
+            loginHint.style.display = 'block';
+            saveButton.disabled = true;
+            compositionList.dataset.loaded = 'false';
+            return false;
+        }
+
+        const hasSession = updateAuthState();
+        if (hasSession) {
+            loadCompositions();
+        } else {
+            renderEmpty('Connecte-toi pour voir les compositions partagées.');
+        }
+
+        setInterval(() => {
+            const nowHasSession = updateAuthState();
+            if (nowHasSession && compositionList.dataset.loaded !== 'true') {
+                loadCompositions();
+            }
+        }, 1500);
+
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        document.querySelectorAll('.nav-item a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                hamburger.classList.remove('active');
+            });
+        });
+
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(11, 11, 15, 0.98)';
+                header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+            } else {
+                header.style.background = 'rgba(11, 11, 15, 0.95)';
+                header.style.boxShadow = 'none';
+            }
+        });
+    </script>
+    <script src="/auth-session.js"></script>
+</body>
+</html>

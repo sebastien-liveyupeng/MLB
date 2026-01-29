@@ -13,7 +13,7 @@ const server = http.createServer((req, res) => {
   // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
     res.writeHead(200);
@@ -39,6 +39,9 @@ const server = http.createServer((req, res) => {
     } else if (apiPath === 'auth/profile') {
       handleProfile(req, res);
       return;
+    } else if (apiPath === 'compositions') {
+      handleCompositions(req, res);
+      return;
     }
   }
 
@@ -48,6 +51,7 @@ const server = http.createServer((req, res) => {
     '/tournois': '/tournois.html',
     '/contact': '/contact.html',
     '/equipe': '/equipe.html',
+    '/compositions': '/compositions.html',
     '/roster-europe': '/roster-europe.html',
     '/roster-feminin': '/roster-feminin.html',
     '/roster-masculin': '/roster-masculin.html',
@@ -455,8 +459,149 @@ function handleProfile(req, res) {
   }
 }
 
+async function handleCompositions(req, res) {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    res.writeHead(401, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Not authenticated' }));
+    return;
+  }
+
+  const token = authHeader.substring(7);
+  let userId;
+
+  try {
+    const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    userId = decodedToken.sub;
+  } catch (e) {
+    res.writeHead(401, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Invalid token format' }));
+    return;
+  }
+
+  try {
+    const { createClient } = require('@supabase/supabase-js');
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
+    const { data: { user }, error: userError } = await supabase.auth.admin.getUserById(userId);
+    if (userError || !user) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'User not found' }));
+      return;
+    }
+
+    if (req.method === 'GET') {
+      const { data: compositions, error } = await supabase
+        .from('compositions')
+        .select('*')
+        .or(`owner_id.eq.${userId},is_shared.eq.true`)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Database error:', error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Failed to fetch compositions' }));
+        return;
+      }
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        success: true,
+        compositions: compositions || []
+      }));
+      return;
+    }
+
+    if (req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => {
+        body += chunk.toString();
+      });
+
+      req.on('end', async () => {
+        try {
+          const parsedBody = JSON.parse(body || '{}');
+          const { name, heroes, is_shared } = parsedBody;
+
+          if (!name || !name.trim()) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Name is required' }));
+            return;
+          }
+
+          if (!Array.isArray(heroes)) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Heroes must be an array' }));
+            return;
+          }
+
+          const normalizedHeroes = heroes
+            .filter(hero => hero && hero.name && hero.role)
+            .map(hero => ({
+              name: String(hero.name).trim(),
+              role: String(hero.role).trim()
+            }))
+            .filter(hero => hero.name.length > 0 && hero.role.length > 0)
+            .slice(0, 5);
+
+          if (normalizedHeroes.length === 0) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'At least one hero is required' }));
+            return;
+          }
+
+          const ownerUsername = user.user_metadata?.username || user.email?.split('@')[0] || 'Membre';
+
+          const { data, error } = await supabase
+            .from('compositions')
+            .insert([
+              {
+                name: name.trim(),
+                owner_id: userId,
+                owner_username: ownerUsername,
+                is_shared: Boolean(is_shared),
+                heroes: normalizedHeroes,
+                created_at: new Date().toISOString()
+              }
+            ])
+            .select();
+
+          if (error) {
+            console.error('Database insert error:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Failed to save composition' }));
+            return;
+          }
+
+          res.writeHead(201, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            success: true,
+            composition: data[0]
+          }));
+        } catch (error) {
+          console.error('Compositions save error:', error);
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Internal server error' }));
+        }
+      });
+      return;
+    }
+
+    res.writeHead(405, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Method not allowed' }));
+  } catch (error) {
+    console.error('Compositions handler error:', error);
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Internal server error' }));
+  }
+}
+
 server.listen(PORT, () => {
   console.log(`\n🚀 Server running on http://localhost:${PORT}`);
   console.log(`📄 Static files served from: ${__dirname}`);
-  console.log(`🔌 API routes available at /api/auth/*\n`);
+  console.log(`🔌 API routes available at /api/auth/* and /api/compositions\n`);
 });
