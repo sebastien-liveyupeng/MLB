@@ -121,10 +121,11 @@
         }
 
         .roles-table td {
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            gap: 0.9rem;
+            vertical-align: top;
+        }
+
+        .roles-table td .hero-card + .hero-card {
+            margin-top: 0.9rem;
         }
 
         .role-option {
