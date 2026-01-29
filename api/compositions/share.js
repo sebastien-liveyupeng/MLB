@@ -73,7 +73,40 @@ module.exports = async function handler(req, res) {
 
     const uniqueMembers = Array.from(new Set(member_ids.filter(id => typeof id === 'string' && id.trim())));
 
-    const links = uniqueMembers.map(memberId => ({
+    if (uniqueMembers.length === 0) {
+      return res.status(400).json({ error: 'member_ids is required' });
+    }
+
+    const { data: friendships, error: friendsError } = await supabase
+      .from('friend_requests')
+      .select('*')
+      .eq('status', 'accepted')
+      .or(
+        `and(requester_id.eq.${userId},addressee_id.in.(${uniqueMembers.join(',')})),and(requester_id.in.(${uniqueMembers.join(',')}),addressee_id.eq.${userId})`
+      );
+
+    if (friendsError) {
+      const message = friendsError.message || '';
+      if (message.includes('friend_requests') && message.includes('does not exist')) {
+        return res.status(400).json({ error: 'Table friend_requests missing' });
+      }
+      console.error('Friends fetch error:', friendsError);
+      return res.status(500).json({ error: 'Failed to validate friends' });
+    }
+
+    const allowed = new Set();
+    (friendships || []).forEach(rel => {
+      const otherId = rel.requester_id === userId ? rel.addressee_id : rel.requester_id;
+      allowed.add(otherId);
+    });
+
+    const filteredMembers = uniqueMembers.filter(memberId => allowed.has(memberId));
+
+    if (filteredMembers.length === 0) {
+      return res.status(403).json({ error: 'Only friends can be shared with' });
+    }
+
+    const links = filteredMembers.map(memberId => ({
       composition_id,
       member_id: memberId
     }));
