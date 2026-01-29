@@ -2,6 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const friendsHandler = require('./api/friends');
 require('dotenv').config({ path: '.env.local' });
 
 const PORT = 3002;
@@ -47,6 +48,9 @@ const server = http.createServer((req, res) => {
       return;
     } else if (apiPath === 'users') {
       handleUsers(req, res);
+      return;
+    } else if (apiPath === 'friends') {
+      friendsHandler(req, res);
       return;
     }
   }

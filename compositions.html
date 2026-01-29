@@ -1325,13 +1325,13 @@
             friendSearchStatus.textContent = '';
 
             try {
-                const response = await fetch('/api/friends/request', {
+                const response = await fetch('/api/friends', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ user_id: targetUserId })
+                    body: JSON.stringify({ action: 'request', user_id: targetUserId })
                 });
 
                 if (response.status === 401 || response.status === 403) {
@@ -1367,13 +1367,13 @@
             }
 
             try {
-                const response = await fetch('/api/friends/respond', {
+                const response = await fetch('/api/friends', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ request_id: requestId, action })
+                    body: JSON.stringify({ action: 'respond', request_id: requestId, decision: action })
                 });
 
                 if (response.status === 401 || response.status === 403) {
@@ -1411,7 +1411,7 @@
             friendSearchStatus.textContent = '';
 
             try {
-                const response = await fetch(`/api/friends/search?q=${encodeURIComponent(query)}`, {
+                const response = await fetch(`/api/friends?mode=search&q=${encodeURIComponent(query)}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
