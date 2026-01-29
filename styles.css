@@ -145,7 +145,12 @@
             list-style: none;
             gap: 0.5rem;
             align-items: center;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
         }
 
         .hamburger {
