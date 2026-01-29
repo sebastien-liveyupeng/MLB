@@ -120,6 +120,28 @@
             margin-bottom: 1.2rem;
         }
 
+        .members-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin: 1.2rem 0 1.6rem;
+        }
+
+        .member-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.45rem 0.75rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+        }
+
+        .member-chip i {
+            color: #ff6b35;
+        }
+
         .toggle-share input {
             transform: scale(1.2);
         }
@@ -307,6 +329,10 @@
                     <input type="checkbox" id="compositionShared">
                     <label for="compositionShared">Partager avec les membres connectés (tous les comptes Supabase)</label>
                 </div>
+                <div id="membersInfo" class="login-hint" style="display: none;">
+                    Liste des membres disponibles après connexion.
+                </div>
+                <div id="membersList" class="members-list"></div>
                 <table class="roles-table" id="heroTable">
                     <thead>
                         <tr>
@@ -352,6 +378,8 @@
         const saveStatus = document.getElementById('saveStatus');
         const compositionList = document.getElementById('compositionList');
         const loginHint = document.getElementById('loginHint');
+        const membersInfo = document.getElementById('membersInfo');
+        const membersList = document.getElementById('membersList');
 
         const heroesByRole = {
             Tank: ['Akai', 'Atlas', 'Tigreal', 'Belerick', 'Khufra', 'Lolita'],
@@ -393,6 +421,21 @@
                     label.appendChild(span);
                     target.appendChild(label);
                 });
+            });
+        }
+
+        function renderMembers(users) {
+            if (!Array.isArray(users) || users.length === 0) {
+                membersList.innerHTML = '<div class="empty-state">Aucun membre trouvé.</div>';
+                return;
+            }
+
+            membersList.innerHTML = '';
+            users.forEach(user => {
+                const chip = document.createElement('div');
+                chip.className = 'member-chip';
+                chip.innerHTML = `<i class='bx bx-user'></i>${user.username}`;
+                membersList.appendChild(chip);
             });
         }
 
@@ -515,6 +558,37 @@
             }
         }
 
+        async function loadMembers() {
+            const token = getToken();
+            if (!token) {
+                membersInfo.style.display = 'block';
+                membersList.innerHTML = '';
+                return;
+            }
+
+            membersInfo.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/users', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    membersList.innerHTML = '<div class="empty-state">Impossible de charger les membres.</div>';
+                    return;
+                }
+
+                const data = await response.json();
+                renderMembers(data.users || []);
+                membersList.dataset.loaded = 'true';
+            } catch (error) {
+                console.error(error);
+                membersList.innerHTML = '<div class="empty-state">Erreur serveur lors du chargement.</div>';
+            }
+        }
+
         async function saveComposition() {
             setStatus('', '');
             const token = getToken();
@@ -587,20 +661,26 @@
             loginHint.style.display = 'block';
             saveButton.disabled = true;
             compositionList.dataset.loaded = 'false';
+            membersList.dataset.loaded = 'false';
             return false;
         }
 
         const hasSession = updateAuthState();
         if (hasSession) {
             loadCompositions();
+            loadMembers();
         } else {
             renderEmpty('Connecte-toi pour voir les compositions partagées.');
+            membersInfo.style.display = 'block';
         }
 
         setInterval(() => {
             const nowHasSession = updateAuthState();
             if (nowHasSession && compositionList.dataset.loaded !== 'true') {
                 loadCompositions();
+            }
+            if (nowHasSession && membersList.dataset.loaded !== 'true') {
+                loadMembers();
             }
         }, 1500);
 

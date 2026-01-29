@@ -42,6 +42,9 @@ const server = http.createServer((req, res) => {
     } else if (apiPath === 'compositions') {
       handleCompositions(req, res);
       return;
+    } else if (apiPath === 'users') {
+      handleUsers(req, res);
+      return;
     }
   }
 
@@ -600,8 +603,71 @@ async function handleCompositions(req, res) {
   }
 }
 
+async function handleUsers(req, res) {
+  if (req.method !== 'GET') {
+    res.writeHead(405, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Method not allowed' }));
+    return;
+  }
+
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    res.writeHead(401, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Not authenticated' }));
+    return;
+  }
+
+  const token = authHeader.substring(7);
+  let userId;
+
+  try {
+    const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    userId = decodedToken.sub;
+  } catch (e) {
+    res.writeHead(401, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Invalid token format' }));
+    return;
+  }
+
+  try {
+    const { createClient } = require('@supabase/supabase-js');
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+    );
+
+    const { data: { user }, error: userError } = await supabase.auth.admin.getUserById(userId);
+    if (userError || !user) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'User not found' }));
+      return;
+    }
+
+    const { data, error } = await supabase.auth.admin.listUsers({ perPage: 1000 });
+    if (error) {
+      console.error('Users fetch error:', error);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Failed to fetch users' }));
+      return;
+    }
+
+    const users = (data?.users || []).map(account => ({
+      id: account.id,
+      email: account.email,
+      username: account.user_metadata?.username || account.email?.split('@')[0] || 'Membre'
+    }));
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: true, users }));
+  } catch (error) {
+    console.error('Users handler error:', error);
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Internal server error' }));
+  }
+}
+
 server.listen(PORT, () => {
   console.log(`\n🚀 Server running on http://localhost:${PORT}`);
   console.log(`📄 Static files served from: ${__dirname}`);
-  console.log(`🔌 API routes available at /api/auth/* and /api/compositions\n`);
+  console.log(`🔌 API routes available at /api/auth/*, /api/compositions, /api/users\n`);
 });
