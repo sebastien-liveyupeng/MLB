@@ -514,6 +514,19 @@
             return match ? decodeURIComponent(match[1]) : null;
         }
 
+        function clearToken() {
+            localStorage.removeItem('access_token');
+            sessionStorage.removeItem('access_token');
+            document.cookie = 'access_token=; Path=/; Max-Age=0';
+        }
+
+        function handleUnauthorized(message) {
+            clearToken();
+            loginHint.style.display = 'block';
+            saveButton.disabled = true;
+            renderEmpty(message || 'Connecte-toi pour voir les compositions partagées.');
+        }
+
         function getUserIdFromToken() {
             const token = getToken();
             if (!token) return null;
@@ -705,6 +718,13 @@
                     })
                 });
 
+                if (response.status === 401 || response.status === 403) {
+                    handleUnauthorized('Session expirée. Connecte-toi de nouveau.');
+                    statusElement.textContent = 'Session expirée. Connecte-toi de nouveau.';
+                    statusElement.className = 'status error';
+                    return;
+                }
+
                 const data = await response.json();
                 if (!response.ok) {
                     statusElement.textContent = data.error || 'Erreur lors du partage.';
@@ -743,6 +763,11 @@
                     }
                 });
 
+                if (response.status === 401 || response.status === 403) {
+                    handleUnauthorized('Session expirée. Connecte-toi de nouveau.');
+                    return;
+                }
+
                 if (!response.ok) {
                     renderEmpty('Impossible de charger les compositions.');
                     return;
@@ -769,6 +794,12 @@
                         'Authorization': `Bearer ${token}`
                     }
                 });
+
+                if (response.status === 401 || response.status === 403) {
+                    handleUnauthorized('Session expirée. Connecte-toi de nouveau.');
+                    availableMembers = [];
+                    return;
+                }
 
                 if (!response.ok) {
                     availableMembers = [];
@@ -823,6 +854,12 @@
                         shared_with: []
                     })
                 });
+
+                if (response.status === 401 || response.status === 403) {
+                    handleUnauthorized('Session expirée. Connecte-toi de nouveau.');
+                    setStatus('Session expirée. Connecte-toi de nouveau.', 'error');
+                    return;
+                }
 
                 const data = await response.json();
                 if (!response.ok) {
