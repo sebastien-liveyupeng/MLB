@@ -24,6 +24,10 @@ module.exports = async function handler(req, res) {
     return res.status(401).json({ error: 'Invalid token format' });
   }
 
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return res.status(500).json({ error: 'Supabase env variables missing' });
+  }
+
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -69,6 +73,10 @@ module.exports = async function handler(req, res) {
       const { data: compositions, error } = await query;
 
       if (error) {
+        const message = error.message || '';
+        if (message.includes('compositions') && message.includes('does not exist')) {
+          return res.status(400).json({ error: 'Table compositions missing' });
+        }
         console.error('Database error:', error);
         return res.status(500).json({ error: 'Failed to fetch compositions' });
       }
@@ -134,6 +142,10 @@ module.exports = async function handler(req, res) {
         .select();
 
       if (error) {
+        const message = error.message || '';
+        if (message.includes('compositions') && message.includes('does not exist')) {
+          return res.status(400).json({ error: 'Table compositions missing' });
+        }
         console.error('Database insert error:', error);
         return res.status(500).json({ error: 'Failed to save composition' });
       }
@@ -157,6 +169,10 @@ module.exports = async function handler(req, res) {
           .insert(links);
 
         if (linkError) {
+          const message = linkError.message || '';
+          if (message.includes('composition_members') && message.includes('does not exist')) {
+            return res.status(400).json({ error: 'Table composition_members missing' });
+          }
           console.error('Share insert error:', linkError);
           return res.status(500).json({ error: 'Failed to share composition' });
         }

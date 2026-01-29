@@ -42,6 +42,9 @@ const server = http.createServer((req, res) => {
     } else if (apiPath === 'compositions') {
       handleCompositions(req, res);
       return;
+    } else if (apiPath === 'compositions/share') {
+      handleShareComposition(req, res);
+      return;
     } else if (apiPath === 'users') {
       handleUsers(req, res);
       return;
@@ -484,6 +487,12 @@ async function handleCompositions(req, res) {
   }
 
   try {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Supabase env variables missing' }));
+      return;
+    }
+
     const { createClient } = require('@supabase/supabase-js');
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -533,6 +542,12 @@ async function handleCompositions(req, res) {
       const { data: compositions, error } = await query;
 
       if (error) {
+        const message = error.message || '';
+        if (message.includes('compositions') && message.includes('does not exist')) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Table compositions missing' }));
+          return;
+        }
         console.error('Database error:', error);
         res.writeHead(500, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'Failed to fetch compositions' }));
@@ -602,6 +617,12 @@ async function handleCompositions(req, res) {
             .select();
 
           if (error) {
+            const message = error.message || '';
+            if (message.includes('compositions') && message.includes('does not exist')) {
+              res.writeHead(400, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: 'Table compositions missing' }));
+              return;
+            }
             console.error('Database insert error:', error);
             res.writeHead(500, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Failed to save composition' }));
@@ -627,6 +648,12 @@ async function handleCompositions(req, res) {
               .insert(links);
 
             if (linkError) {
+              const message = linkError.message || '';
+              if (message.includes('composition_members') && message.includes('does not exist')) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Table composition_members missing' }));
+                return;
+              }
               console.error('Share insert error:', linkError);
               res.writeHead(500, { 'Content-Type': 'application/json' });
               res.end(JSON.stringify({ error: 'Failed to share composition' }));
@@ -722,8 +749,124 @@ async function handleUsers(req, res) {
   }
 }
 
+async function handleShareComposition(req, res) {
+  if (req.method !== 'POST') {
+    res.writeHead(405, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Method not allowed' }));
+    return;
+  }
+
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    res.writeHead(401, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Not authenticated' }));
+    return;
+  }
+
+  const token = authHeader.substring(7);
+  let userId;
+
+  try {
+    const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    userId = decodedToken.sub;
+  } catch (e) {
+    res.writeHead(401, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Invalid token format' }));
+    return;
+  }
+
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Supabase env variables missing' }));
+    return;
+  }
+
+  let body = '';
+  req.on('data', chunk => {
+    body += chunk.toString();
+  });
+
+  req.on('end', async () => {
+    try {
+      const parsedBody = JSON.parse(body || '{}');
+      const { composition_id, member_ids } = parsedBody;
+
+      if (!composition_id) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'composition_id is required' }));
+        return;
+      }
+
+      if (!Array.isArray(member_ids) || member_ids.length === 0) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'member_ids is required' }));
+        return;
+      }
+
+      const { createClient } = require('@supabase/supabase-js');
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL,
+        process.env.SUPABASE_SERVICE_ROLE_KEY
+      );
+
+      const { data: composition, error: compositionError } = await supabase
+        .from('compositions')
+        .select('*')
+        .eq('id', composition_id)
+        .single();
+
+      if (compositionError || !composition) {
+        res.writeHead(404, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Composition not found' }));
+        return;
+      }
+
+      if (composition.owner_id !== userId) {
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Not allowed' }));
+        return;
+      }
+
+      const uniqueMembers = Array.from(new Set(member_ids.filter(id => typeof id === 'string' && id.trim())));
+      const links = uniqueMembers.map(memberId => ({
+        composition_id,
+        member_id: memberId
+      }));
+
+      const { error: linkError } = await supabase
+        .from('composition_members')
+        .insert(links);
+
+      if (linkError) {
+        const message = linkError.message || '';
+        if (message.includes('composition_members') && message.includes('does not exist')) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Table composition_members missing' }));
+          return;
+        }
+        console.error('Share insert error:', linkError);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Failed to share composition' }));
+        return;
+      }
+
+      await supabase
+        .from('compositions')
+        .update({ is_shared: true })
+        .eq('id', composition_id);
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true }));
+    } catch (error) {
+      console.error('Share handler error:', error);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Internal server error' }));
+    }
+  });
+}
+
 server.listen(PORT, () => {
   console.log(`\n🚀 Server running on http://localhost:${PORT}`);
   console.log(`📄 Static files served from: ${__dirname}`);
-  console.log(`🔌 API routes available at /api/auth/*, /api/compositions, /api/users\n`);
+  console.log(`🔌 API routes available at /api/auth/*, /api/compositions, /api/compositions/share, /api/users\n`);
 });

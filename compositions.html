@@ -205,6 +205,52 @@
             padding: 1.5rem;
         }
 
+        .share-section {
+            margin-top: 1.2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .share-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .share-header span {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.95rem;
+        }
+
+        .share-toggle-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.4rem 0.8rem;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .share-body {
+            margin-top: 0.8rem;
+        }
+
+        .share-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-top: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn.share-btn {
+            padding: 0.65rem 1.2rem;
+            font-size: 0.9rem;
+        }
+
         .composition-card h3 {
             color: #FFFFFF;
             font-size: 1.15rem;
@@ -336,15 +382,9 @@
                     <label for="compositionName">Nom de la composition</label>
                     <input id="compositionName" type="text" placeholder="Ex: Draft tournoi Semaine 1">
                 </div>
-                <div class="toggle-share">
-                    <input type="checkbox" id="compositionShared">
-                    <label for="compositionShared">Partager avec des membres sélectionnés</label>
+                <div class="login-hint" style="display: block;">
+                    Sauvegarde d'abord ta composition. Tu pourras la partager ensuite depuis la liste en bas.
                 </div>
-                <div class="share-note">Sélectionne un ou plusieurs membres pour partager cette composition.</div>
-                <div id="membersInfo" class="login-hint" style="display: none;">
-                    Liste des membres disponibles après connexion.
-                </div>
-                <div id="membersList" class="members-list"></div>
                 <table class="roles-table" id="heroTable">
                     <thead>
                         <tr>
@@ -390,9 +430,7 @@
         const saveStatus = document.getElementById('saveStatus');
         const compositionList = document.getElementById('compositionList');
         const loginHint = document.getElementById('loginHint');
-        const membersInfo = document.getElementById('membersInfo');
-        const membersList = document.getElementById('membersList');
-        const shareToggle = document.getElementById('compositionShared');
+        let availableMembers = [];
 
         const heroesByRole = {
             Tank: ['Akai', 'Atlas', 'Tigreal', 'Belerick', 'Khufra', 'Lolita'],
@@ -437,13 +475,13 @@
             });
         }
 
-        function renderMembers(users) {
+        function renderMembers(container, users) {
             if (!Array.isArray(users) || users.length === 0) {
-                membersList.innerHTML = '<div class="empty-state">Aucun membre trouvé.</div>';
+                container.innerHTML = '<div class="empty-state">Aucun membre trouvé.</div>';
                 return;
             }
 
-            membersList.innerHTML = '';
+            container.innerHTML = '';
             users.forEach(user => {
                 const label = document.createElement('label');
                 label.className = 'member-chip';
@@ -451,8 +489,6 @@
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
                 checkbox.value = user.id;
-                checkbox.dataset.username = user.username;
-                checkbox.disabled = !shareToggle.checked;
 
                 const icon = document.createElement('i');
                 icon.className = 'bx bx-user';
@@ -463,17 +499,23 @@
                 label.appendChild(checkbox);
                 label.appendChild(icon);
                 label.appendChild(name);
-                membersList.appendChild(label);
+                container.appendChild(label);
             });
-        }
-
-        function getSelectedMembers() {
-            const selected = Array.from(membersList.querySelectorAll('input[type="checkbox"]:checked'));
-            return selected.map(input => input.value);
         }
 
         function getToken() {
             return localStorage.getItem('access_token');
+        }
+
+        function getUserIdFromToken() {
+            const token = getToken();
+            if (!token) return null;
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                return payload.sub || null;
+            } catch (error) {
+                return null;
+            }
         }
 
         function setStatus(message, type) {
@@ -508,6 +550,7 @@
             }
 
             compositionList.innerHTML = '';
+            const currentUserId = getUserIdFromToken();
 
             compositions.forEach(compo => {
                 const card = document.createElement('div');
@@ -558,8 +601,123 @@
                 card.appendChild(meta);
                 card.appendChild(badge);
                 card.appendChild(roleGrid);
+
+                if (currentUserId && compo.owner_id === currentUserId) {
+                    const shareSection = document.createElement('div');
+                    shareSection.className = 'share-section';
+
+                    const shareHeader = document.createElement('div');
+                    shareHeader.className = 'share-header';
+
+                    const shareTitle = document.createElement('span');
+                    shareTitle.textContent = 'Partager cette composition';
+
+                    const shareToggleBtn = document.createElement('button');
+                    shareToggleBtn.className = 'share-toggle-btn';
+                    shareToggleBtn.textContent = 'Choisir des membres';
+
+                    shareHeader.appendChild(shareTitle);
+                    shareHeader.appendChild(shareToggleBtn);
+
+                    const shareBody = document.createElement('div');
+                    shareBody.className = 'share-body';
+                    shareBody.style.display = 'none';
+
+                    const membersContainer = document.createElement('div');
+                    membersContainer.className = 'members-list';
+                    renderMembers(membersContainer, availableMembers);
+
+                    const shareActions = document.createElement('div');
+                    shareActions.className = 'share-actions';
+
+                    const shareButton = document.createElement('button');
+                    shareButton.className = 'action-btn share-btn';
+                    shareButton.textContent = 'Envoyer';
+
+                    const shareStatus = document.createElement('div');
+                    shareStatus.className = 'status';
+
+                    shareActions.appendChild(shareButton);
+                    shareActions.appendChild(shareStatus);
+
+                    shareBody.appendChild(membersContainer);
+                    shareBody.appendChild(shareActions);
+
+                    shareToggleBtn.addEventListener('click', () => {
+                        shareBody.style.display = shareBody.style.display === 'none' ? 'block' : 'none';
+                    });
+
+                    shareButton.addEventListener('click', () => {
+                        shareComposition(compo.id, membersContainer, shareStatus, shareButton);
+                    });
+
+                    if (availableMembers.length === 0) {
+                        shareButton.disabled = true;
+                        shareStatus.textContent = 'Aucun membre disponible.';
+                        shareStatus.className = 'status error';
+                    }
+
+                    shareSection.appendChild(shareHeader);
+                    shareSection.appendChild(shareBody);
+                    card.appendChild(shareSection);
+                }
                 compositionList.appendChild(card);
             });
+        }
+
+        async function shareComposition(compositionId, membersContainer, statusElement, button) {
+            const token = getToken();
+            if (!token) {
+                statusElement.textContent = 'Connecte-toi pour partager.';
+                statusElement.className = 'status error';
+                return;
+            }
+
+            const selected = Array.from(membersContainer.querySelectorAll('input[type="checkbox"]:checked'))
+                .map(input => input.value);
+
+            if (selected.length === 0) {
+                statusElement.textContent = 'Sélectionne au moins un membre.';
+                statusElement.className = 'status error';
+                return;
+            }
+
+            button.disabled = true;
+            statusElement.textContent = '';
+
+            try {
+                const response = await fetch('/api/compositions/share', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        composition_id: compositionId,
+                        member_ids: selected
+                    })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    statusElement.textContent = data.error || 'Erreur lors du partage.';
+                    statusElement.className = 'status error';
+                    return;
+                }
+
+                statusElement.textContent = 'Composition partagée !';
+                statusElement.className = 'status success';
+                membersContainer.querySelectorAll('input[type="checkbox"]').forEach(input => {
+                    input.checked = false;
+                });
+                await loadCompositions();
+            } catch (error) {
+                console.error(error);
+                statusElement.textContent = 'Erreur serveur lors du partage.';
+                statusElement.className = 'status error';
+            } finally {
+                button.disabled = false;
+            }
         }
 
         async function loadCompositions() {
@@ -594,12 +752,9 @@
         async function loadMembers() {
             const token = getToken();
             if (!token) {
-                membersInfo.style.display = 'block';
-                membersList.innerHTML = '';
+                availableMembers = [];
                 return;
             }
-
-            membersInfo.style.display = 'none';
 
             try {
                 const response = await fetch('/api/users', {
@@ -609,19 +764,18 @@
                 });
 
                 if (!response.ok) {
-                    membersList.innerHTML = '<div class="empty-state">Impossible de charger les membres.</div>';
+                    availableMembers = [];
                     return;
                 }
 
                 const data = await response.json();
-                renderMembers(data.users || []);
-                membersList.dataset.loaded = 'true';
-                membersList.querySelectorAll('input[type="checkbox"]').forEach(input => {
-                    input.disabled = !shareToggle.checked;
-                });
+                availableMembers = data.users || [];
+                if (compositionList.dataset.loaded === 'true') {
+                    await loadCompositions();
+                }
             } catch (error) {
                 console.error(error);
-                membersList.innerHTML = '<div class="empty-state">Erreur serveur lors du chargement.</div>';
+                availableMembers = [];
             }
         }
 
@@ -635,8 +789,6 @@
 
             const name = document.getElementById('compositionName').value.trim();
             const heroes = readHeroes();
-            const isShared = shareToggle.checked;
-            const sharedWith = isShared ? getSelectedMembers() : [];
 
             if (!name) {
                 setStatus('Ajoute un nom pour la composition.', 'error');
@@ -648,10 +800,6 @@
                 return;
             }
 
-            if (isShared && sharedWith.length === 0) {
-                setStatus('Sélectionne au moins un membre pour le partage.', 'error');
-                return;
-            }
 
             saveButton.disabled = true;
 
@@ -665,7 +813,7 @@
                     body: JSON.stringify({
                         name,
                         heroes,
-                        shared_with: sharedWith
+                        shared_with: []
                     })
                 });
 
@@ -677,11 +825,6 @@
 
                 setStatus('Composition sauvegardée !', 'success');
                 document.getElementById('compositionName').value = '';
-                shareToggle.checked = false;
-                membersList.querySelectorAll('input[type="checkbox"]').forEach(input => {
-                    input.checked = false;
-                    input.disabled = true;
-                });
                 document.querySelectorAll('#heroTable input[data-role]').forEach(input => {
                     input.checked = false;
                 });
@@ -707,18 +850,9 @@
             loginHint.style.display = 'block';
             saveButton.disabled = true;
             compositionList.dataset.loaded = 'false';
-            membersList.dataset.loaded = 'false';
+            availableMembers = [];
             return false;
         }
-
-        shareToggle.addEventListener('change', () => {
-            membersList.querySelectorAll('input[type="checkbox"]').forEach(input => {
-                input.disabled = !shareToggle.checked;
-                if (!shareToggle.checked) {
-                    input.checked = false;
-                }
-            });
-        });
 
         const hasSession = updateAuthState();
         if (hasSession) {
@@ -726,7 +860,6 @@
             loadMembers();
         } else {
             renderEmpty('Connecte-toi pour voir les compositions partagées.');
-            membersInfo.style.display = 'block';
         }
 
         setInterval(() => {
@@ -734,7 +867,7 @@
             if (nowHasSession && compositionList.dataset.loaded !== 'true') {
                 loadCompositions();
             }
-            if (nowHasSession && membersList.dataset.loaded !== 'true') {
+            if (nowHasSession && availableMembers.length === 0) {
                 loadMembers();
             }
         }, 1500);
