@@ -118,10 +118,145 @@
             font-weight: 600;
         }
 
+        .profile-actions {
+            display: flex;
+            gap: 0.6rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 0.8rem;
+        }
+
+        .profile-message-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.85);
+            padding: 0.45rem 0.9rem;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .profile-message-btn:hover {
+            border-color: #ff6b35;
+            color: #ff6b35;
+        }
+
         .status {
             margin-top: 1.5rem;
             text-align: center;
             color: var(--text-muted);
+        }
+
+        .chat-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+            z-index: 999;
+        }
+
+        .chat-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .chat-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 340px;
+            height: 100vh;
+            background: linear-gradient(180deg, rgba(10, 10, 15, 0.98), rgba(20, 10, 5, 0.98));
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            transform: translateX(-100%);
+            transition: transform 0.25s ease;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-sidebar.open {
+            transform: translateX(0);
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .chat-header h3 {
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        .chat-close {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .chat-bubble {
+            padding: 0.6rem 0.8rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            max-width: 85%;
+        }
+
+        .chat-bubble.me {
+            align-self: flex-end;
+            background: rgba(255, 107, 53, 0.25);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+
+        .chat-meta {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 0.2rem;
+        }
+
+        .chat-input {
+            padding: 0.9rem 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            color: #fff;
+            padding: 0.6rem 0.8rem;
+        }
+
+        .chat-input button {
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            padding: 0.6rem 1rem;
+            font-weight: 700;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -182,6 +317,20 @@
         <div class="status" id="profilesStatus">Chargement...</div>
     </section>
 
+    <div class="chat-overlay" id="chatOverlay"></div>
+    <aside class="chat-sidebar" id="chatSidebar">
+        <div class="chat-header">
+            <h3 id="chatTitle">Discussion</h3>
+            <button class="chat-close" id="chatClose">&times;</button>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="status" id="chatStatus" style="margin: 0 1rem 0.8rem;"></div>
+        <form class="chat-input" id="chatForm">
+            <input id="chatInput" type="text" placeholder="Écrire un message..." maxlength="500">
+            <button type="submit">Envoyer</button>
+        </form>
+    </aside>
+
     <script src="auth-session.js"></script>
     <script>
         const hamburger = document.getElementById('hamburger');
@@ -203,6 +352,17 @@
 
         const grid = document.getElementById('profilesGrid');
         const status = document.getElementById('profilesStatus');
+        const chatSidebar = document.getElementById('chatSidebar');
+        const chatOverlay = document.getElementById('chatOverlay');
+        const chatTitle = document.getElementById('chatTitle');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatStatus = document.getElementById('chatStatus');
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+        const chatClose = document.getElementById('chatClose');
+
+        let currentUser = null;
+        let selectedUser = null;
 
         function getToken() {
             const localToken = localStorage.getItem('access_token');
@@ -219,6 +379,8 @@
                 status.textContent = 'Connecte-toi pour voir les profils.';
                 return;
             }
+
+            await loadCurrentUser(token);
 
             try {
                 const response = await fetch('/api/users?includeSelf=1', {
@@ -267,15 +429,25 @@
                     bio.className = 'profile-bio';
                     bio.textContent = user.bio || 'Aucune bio pour le moment.';
 
+                    const actions = document.createElement('div');
+                    actions.className = 'profile-actions';
+
                     const link = document.createElement('a');
                     link.className = 'profile-link';
                     link.href = `/profil?id=${encodeURIComponent(user.id)}`;
                     link.innerHTML = `<i class='bx bx-link-external'></i> Voir le profil`;
 
+                    const msgBtn = document.createElement('button');
+                    msgBtn.className = 'profile-message-btn';
+                    msgBtn.textContent = 'Messages';
+                    msgBtn.addEventListener('click', () => openChatSidebar(user));
+
                     card.appendChild(avatar);
                     card.appendChild(name);
                     card.appendChild(bio);
-                    card.appendChild(link);
+                    actions.appendChild(link);
+                    actions.appendChild(msgBtn);
+                    card.appendChild(actions);
                     grid.appendChild(card);
                 });
 
@@ -287,6 +459,136 @@
         }
 
         loadProfiles();
+
+        async function loadCurrentUser(token) {
+            try {
+                const response = await fetch('/api/auth/session', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                if (response.ok && data.user) {
+                    currentUser = data.user;
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function openChatSidebar(user) {
+            selectedUser = user;
+            chatTitle.textContent = `Discussion avec ${user.username || 'Membre'}`;
+            chatSidebar.classList.add('open');
+            chatOverlay.classList.add('open');
+            chatStatus.textContent = '';
+            loadChatMessages();
+        }
+
+        function closeChatSidebar() {
+            chatSidebar.classList.remove('open');
+            chatOverlay.classList.remove('open');
+            selectedUser = null;
+            chatMessages.innerHTML = '';
+        }
+
+        if (chatClose) chatClose.addEventListener('click', closeChatSidebar);
+        if (chatOverlay) chatOverlay.addEventListener('click', closeChatSidebar);
+
+        async function loadChatMessages() {
+            const token = getToken();
+            if (!token || !selectedUser || !currentUser) {
+                chatStatus.textContent = 'Connecte-toi pour discuter.';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/chat/messages', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    chatStatus.textContent = data.error || 'Impossible de charger les messages.';
+                    return;
+                }
+
+                const mentionSelected = `@${(selectedUser.username || '').toLowerCase()}`;
+                const mentionMe = `@${(currentUser.username || '').toLowerCase()}`;
+                const messages = (data.messages || []).filter(msg => {
+                    const content = (msg.message || '').toLowerCase();
+                    const fromSelected = msg.username === selectedUser.username;
+                    const fromMe = msg.username === currentUser.username;
+                    return (fromMe && content.includes(mentionSelected)) || (fromSelected && content.includes(mentionMe));
+                });
+
+                chatMessages.innerHTML = '';
+                if (messages.length === 0) {
+                    chatStatus.textContent = 'Aucun message pour le moment.';
+                    return;
+                }
+                chatStatus.textContent = '';
+
+                messages.forEach(msg => {
+                    const bubble = document.createElement('div');
+                    bubble.className = `chat-bubble ${msg.username === currentUser.username ? 'me' : ''}`;
+                    bubble.textContent = msg.message;
+
+                    const meta = document.createElement('div');
+                    meta.className = 'chat-meta';
+                    const time = msg.created_at ? new Date(msg.created_at).toLocaleString('fr-FR') : '';
+                    meta.textContent = `${msg.username || 'Membre'}${time ? ' • ' + time : ''}`;
+
+                    bubble.appendChild(meta);
+                    chatMessages.appendChild(bubble);
+                });
+
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            } catch (error) {
+                console.error(error);
+                chatStatus.textContent = 'Erreur lors du chargement.';
+            }
+        }
+
+        if (chatForm) {
+            chatForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const token = getToken();
+                if (!token || !selectedUser || !currentUser) {
+                    chatStatus.textContent = 'Connecte-toi pour discuter.';
+                    return;
+                }
+
+                const value = (chatInput.value || '').trim();
+                if (!value) return;
+
+                const mention = `@${selectedUser.username}`;
+                const message = value.startsWith(mention) ? value : `${mention} ${value}`;
+
+                try {
+                    const response = await fetch('/api/chat/send', {
+                        method: 'POST',
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ message })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) {
+                        chatStatus.textContent = data.error || 'Impossible d\'envoyer.';
+                        return;
+                    }
+
+                    chatInput.value = '';
+                    await loadChatMessages();
+                } catch (error) {
+                    console.error(error);
+                    chatStatus.textContent = 'Erreur lors de l\'envoi.';
+                }
+            });
+        }
     </script>
 </body>
 </html>
