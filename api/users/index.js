@@ -171,8 +171,9 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ error: 'Failed to fetch users' });
     }
 
+    const includeSelf = query.includeSelf === '1' || query.includeSelf === 'true';
     const users = (data?.users || [])
-      .filter(account => account.id !== userId)
+      .filter(account => includeSelf || account.id !== userId)
       .map(account => ({
         id: account.id,
         email: account.email,

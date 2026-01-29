@@ -455,25 +455,6 @@ async function loadProfileData() {
             const avatarUrl = data.user.avatar_url || '';
             setSelectedAvatar(avatarUrl);
 
-            const publicLink = document.getElementById('profile-public-link');
-            if (publicLink && data.user.id) {
-                publicLink.href = `/profil?id=${encodeURIComponent(data.user.id)}`;
-            }
-
-            const copyBtn = document.getElementById('copyProfileLinkBtn');
-            if (copyBtn && data.user.id) {
-                copyBtn.onclick = async () => {
-                    const url = `${location.origin}/profil?id=${encodeURIComponent(data.user.id)}`;
-                    try {
-                        await navigator.clipboard.writeText(url);
-                        const successElement = document.getElementById('profile-success');
-                        if (successElement) successElement.textContent = 'Lien copié dans le presse-papiers.';
-                    } catch (err) {
-                        const errorElement = document.getElementById('profile-error');
-                        if (errorElement) errorElement.textContent = 'Impossible de copier le lien.';
-                    }
-                };
-            }
             // Vider les champs de mot de passe
             document.getElementById('profile-current-password').value = '';
             document.getElementById('profile-new-password').value = '';
