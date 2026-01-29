@@ -133,22 +133,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.9rem;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .role-search {
-            margin-bottom: 0.75rem;
-        }
-
-        .role-search input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #FFFFFF;
-            padding: 0.6rem 0.8rem;
-            border-radius: 10px;
-            font-size: 0.9rem;
+            overflow: visible;
         }
 
         .scroll-btn {
@@ -190,49 +175,6 @@
 
         .hero-card {
             position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 1rem 0.8rem 1.1rem;
-            min-height: 180px;
-            border-radius: 14px;
-            background: var(--soft-bg);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            margin-bottom: 0;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            width: 100%;
-        }
-
-        .hero-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
-        }
-
-        .hero-card input {
-            position: absolute;
-            top: 0.6rem;
-            left: 0.6rem;
-            transform: scale(1.15);
-        }
-
-        .roles-table .hero-avatar {
-            width: 120px !important;
-            height: 120px !important;
-            border-radius: 50%;
-            overflow: hidden;
-            display: grid;
-            place-items: center;
-            background: radial-gradient(circle, rgba(255, 107, 53, 0.45), rgba(255, 107, 53, 0.12));
-            border: 2px solid rgba(255, 255, 255, 0.18);
-        }
-
-        .hero-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
         }
 
         .hero-initials {
@@ -876,15 +818,6 @@
                 const target = roleTargets[role];
                 if (!target) return;
                 target.innerHTML = '';
-
-                const searchWrapper = document.createElement('div');
-                searchWrapper.className = 'role-search';
-
-                const searchInput = document.createElement('input');
-                searchInput.type = 'text';
-                searchInput.placeholder = `Rechercher ${role}...`;
-
-                searchWrapper.appendChild(searchInput);
 
                 const scrollContainer = document.createElement('div');
                 scrollContainer.className = 'role-scroll';
