@@ -81,6 +81,7 @@
         .roles-table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed;
         }
 
         .roles-table th,
@@ -92,7 +93,7 @@
 
         .roles-table td {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             gap: 0.7rem;
         }
 
@@ -141,9 +142,9 @@
             transform: scale(1.15);
         }
 
-        .hero-avatar {
-            width: 120px;
-            height: 120px;
+        .roles-table .hero-avatar {
+            width: 120px !important;
+            height: 120px !important;
             border-radius: 50%;
             overflow: hidden;
             display: grid;
@@ -495,14 +496,14 @@
             }
 
             .roles-table thead {
-                display: none;
+                display: none !important;
             }
 
             .roles-table tbody,
             .roles-table tr,
             .roles-table td {
-                display: block;
-                width: 100%;
+                display: block !important;
+                width: 100% !important;
             }
 
             .roles-table td {
@@ -510,6 +511,9 @@
                 border-radius: 12px;
                 margin-bottom: 0.9rem;
                 padding: 0.8rem;
+                display: grid !important;
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+                gap: 0.8rem;
             }
 
             .roles-table td::before {
@@ -519,6 +523,7 @@
                 margin-bottom: 0.6rem;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
+                grid-column: 1 / -1;
             }
 
             #role-tank::before { content: 'Tank'; }
@@ -528,9 +533,9 @@
             #role-marksman::before { content: 'Marksman'; }
             #role-support::before { content: 'Support'; }
 
-            .hero-avatar {
-                width: 120px;
-                height: 120px;
+            .roles-table .hero-avatar {
+                width: 128px !important;
+                height: 128px !important;
             }
 
             .hero-name {
