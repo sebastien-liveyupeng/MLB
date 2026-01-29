@@ -498,6 +498,45 @@
             Support: ['Estes', 'Angela', 'Diggie', 'Mathilda', 'Rafaela', 'Floryn']
         };
 
+        const heroImages = {
+            Akai: 'assets/heroes/akai.png',
+            Atlas: 'assets/heroes/atlas.png',
+            Tigreal: 'assets/heroes/tigreal.png',
+            Belerick: 'assets/heroes/belerick.png',
+            Khufra: 'assets/heroes/khufra.png',
+            Lolita: 'assets/heroes/lolita.png',
+            Aldous: 'assets/heroes/aldous.png',
+            Chou: 'assets/heroes/chou.png',
+            Paquito: 'assets/heroes/paquito.png',
+            'Yu Zhong': 'assets/heroes/yu-zhong.png',
+            Dyrroth: 'assets/heroes/dyrroth.png',
+            Terizla: 'assets/heroes/terizla.png',
+            Fanny: 'assets/heroes/fanny.png',
+            Gusion: 'assets/heroes/gusion.png',
+            Lancelot: 'assets/heroes/lancelot.png',
+            Hayabusa: 'assets/heroes/hayabusa.png',
+            Ling: 'assets/heroes/ling.png',
+            Saber: 'assets/heroes/saber.png',
+            Eudora: 'assets/heroes/eudora.png',
+            Lunox: 'assets/heroes/lunox.png',
+            Kagura: 'assets/heroes/kagura.png',
+            Lylia: 'assets/heroes/lylia.png',
+            Valentina: 'assets/heroes/valentina.png',
+            Pharsa: 'assets/heroes/pharsa.png',
+            Beatrix: 'assets/heroes/beatrix.png',
+            Brody: 'assets/heroes/brody.png',
+            Claude: 'assets/heroes/claude.png',
+            Karrie: 'assets/heroes/karrie.png',
+            Lesley: 'assets/heroes/lesley.png',
+            Wanwan: 'assets/heroes/wanwan.png',
+            Estes: 'assets/heroes/estes.png',
+            Angela: 'assets/heroes/angela.png',
+            Diggie: 'assets/heroes/diggie.png',
+            Mathilda: 'assets/heroes/mathilda.png',
+            Rafaela: 'assets/heroes/rafaela.png',
+            Floryn: 'assets/heroes/floryn.png'
+        };
+
         const roleTargets = {
             Tank: document.getElementById('role-tank'),
             Fighter: document.getElementById('role-fighter'),
@@ -517,6 +556,9 @@
         }
 
         function getHeroImage(hero) {
+            if (heroImages[hero]) {
+                return heroImages[hero];
+            }
             const slug = slugifyHeroName(hero);
             return `assets/heroes/${slug}.png`;
         }
