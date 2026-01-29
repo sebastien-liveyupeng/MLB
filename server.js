@@ -12,7 +12,7 @@ const server = http.createServer((req, res) => {
 
   // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
@@ -675,6 +675,11 @@ async function handleCompositions(req, res) {
       return;
     }
 
+    if (req.method === 'DELETE') {
+      await handleCompositionsDelete(req, res, supabase, userId);
+      return;
+    }
+
     res.writeHead(405, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'Method not allowed' }));
   } catch (error) {
@@ -682,6 +687,65 @@ async function handleCompositions(req, res) {
     res.writeHead(500, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'Internal server error' }));
   }
+}
+
+async function handleCompositionsDelete(req, res, supabase, userId) {
+  const parsedUrl = url.parse(req.url, true);
+  const compositionId = parsedUrl.query.id;
+
+  if (!compositionId) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'id is required' }));
+    return;
+  }
+
+  const { data: composition, error: compositionError } = await supabase
+    .from('compositions')
+    .select('*')
+    .eq('id', compositionId)
+    .single();
+
+  if (compositionError || !composition) {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Composition not found' }));
+    return;
+  }
+
+  if (composition.owner_id !== userId) {
+    res.writeHead(403, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Not allowed' }));
+    return;
+  }
+
+  const { error: deleteMembersError } = await supabase
+    .from('composition_members')
+    .delete()
+    .eq('composition_id', compositionId);
+
+  if (deleteMembersError) {
+    const message = deleteMembersError.message || '';
+    if (!(message.includes('composition_members') && message.includes('does not exist'))) {
+      console.error('Delete composition_members error:', deleteMembersError);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Failed to delete composition members' }));
+      return;
+    }
+  }
+
+  const { error: deleteError } = await supabase
+    .from('compositions')
+    .delete()
+    .eq('id', compositionId);
+
+  if (deleteError) {
+    console.error('Delete composition error:', deleteError);
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Failed to delete composition' }));
+    return;
+  }
+
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ success: true }));
 }
 
 async function handleUsers(req, res) {

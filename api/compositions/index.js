@@ -2,7 +2,7 @@ const { createClient } = require('@supabase/supabase-js');
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
@@ -246,6 +246,64 @@ module.exports = async function handler(req, res) {
       });
     } catch (error) {
       console.error('Compositions save error:', error);
+      return res.status(500).json({
+        error: 'Internal server error',
+        details: error?.message || 'Unknown error'
+      });
+    }
+  }
+
+  if (req.method === 'DELETE') {
+    try {
+      const url = new URL(req.url, 'http://localhost');
+      const compositionId = url.searchParams.get('id');
+
+      if (!compositionId) {
+        return res.status(400).json({ error: 'id is required' });
+      }
+
+      const { data: composition, error: compositionError } = await supabase
+        .from('compositions')
+        .select('*')
+        .eq('id', compositionId)
+        .single();
+
+      if (compositionError || !composition) {
+        return res.status(404).json({ error: 'Composition not found' });
+      }
+
+      if (composition.owner_id !== userId) {
+        return res.status(403).json({ error: 'Not allowed' });
+      }
+
+      const { error: deleteMembersError } = await supabase
+        .from('composition_members')
+        .delete()
+        .eq('composition_id', compositionId);
+
+      if (deleteMembersError) {
+        const message = deleteMembersError.message || '';
+        if (message.includes('composition_members') && message.includes('does not exist')) {
+          // ignore if table missing
+        } else {
+          console.error('Delete composition_members error:', deleteMembersError);
+          return res.status(500).json({ error: 'Failed to delete composition members' });
+        }
+      }
+
+      const { error: deleteError } = await supabase
+        .from('compositions')
+        .delete()
+        .eq('id', compositionId);
+
+      if (deleteError) {
+        console.error('Delete composition error:', deleteError);
+        return res.status(500).json({ error: 'Failed to delete composition' });
+      }
+
+      return res.status(200).json({ success: true });
+    } catch (error) {
+      console.error('Compositions delete error:', error);
       return res.status(500).json({
         error: 'Internal server error',
         details: error?.message || 'Unknown error'

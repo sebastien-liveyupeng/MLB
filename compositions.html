@@ -1052,6 +1052,19 @@
                 card.appendChild(roleGrid);
 
                 if (currentUserId && compo.owner_id === currentUserId) {
+                    const manageRow = document.createElement('div');
+                    manageRow.className = 'share-actions';
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'ghost-btn';
+                    deleteButton.textContent = 'Supprimer';
+                    deleteButton.addEventListener('click', () => {
+                        deleteComposition(compo.id, deleteButton);
+                    });
+
+                    manageRow.appendChild(deleteButton);
+                    card.appendChild(manageRow);
+
                     const shareSection = document.createElement('div');
                     shareSection.className = 'share-section';
 
@@ -1113,6 +1126,48 @@
                 compositionList.appendChild(card);
             });
         }
+
+            async function deleteComposition(compositionId, button) {
+                const token = getToken();
+                if (!token) {
+                    handleUnauthorized('Connecte-toi pour supprimer.');
+                    return;
+                }
+
+                const confirmed = window.confirm('Supprimer cette composition ?');
+                if (!confirmed) {
+                    return;
+                }
+
+                button.disabled = true;
+
+                try {
+                    const response = await fetch(`/api/compositions?id=${encodeURIComponent(compositionId)}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (response.status === 401 || response.status === 403) {
+                        handleUnauthorized('Session expirée. Connecte-toi de nouveau.');
+                        return;
+                    }
+
+                    const data = await readResponsePayload(response);
+                    if (!response.ok) {
+                        setStatus(data.error || 'Erreur lors de la suppression.', 'error');
+                        return;
+                    }
+
+                    await loadCompositions();
+                } catch (error) {
+                    console.error(error);
+                    setStatus('Erreur serveur lors de la suppression.', 'error');
+                } finally {
+                    button.disabled = false;
+                }
+            }
 
         async function shareComposition(compositionId, membersContainer, statusElement, button) {
             const token = getToken();
