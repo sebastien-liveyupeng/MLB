@@ -22,7 +22,7 @@ module.exports = async function handler(req, res) {
   let userId;
 
   try {
-    const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
     userId = decodedToken.sub;
   } catch (e) {
     return res.status(401).json({ error: 'Invalid token format' });

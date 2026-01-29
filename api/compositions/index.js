@@ -18,7 +18,7 @@ module.exports = async function handler(req, res) {
 
   let userId;
   try {
-    const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
     userId = decodedToken.sub;
   } catch (e) {
     return res.status(401).json({ error: 'Invalid token format' });
@@ -81,9 +81,34 @@ module.exports = async function handler(req, res) {
         return res.status(500).json({ error: 'Failed to fetch compositions' });
       }
 
+      const normalizedCompositions = (compositions || []).map(composition => {
+        if (typeof composition.heroes === 'string') {
+          try {
+            return {
+              ...composition,
+              heroes: JSON.parse(composition.heroes)
+            };
+          } catch (parseError) {
+            return {
+              ...composition,
+              heroes: []
+            };
+          }
+        }
+
+        if (!Array.isArray(composition.heroes)) {
+          return {
+            ...composition,
+            heroes: []
+          };
+        }
+
+        return composition;
+      });
+
       return res.status(200).json({
         success: true,
-        compositions: compositions || []
+        compositions: normalizedCompositions
       });
     } catch (error) {
       console.error('Compositions fetch error:', error);
@@ -127,19 +152,44 @@ module.exports = async function handler(req, res) {
 
       const ownerUsername = user.user_metadata?.username || user.email?.split('@')[0] || 'Membre';
 
-      const { data, error } = await supabase
+      const insertPayload = {
+        name: name.trim(),
+        owner_id: userId,
+        owner_username: ownerUsername,
+        is_shared: Array.isArray(shared_with) && shared_with.length > 0,
+        heroes: normalizedHeroes,
+        created_at: new Date().toISOString()
+      };
+
+      let { data, error } = await supabase
         .from('compositions')
-        .insert([
-          {
-            name: name.trim(),
-            owner_id: userId,
-            owner_username: ownerUsername,
-            is_shared: Array.isArray(shared_with) && shared_with.length > 0,
-            heroes: normalizedHeroes,
-            created_at: new Date().toISOString()
-          }
-        ])
+        .insert([insertPayload])
         .select();
+
+      if (error) {
+        const message = error.message || '';
+        const shouldRetry = message.includes('invalid input syntax')
+          || message.includes('type json')
+          || message.includes('type jsonb')
+          || message.includes('type text')
+          || message.includes('cannot cast')
+          || message.includes('json');
+
+        if (shouldRetry) {
+          const retryPayload = {
+            ...insertPayload,
+            heroes: JSON.stringify(normalizedHeroes)
+          };
+
+          const retryResult = await supabase
+            .from('compositions')
+            .insert([retryPayload])
+            .select();
+
+          data = retryResult.data;
+          error = retryResult.error;
+        }
+      }
 
       if (error) {
         const message = error.message || '';
@@ -147,7 +197,10 @@ module.exports = async function handler(req, res) {
           return res.status(400).json({ error: 'Table compositions missing' });
         }
         console.error('Database insert error:', error);
-        return res.status(500).json({ error: 'Failed to save composition' });
+        return res.status(500).json({
+          error: 'Failed to save composition',
+          details: error.message || 'Unknown database error'
+        });
       }
 
       const composition = data[0];
