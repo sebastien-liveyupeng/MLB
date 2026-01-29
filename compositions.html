@@ -109,6 +109,63 @@
             color: rgba(255, 255, 255, 0.9);
         }
 
+        .hero-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.6rem 0.5rem 0.7rem;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 0.6rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .hero-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        .hero-card input {
+            position: absolute;
+            top: 0.6rem;
+            left: 0.6rem;
+            transform: scale(1.15);
+        }
+
+        .hero-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: grid;
+            place-items: center;
+            background: radial-gradient(circle, rgba(255, 107, 53, 0.45), rgba(255, 107, 53, 0.12));
+            border: 2px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .hero-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .hero-initials {
+            font-weight: 700;
+            color: #fff;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-name {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+        }
+
         .role-option input {
             transform: scale(1.15);
         }
@@ -450,6 +507,29 @@
             Support: document.getElementById('role-support')
         };
 
+        function slugifyHeroName(name) {
+            return name
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '');
+        }
+
+        function getHeroImage(hero) {
+            const slug = slugifyHeroName(hero);
+            return `assets/heroes/${slug}.png`;
+        }
+
+        function getHeroInitials(hero) {
+            return hero
+                .split(' ')
+                .map(part => part.charAt(0))
+                .join('')
+                .slice(0, 2)
+                .toUpperCase();
+        }
+
         function renderHeroTable() {
             Object.entries(heroesByRole).forEach(([role, heroes]) => {
                 const target = roleTargets[role];
@@ -458,18 +538,40 @@
 
                 heroes.forEach(hero => {
                     const label = document.createElement('label');
-                    label.className = 'role-option';
+                    label.className = 'hero-card';
 
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
                     checkbox.dataset.role = role;
                     checkbox.value = hero;
 
-                    const span = document.createElement('span');
-                    span.textContent = hero;
+                    const avatar = document.createElement('div');
+                    avatar.className = 'hero-avatar';
+
+                    const image = document.createElement('img');
+                    image.src = getHeroImage(hero);
+                    image.alt = hero;
+
+                    const initials = document.createElement('span');
+                    initials.className = 'hero-initials';
+                    initials.textContent = getHeroInitials(hero);
+                    initials.style.display = 'none';
+
+                    image.addEventListener('error', () => {
+                        image.style.display = 'none';
+                        initials.style.display = 'inline';
+                    });
+
+                    avatar.appendChild(image);
+                    avatar.appendChild(initials);
+
+                    const name = document.createElement('span');
+                    name.className = 'hero-name';
+                    name.textContent = hero;
 
                     label.appendChild(checkbox);
-                    label.appendChild(span);
+                    label.appendChild(avatar);
+                    label.appendChild(name);
                     target.appendChild(label);
                 });
             });
