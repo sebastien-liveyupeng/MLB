@@ -110,24 +110,59 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.45rem 0.5rem;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            margin-bottom: 0.45rem;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.9);
-        }
+            .hero-toolbar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                margin-bottom: 1rem;
+                flex-wrap: wrap;
+            }
 
-        .hero-card {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 1rem 0.8rem 1.1rem;
-            min-height: 180px;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.06);
+            .role-tabs {
+                display: flex;
+                gap: 0.6rem;
+                flex-wrap: wrap;
+            }
+
+            .role-tab {
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                color: rgba(255, 255, 255, 0.85);
+                padding: 0.5rem 1rem;
+                border-radius: 999px;
+                cursor: pointer;
+                font-size: 0.9rem;
+                transition: background 0.2s ease, color 0.2s ease, border 0.2s ease;
+            }
+
+            .role-tab.active {
+                background: rgba(255, 107, 53, 0.2);
+                border-color: rgba(255, 107, 53, 0.6);
+                color: #fff;
+            }
+
+            .hero-search {
+                flex: 1;
+                min-width: 220px;
+            }
+
+            .hero-search input {
+                width: 100%;
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                color: #FFFFFF;
+                padding: 0.7rem 0.9rem;
+                border-radius: 10px;
+                font-size: 0.95rem;
+            }
+
+            .hero-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 0.9rem;
+                margin-bottom: 1.2rem;
+            }
             border: 1px solid rgba(255, 255, 255, 0.08);
             margin-bottom: 0;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -147,6 +182,7 @@
         }
 
         .roles-table .hero-avatar {
+            .hero-grid .hero-avatar {
             width: 120px !important;
             height: 120px !important;
             border-radius: 50%;
@@ -467,11 +503,6 @@
                 padding: 1.7rem;
             }
 
-            .roles-table th,
-            .roles-table td {
-                padding: 0.7rem;
-            }
-
             .hero-avatar {
                 width: 110px;
                 height: 110px;
@@ -495,51 +526,13 @@
                 padding: 1.4rem;
             }
 
-            .roles-table {
-                display: block;
+            .hero-grid {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             }
 
-            .roles-table thead {
-                display: none !important;
-            }
-
-            .roles-table tbody,
-            .roles-table tr,
-            .roles-table td {
-                display: block !important;
-                width: 100% !important;
-            }
-
-            .roles-table td {
-                border: 1px solid rgba(255, 255, 255, 0.12);
-                border-radius: 12px;
-                margin-bottom: 0.9rem;
-                padding: 0.9rem;
-                display: grid !important;
-                grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)) !important;
-                gap: 0.9rem;
-            }
-
-            .roles-table td::before {
-                display: block;
-                font-weight: 700;
-                color: rgba(255, 255, 255, 0.9);
-                margin-bottom: 0.6rem;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                grid-column: 1 / -1;
-            }
-
-            #role-tank::before { content: 'Tank'; }
-            #role-fighter::before { content: 'Fighter'; }
-            #role-assassin::before { content: 'Assassin'; }
-            #role-mage::before { content: 'Mage'; }
-            #role-marksman::before { content: 'Marksman'; }
-            #role-support::before { content: 'Support'; }
-
-            .roles-table .hero-avatar {
-                width: 128px !important;
-                height: 128px !important;
+            .hero-grid .hero-avatar {
+                width: 110px !important;
+                height: 110px !important;
             }
 
             .hero-name {
@@ -622,28 +615,13 @@
                 <div class="login-hint" style="display: block;">
                     Sauvegarde d'abord ta composition. Tu pourras la partager ensuite depuis la liste en bas.
                 </div>
-                <table class="roles-table" id="heroTable">
-                    <thead>
-                        <tr>
-                            <th>Tank</th>
-                            <th>Fighter</th>
-                            <th>Assassin</th>
-                            <th>Mage</th>
-                            <th>Marksman</th>
-                            <th>Support</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td id="role-tank"></td>
-                            <td id="role-fighter"></td>
-                            <td id="role-assassin"></td>
-                            <td id="role-mage"></td>
-                            <td id="role-marksman"></td>
-                            <td id="role-support"></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="hero-toolbar">
+                    <div class="role-tabs" id="roleTabs"></div>
+                    <div class="hero-search">
+                        <input id="heroSearchInput" type="text" placeholder="Rechercher un héros...">
+                    </div>
+                </div>
+                <div class="hero-grid" id="heroGrid"></div>
                 <button class="action-btn" id="saveCompositionBtn">Sauvegarder</button>
                 <div id="saveStatus" class="status"></div>
             </div>
@@ -695,6 +673,9 @@
         const saveStatus = document.getElementById('saveStatus');
         const compositionList = document.getElementById('compositionList');
         const loginHint = document.getElementById('loginHint');
+        const roleTabs = document.getElementById('roleTabs');
+        const heroGrid = document.getElementById('heroGrid');
+        const heroSearchInput = document.getElementById('heroSearchInput');
         const friendSearchInput = document.getElementById('friendSearchInput');
         const friendSearchBtn = document.getElementById('friendSearchBtn');
         const friendSearchResults = document.getElementById('friendSearchResults');
@@ -752,14 +733,10 @@
             Floryn: 'assets/heroes/floryn.png'
         };
 
-        const roleTargets = {
-            Tank: document.getElementById('role-tank'),
-            Fighter: document.getElementById('role-fighter'),
-            Assassin: document.getElementById('role-assassin'),
-            Mage: document.getElementById('role-mage'),
-            Marksman: document.getElementById('role-marksman'),
-            Support: document.getElementById('role-support')
-        };
+        const roles = Object.keys(heroesByRole);
+        let currentRole = roles[0];
+        let heroSearchQuery = '';
+        const selectedHeroes = new Map();
 
         function slugifyHeroName(name) {
             return name
@@ -787,50 +764,84 @@
                 .toUpperCase();
         }
 
-        function renderHeroTable() {
-            Object.entries(heroesByRole).forEach(([role, heroes]) => {
-                const target = roleTargets[role];
-                if (!target) return;
-                target.innerHTML = '';
+        function heroKey(role, hero) {
+            return `${role}::${hero}`;
+        }
 
-                heroes.forEach(hero => {
-                    const label = document.createElement('label');
-                    label.className = 'hero-card';
-
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.dataset.role = role;
-                    checkbox.value = hero;
-
-                    const avatar = document.createElement('div');
-                    avatar.className = 'hero-avatar';
-
-                    const image = document.createElement('img');
-                    image.src = getHeroImage(hero);
-                    image.alt = hero;
-
-                    const initials = document.createElement('span');
-                    initials.className = 'hero-initials';
-                    initials.textContent = getHeroInitials(hero);
-                    initials.style.display = 'none';
-
-                    image.addEventListener('error', () => {
-                        image.style.display = 'none';
-                        initials.style.display = 'inline';
-                    });
-
-                    avatar.appendChild(image);
-                    avatar.appendChild(initials);
-
-                    const name = document.createElement('span');
-                    name.className = 'hero-name';
-                    name.textContent = hero;
-
-                    label.appendChild(checkbox);
-                    label.appendChild(avatar);
-                    label.appendChild(name);
-                    target.appendChild(label);
+        function renderRoleTabs() {
+            roleTabs.innerHTML = '';
+            roles.forEach(role => {
+                const button = document.createElement('button');
+                button.className = `role-tab${role === currentRole ? ' active' : ''}`;
+                button.type = 'button';
+                button.textContent = role;
+                button.addEventListener('click', () => {
+                    currentRole = role;
+                    renderRoleTabs();
+                    renderHeroGrid();
                 });
+                roleTabs.appendChild(button);
+            });
+        }
+
+        function renderHeroGrid() {
+            const heroes = heroesByRole[currentRole] || [];
+            const filtered = heroes.filter(hero =>
+                hero.toLowerCase().includes(heroSearchQuery.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                heroGrid.innerHTML = '<div class="empty-state">Aucun héros trouvé.</div>';
+                return;
+            }
+
+            heroGrid.innerHTML = '';
+            filtered.forEach(hero => {
+                const label = document.createElement('label');
+                label.className = 'hero-card';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.dataset.role = currentRole;
+                checkbox.value = hero;
+                checkbox.checked = selectedHeroes.has(heroKey(currentRole, hero));
+                checkbox.addEventListener('change', () => {
+                    const key = heroKey(currentRole, hero);
+                    if (checkbox.checked) {
+                        selectedHeroes.set(key, { name: hero, role: currentRole });
+                    } else {
+                        selectedHeroes.delete(key);
+                    }
+                });
+
+                const avatar = document.createElement('div');
+                avatar.className = 'hero-avatar';
+
+                const image = document.createElement('img');
+                image.src = getHeroImage(hero);
+                image.alt = hero;
+
+                const initials = document.createElement('span');
+                initials.className = 'hero-initials';
+                initials.textContent = getHeroInitials(hero);
+                initials.style.display = 'none';
+
+                image.addEventListener('error', () => {
+                    image.style.display = 'none';
+                    initials.style.display = 'inline';
+                });
+
+                avatar.appendChild(image);
+                avatar.appendChild(initials);
+
+                const name = document.createElement('span');
+                name.className = 'hero-name';
+                name.textContent = hero;
+
+                label.appendChild(checkbox);
+                label.appendChild(avatar);
+                label.appendChild(name);
+                heroGrid.appendChild(label);
             });
         }
 
@@ -1082,19 +1093,7 @@
         }
 
         function readHeroes() {
-            const checks = document.querySelectorAll('#heroTable input[data-role]:checked');
-            const heroes = [];
-
-            checks.forEach(input => {
-                const name = input.value.trim();
-                const role = input.dataset.role;
-
-                if (name && role) {
-                    heroes.push({ name, role });
-                }
-            });
-
-            return heroes;
+            return Array.from(selectedHeroes.values());
         }
 
         function renderEmpty(message) {
@@ -1599,9 +1598,8 @@
 
                 setStatus('Composition sauvegardée !', 'success');
                 document.getElementById('compositionName').value = '';
-                document.querySelectorAll('#heroTable input[data-role]').forEach(input => {
-                    input.checked = false;
-                });
+                selectedHeroes.clear();
+                renderHeroGrid();
                 await loadCompositions();
             } catch (error) {
                 console.error(error);
@@ -1611,7 +1609,8 @@
             }
         }
 
-        renderHeroTable();
+        renderRoleTabs();
+        renderHeroGrid();
         saveButton.addEventListener('click', saveComposition);
 
         function updateAuthState() {
@@ -1660,6 +1659,11 @@
                 event.preventDefault();
                 searchFriends();
             }
+        });
+
+        heroSearchInput.addEventListener('input', (event) => {
+            heroSearchQuery = event.target.value.trim();
+            renderHeroGrid();
         });
 
         const hamburger = document.getElementById('hamburger');
