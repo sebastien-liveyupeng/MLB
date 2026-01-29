@@ -122,10 +122,42 @@
 
         .roles-table td {
             vertical-align: top;
+            position: relative;
         }
 
         .roles-table td .hero-card + .hero-card {
             margin-top: 0.9rem;
+        }
+
+        .role-scroll {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        .scroll-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(10, 10, 15, 0.6);
+            color: #fff;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .scroll-btn.left {
+            left: 8px;
+        }
+
+        .scroll-btn.right {
+            right: 8px;
         }
 
         .role-option {
@@ -533,9 +565,7 @@
                 border-radius: 12px;
                 margin-bottom: 0.9rem;
                 padding: 0.9rem;
-                display: grid !important;
-                grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)) !important;
-                gap: 0.9rem;
+                display: block !important;
             }
 
             .roles-table td::before {
@@ -546,6 +576,26 @@
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
                 grid-column: 1 / -1;
+            }
+
+            .role-scroll {
+                display: grid;
+                grid-auto-flow: column;
+                grid-auto-columns: minmax(160px, 1fr);
+                gap: 0.9rem;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                scrollbar-width: thin;
+                padding-bottom: 0.2rem;
+            }
+
+            .role-scroll .hero-card {
+                scroll-snap-align: start;
+                min-width: 160px;
+            }
+
+            .scroll-btn {
+                display: flex;
             }
 
             #role-tank::before { content: 'Tank'; }
@@ -811,6 +861,28 @@
                 if (!target) return;
                 target.innerHTML = '';
 
+                const scrollContainer = document.createElement('div');
+                scrollContainer.className = 'role-scroll';
+
+                const leftBtn = document.createElement('button');
+                leftBtn.className = 'scroll-btn left';
+                leftBtn.type = 'button';
+                leftBtn.innerHTML = '<i class="bx bx-chevron-left"></i>';
+                leftBtn.addEventListener('click', () => {
+                    scrollContainer.scrollBy({ left: -220, behavior: 'smooth' });
+                });
+
+                const rightBtn = document.createElement('button');
+                rightBtn.className = 'scroll-btn right';
+                rightBtn.type = 'button';
+                rightBtn.innerHTML = '<i class="bx bx-chevron-right"></i>';
+                rightBtn.addEventListener('click', () => {
+                    scrollContainer.scrollBy({ left: 220, behavior: 'smooth' });
+                });
+
+                target.appendChild(leftBtn);
+                target.appendChild(rightBtn);
+
                 heroes.forEach(hero => {
                     const label = document.createElement('label');
                     label.className = 'hero-card';
@@ -847,8 +919,10 @@
                     label.appendChild(checkbox);
                     label.appendChild(avatar);
                     label.appendChild(name);
-                    target.appendChild(label);
+                    scrollContainer.appendChild(label);
                 });
+
+                target.appendChild(scrollContainer);
             });
         }
 
