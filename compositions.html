@@ -504,7 +504,14 @@
         }
 
         function getToken() {
-            return localStorage.getItem('access_token');
+            const localToken = localStorage.getItem('access_token');
+            if (localToken) return localToken;
+
+            const sessionToken = sessionStorage.getItem('access_token');
+            if (sessionToken) return sessionToken;
+
+            const match = document.cookie.match(/(?:^|; )access_token=([^;]+)/);
+            return match ? decodeURIComponent(match[1]) : null;
         }
 
         function getUserIdFromToken() {

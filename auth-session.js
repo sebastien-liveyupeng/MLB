@@ -78,9 +78,33 @@ function closeSignupModal() {
 }
 
 // Gestion de la session utilisateur
+function getStoredToken() {
+    const localToken = localStorage.getItem('access_token');
+    if (localToken) return localToken;
+
+    const sessionToken = sessionStorage.getItem('access_token');
+    if (sessionToken) return sessionToken;
+
+    const match = document.cookie.match(/(?:^|; )access_token=([^;]+)/);
+    return match ? decodeURIComponent(match[1]) : null;
+}
+
+function setStoredToken(token) {
+    if (!token) return;
+    localStorage.setItem('access_token', token);
+    sessionStorage.setItem('access_token', token);
+    const secure = location.protocol === 'https:' ? '; Secure' : '';
+    document.cookie = `access_token=${encodeURIComponent(token)}; Path=/; Max-Age=604800; SameSite=Lax${secure}`;
+}
+
+function clearStoredToken() {
+    localStorage.removeItem('access_token');
+    sessionStorage.removeItem('access_token');
+    document.cookie = 'access_token=; Path=/; Max-Age=0';
+}
 async function checkUserSession() {
     try {
-        const token = localStorage.getItem('access_token');
+        const token = getStoredToken();
         const authNav = document.getElementById('authNav');
         const userNav = document.getElementById('userNav');
 
@@ -128,7 +152,7 @@ async function checkUserSession() {
         } else {
             // Token invalide ou réponse non-ok - supprimer le token
             console.log('Session check failed, clearing token');
-            localStorage.removeItem('access_token');
+            clearStoredToken();
             authNav.style.setProperty('display', 'flex', 'important');
             userNav.style.setProperty('display', 'none', 'important');
         }
@@ -147,7 +171,7 @@ async function checkUserSession() {
 
 // Fonction de déconnexion
 function handleLogout() {
-    localStorage.removeItem('access_token');
+    clearStoredToken();
     location.reload();
 }
 
@@ -207,7 +231,7 @@ async function handleLoginModal(event) {
 
         // Stocker le token
         if (data.session && data.session.access_token) {
-            localStorage.setItem('access_token', data.session.access_token);
+            setStoredToken(data.session.access_token);
         }
         
         if (loginSuccessElement) {
@@ -324,7 +348,7 @@ function closeProfileModal() {
 
 async function loadProfileData() {
     try {
-        const token = localStorage.getItem('access_token');
+        const token = getStoredToken();
         if (!token) return;
 
         const response = await fetch('/api/auth/profile', {
@@ -384,7 +408,7 @@ async function handleProfileUpdate(event) {
     }
 
     try {
-        const token = localStorage.getItem('access_token');
+        const token = getStoredToken();
         if (!token) {
             if (errorElement) errorElement.textContent = 'Vous n\'êtes pas connecté';
             return;
