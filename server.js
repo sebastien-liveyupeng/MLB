@@ -498,11 +498,33 @@ async function handleCompositions(req, res) {
     }
 
     if (req.method === 'GET') {
-      const { data: compositions, error } = await supabase
+      const { data: sharedLinks, error: sharedError } = await supabase
+        .from('composition_members')
+        .select('composition_id')
+        .eq('member_id', userId);
+
+      if (sharedError) {
+        console.error('Shared compositions error:', sharedError);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Failed to fetch shared compositions' }));
+        return;
+      }
+
+      const sharedIds = (sharedLinks || []).map(item => item.composition_id);
+      const uniqueIds = Array.from(new Set(sharedIds));
+
+      let query = supabase
         .from('compositions')
         .select('*')
-        .or(`owner_id.eq.${userId},is_shared.eq.true`)
         .order('created_at', { ascending: false });
+
+      if (uniqueIds.length > 0) {
+        query = query.or(`owner_id.eq.${userId},id.in.(${uniqueIds.join(',')})`);
+      } else {
+        query = query.eq('owner_id', userId);
+      }
+
+      const { data: compositions, error } = await query;
 
       if (error) {
         console.error('Database error:', error);
@@ -528,7 +550,7 @@ async function handleCompositions(req, res) {
       req.on('end', async () => {
         try {
           const parsedBody = JSON.parse(body || '{}');
-          const { name, heroes, is_shared } = parsedBody;
+          const { name, heroes, shared_with } = parsedBody;
 
           if (!name || !name.trim()) {
             res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -566,7 +588,7 @@ async function handleCompositions(req, res) {
                 name: name.trim(),
                 owner_id: userId,
                 owner_username: ownerUsername,
-                is_shared: Boolean(is_shared),
+                is_shared: Array.isArray(shared_with) && shared_with.length > 0,
                 heroes: normalizedHeroes,
                 created_at: new Date().toISOString()
               }
@@ -580,10 +602,36 @@ async function handleCompositions(req, res) {
             return;
           }
 
+          const composition = data[0];
+          const membersToShare = Array.isArray(shared_with)
+            ? shared_with
+                .filter(memberId => typeof memberId === 'string' && memberId.trim())
+                .map(memberId => memberId.trim())
+            : [];
+
+          if (membersToShare.length > 0) {
+            const uniqueMembers = Array.from(new Set(membersToShare));
+            const links = uniqueMembers.map(memberId => ({
+              composition_id: composition.id,
+              member_id: memberId
+            }));
+
+            const { error: linkError } = await supabase
+              .from('composition_members')
+              .insert(links);
+
+            if (linkError) {
+              console.error('Share insert error:', linkError);
+              res.writeHead(500, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: 'Failed to share composition' }));
+              return;
+            }
+          }
+
           res.writeHead(201, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({
             success: true,
-            composition: data[0]
+            composition
           }));
         } catch (error) {
           console.error('Compositions save error:', error);
@@ -651,11 +699,13 @@ async function handleUsers(req, res) {
       return;
     }
 
-    const users = (data?.users || []).map(account => ({
-      id: account.id,
-      email: account.email,
-      username: account.user_metadata?.username || account.email?.split('@')[0] || 'Membre'
-    }));
+    const users = (data?.users || [])
+      .filter(account => account.id !== userId)
+      .map(account => ({
+        id: account.id,
+        email: account.email,
+        username: account.user_metadata?.username || account.email?.split('@')[0] || 'Membre'
+      }));
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ success: true, users }));

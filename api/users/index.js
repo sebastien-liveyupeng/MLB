@@ -46,11 +46,13 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ error: 'Failed to fetch users' });
     }
 
-    const users = (data?.users || []).map(account => ({
-      id: account.id,
-      email: account.email,
-      username: account.user_metadata?.username || account.email?.split('@')[0] || 'Membre'
-    }));
+    const users = (data?.users || [])
+      .filter(account => account.id !== userId)
+      .map(account => ({
+        id: account.id,
+        email: account.email,
+        username: account.user_metadata?.username || account.email?.split('@')[0] || 'Membre'
+      }));
 
     return res.status(200).json({ success: true, users });
   } catch (error) {

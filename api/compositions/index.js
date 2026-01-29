@@ -36,11 +36,31 @@ module.exports = async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      const { data: compositions, error } = await supabase
+      const { data: sharedLinks, error: sharedError } = await supabase
+        .from('composition_members')
+        .select('composition_id')
+        .eq('member_id', userId);
+
+      if (sharedError) {
+        console.error('Shared compositions error:', sharedError);
+        return res.status(500).json({ error: 'Failed to fetch shared compositions' });
+      }
+
+      const sharedIds = (sharedLinks || []).map(item => item.composition_id);
+      const uniqueIds = Array.from(new Set(sharedIds));
+
+      let query = supabase
         .from('compositions')
         .select('*')
-        .or(`owner_id.eq.${userId},is_shared.eq.true`)
         .order('created_at', { ascending: false });
+
+      if (uniqueIds.length > 0) {
+        query = query.or(`owner_id.eq.${userId},id.in.(${uniqueIds.join(',')})`);
+      } else {
+        query = query.eq('owner_id', userId);
+      }
+
+      const { data: compositions, error } = await query;
 
       if (error) {
         console.error('Database error:', error);
@@ -68,7 +88,7 @@ module.exports = async function handler(req, res) {
         }
       }
 
-      const { name, heroes, is_shared } = body || {};
+      const { name, heroes, shared_with } = body || {};
 
       if (!name || !name.trim()) {
         return res.status(400).json({ error: 'Name is required' });
@@ -100,7 +120,7 @@ module.exports = async function handler(req, res) {
             name: name.trim(),
             owner_id: userId,
             owner_username: ownerUsername,
-            is_shared: Boolean(is_shared),
+            is_shared: Array.isArray(shared_with) && shared_with.length > 0,
             heroes: normalizedHeroes,
             created_at: new Date().toISOString()
           }
@@ -112,9 +132,33 @@ module.exports = async function handler(req, res) {
         return res.status(500).json({ error: 'Failed to save composition' });
       }
 
+      const composition = data[0];
+      const membersToShare = Array.isArray(shared_with)
+        ? shared_with
+            .filter(memberId => typeof memberId === 'string' && memberId.trim())
+            .map(memberId => memberId.trim())
+        : [];
+
+      if (membersToShare.length > 0) {
+        const uniqueMembers = Array.from(new Set(membersToShare));
+        const links = uniqueMembers.map(memberId => ({
+          composition_id: composition.id,
+          member_id: memberId
+        }));
+
+        const { error: linkError } = await supabase
+          .from('composition_members')
+          .insert(links);
+
+        if (linkError) {
+          console.error('Share insert error:', linkError);
+          return res.status(500).json({ error: 'Failed to share composition' });
+        }
+      }
+
       return res.status(201).json({
         success: true,
-        composition: data[0]
+        composition
       });
     } catch (error) {
       console.error('Compositions save error:', error);

@@ -142,6 +142,17 @@
             color: #ff6b35;
         }
 
+        .member-chip input {
+            transform: scale(1.1);
+        }
+
+        .share-note {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            margin-top: -0.6rem;
+            margin-bottom: 0.6rem;
+        }
+
         .toggle-share input {
             transform: scale(1.2);
         }
@@ -327,8 +338,9 @@
                 </div>
                 <div class="toggle-share">
                     <input type="checkbox" id="compositionShared">
-                    <label for="compositionShared">Partager avec les membres connectés (tous les comptes Supabase)</label>
+                    <label for="compositionShared">Partager avec des membres sélectionnés</label>
                 </div>
+                <div class="share-note">Sélectionne un ou plusieurs membres pour partager cette composition.</div>
                 <div id="membersInfo" class="login-hint" style="display: none;">
                     Liste des membres disponibles après connexion.
                 </div>
@@ -380,6 +392,7 @@
         const loginHint = document.getElementById('loginHint');
         const membersInfo = document.getElementById('membersInfo');
         const membersList = document.getElementById('membersList');
+        const shareToggle = document.getElementById('compositionShared');
 
         const heroesByRole = {
             Tank: ['Akai', 'Atlas', 'Tigreal', 'Belerick', 'Khufra', 'Lolita'],
@@ -432,11 +445,31 @@
 
             membersList.innerHTML = '';
             users.forEach(user => {
-                const chip = document.createElement('div');
-                chip.className = 'member-chip';
-                chip.innerHTML = `<i class='bx bx-user'></i>${user.username}`;
-                membersList.appendChild(chip);
+                const label = document.createElement('label');
+                label.className = 'member-chip';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = user.id;
+                checkbox.dataset.username = user.username;
+                checkbox.disabled = !shareToggle.checked;
+
+                const icon = document.createElement('i');
+                icon.className = 'bx bx-user';
+
+                const name = document.createElement('span');
+                name.textContent = user.username;
+
+                label.appendChild(checkbox);
+                label.appendChild(icon);
+                label.appendChild(name);
+                membersList.appendChild(label);
             });
+        }
+
+        function getSelectedMembers() {
+            const selected = Array.from(membersList.querySelectorAll('input[type="checkbox"]:checked'));
+            return selected.map(input => input.value);
         }
 
         function getToken() {
@@ -583,6 +616,9 @@
                 const data = await response.json();
                 renderMembers(data.users || []);
                 membersList.dataset.loaded = 'true';
+                membersList.querySelectorAll('input[type="checkbox"]').forEach(input => {
+                    input.disabled = !shareToggle.checked;
+                });
             } catch (error) {
                 console.error(error);
                 membersList.innerHTML = '<div class="empty-state">Erreur serveur lors du chargement.</div>';
@@ -599,7 +635,8 @@
 
             const name = document.getElementById('compositionName').value.trim();
             const heroes = readHeroes();
-            const isShared = document.getElementById('compositionShared').checked;
+            const isShared = shareToggle.checked;
+            const sharedWith = isShared ? getSelectedMembers() : [];
 
             if (!name) {
                 setStatus('Ajoute un nom pour la composition.', 'error');
@@ -608,6 +645,11 @@
 
             if (heroes.length === 0) {
                 setStatus('Ajoute au moins un héros avec son rôle.', 'error');
+                return;
+            }
+
+            if (isShared && sharedWith.length === 0) {
+                setStatus('Sélectionne au moins un membre pour le partage.', 'error');
                 return;
             }
 
@@ -623,7 +665,7 @@
                     body: JSON.stringify({
                         name,
                         heroes,
-                        is_shared: isShared
+                        shared_with: sharedWith
                     })
                 });
 
@@ -635,7 +677,11 @@
 
                 setStatus('Composition sauvegardée !', 'success');
                 document.getElementById('compositionName').value = '';
-                document.getElementById('compositionShared').checked = false;
+                shareToggle.checked = false;
+                membersList.querySelectorAll('input[type="checkbox"]').forEach(input => {
+                    input.checked = false;
+                    input.disabled = true;
+                });
                 document.querySelectorAll('#heroTable input[data-role]').forEach(input => {
                     input.checked = false;
                 });
@@ -664,6 +710,15 @@
             membersList.dataset.loaded = 'false';
             return false;
         }
+
+        shareToggle.addEventListener('change', () => {
+            membersList.querySelectorAll('input[type="checkbox"]').forEach(input => {
+                input.disabled = !shareToggle.checked;
+                if (!shareToggle.checked) {
+                    input.checked = false;
+                }
+            });
+        });
 
         const hasSession = updateAuthState();
         if (hasSession) {
