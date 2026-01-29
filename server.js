@@ -3,8 +3,6 @@ const fs = require('fs');
 const path = require('path');
 const url = require('url');
 const friendsHandler = require('./api/friends');
-const userProfileHandler = require('./api/users/profile');
-const userAvatarHandler = require('./api/users/avatar');
 require('dotenv').config({ path: '.env.local' });
 
 const PORT = 3002;
@@ -51,12 +49,6 @@ const server = http.createServer((req, res) => {
       return;
     } else if (apiPath === 'users') {
       handleUsers(req, res);
-      return;
-    } else if (apiPath === 'users/profile') {
-      userProfileHandler(req, res);
-      return;
-    } else if (apiPath === 'users/avatar') {
-      userAvatarHandler(req, res);
       return;
     } else if (apiPath === 'friends') {
       friendsHandler(req, res);

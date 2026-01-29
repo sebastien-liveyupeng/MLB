@@ -442,7 +442,7 @@ async function uploadAvatarFile(file) {
     });
 
     try {
-        const response = await fetch('/api/users/avatar', {
+        const response = await fetch('/api/users?avatar=1', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,

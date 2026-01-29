@@ -120,10 +120,10 @@
                 return;
             }
 
-            const query = userId ? `id=${encodeURIComponent(userId)}` : `username=${encodeURIComponent(username)}`;
+            const query = userId ? `profile=1&id=${encodeURIComponent(userId)}` : `profile=1&username=${encodeURIComponent(username)}`;
 
             try {
-                const response = await fetch(`/api/users/profile?${query}`);
+                const response = await fetch(`/api/users?${query}`);
                 const data = await response.json();
 
                 if (!response.ok || !data?.user) {
