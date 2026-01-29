@@ -503,14 +503,20 @@ async function handleCompositions(req, res) {
         .select('composition_id')
         .eq('member_id', userId);
 
+      let sharedIds = [];
       if (sharedError) {
-        console.error('Shared compositions error:', sharedError);
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Failed to fetch shared compositions' }));
-        return;
+        const message = sharedError.message || '';
+        if (message.includes('composition_members') && message.includes('does not exist')) {
+          sharedIds = [];
+        } else {
+          console.error('Shared compositions error:', sharedError);
+          res.writeHead(500, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Failed to fetch shared compositions' }));
+          return;
+        }
+      } else {
+        sharedIds = (sharedLinks || []).map(item => item.composition_id);
       }
-
-      const sharedIds = (sharedLinks || []).map(item => item.composition_id);
       const uniqueIds = Array.from(new Set(sharedIds));
 
       let query = supabase
