@@ -33,22 +33,16 @@
         }
 
         .composition-grid {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr);
-            gap: 2rem;
-        }
-
-        @media (min-width: 992px) {
-            .composition-grid {
-                grid-template-columns: 1.2fr 1fr;
-            }
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
         }
 
         .panel {
             background: linear-gradient(135deg, rgba(25, 25, 35, 0.75) 0%, rgba(50, 25, 20, 0.55) 100%);
             border: 2px solid rgba(156, 44, 23, 0.4);
             border-radius: 18px;
-            padding: 1.8rem;
+            padding: 2.2rem;
             box-shadow: 0 16px 30px rgba(0, 0, 0, 0.25);
         }
 
@@ -92,7 +86,7 @@
         .roles-table th,
         .roles-table td {
             border: 1px solid rgba(255, 255, 255, 0.12);
-            padding: 0.6rem;
+            padding: 0.9rem;
             vertical-align: top;
         }
 
@@ -103,15 +97,20 @@
             background: rgba(255, 255, 255, 0.06);
         }
 
-        .roles-table input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #FFFFFF;
-            padding: 0.55rem 0.7rem;
+        .role-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem 0.5rem;
             border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 0.45rem;
             font-size: 0.9rem;
-            margin-bottom: 0.4rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .role-option input {
+            transform: scale(1.15);
         }
 
         .toggle-share {
@@ -170,7 +169,7 @@
             background: rgba(11, 11, 15, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 14px;
-            padding: 1.2rem;
+            padding: 1.5rem;
         }
 
         .composition-card h3 {
@@ -321,30 +320,12 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>
-                                <input type="text" data-role="Tank" placeholder="Héros Tank 1">
-                                <input type="text" data-role="Tank" placeholder="Héros Tank 2">
-                            </td>
-                            <td>
-                                <input type="text" data-role="Fighter" placeholder="Héros Fighter 1">
-                                <input type="text" data-role="Fighter" placeholder="Héros Fighter 2">
-                            </td>
-                            <td>
-                                <input type="text" data-role="Assassin" placeholder="Héros Assassin 1">
-                                <input type="text" data-role="Assassin" placeholder="Héros Assassin 2">
-                            </td>
-                            <td>
-                                <input type="text" data-role="Mage" placeholder="Héros Mage 1">
-                                <input type="text" data-role="Mage" placeholder="Héros Mage 2">
-                            </td>
-                            <td>
-                                <input type="text" data-role="Marksman" placeholder="Héros Marksman 1">
-                                <input type="text" data-role="Marksman" placeholder="Héros Marksman 2">
-                            </td>
-                            <td>
-                                <input type="text" data-role="Support" placeholder="Héros Support 1">
-                                <input type="text" data-role="Support" placeholder="Héros Support 2">
-                            </td>
+                            <td id="role-tank"></td>
+                            <td id="role-fighter"></td>
+                            <td id="role-assassin"></td>
+                            <td id="role-mage"></td>
+                            <td id="role-marksman"></td>
+                            <td id="role-support"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -372,6 +353,49 @@
         const compositionList = document.getElementById('compositionList');
         const loginHint = document.getElementById('loginHint');
 
+        const heroesByRole = {
+            Tank: ['Akai', 'Atlas', 'Tigreal', 'Belerick', 'Khufra', 'Lolita'],
+            Fighter: ['Aldous', 'Chou', 'Paquito', 'Yu Zhong', 'Dyrroth', 'Terizla'],
+            Assassin: ['Fanny', 'Gusion', 'Lancelot', 'Hayabusa', 'Ling', 'Saber'],
+            Mage: ['Eudora', 'Lunox', 'Kagura', 'Lylia', 'Valentina', 'Pharsa'],
+            Marksman: ['Beatrix', 'Brody', 'Claude', 'Karrie', 'Lesley', 'Wanwan'],
+            Support: ['Estes', 'Angela', 'Diggie', 'Mathilda', 'Rafaela', 'Floryn']
+        };
+
+        const roleTargets = {
+            Tank: document.getElementById('role-tank'),
+            Fighter: document.getElementById('role-fighter'),
+            Assassin: document.getElementById('role-assassin'),
+            Mage: document.getElementById('role-mage'),
+            Marksman: document.getElementById('role-marksman'),
+            Support: document.getElementById('role-support')
+        };
+
+        function renderHeroTable() {
+            Object.entries(heroesByRole).forEach(([role, heroes]) => {
+                const target = roleTargets[role];
+                if (!target) return;
+                target.innerHTML = '';
+
+                heroes.forEach(hero => {
+                    const label = document.createElement('label');
+                    label.className = 'role-option';
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.dataset.role = role;
+                    checkbox.value = hero;
+
+                    const span = document.createElement('span');
+                    span.textContent = hero;
+
+                    label.appendChild(checkbox);
+                    label.appendChild(span);
+                    target.appendChild(label);
+                });
+            });
+        }
+
         function getToken() {
             return localStorage.getItem('access_token');
         }
@@ -382,10 +406,10 @@
         }
 
         function readHeroes() {
-            const inputs = document.querySelectorAll('#heroTable input[data-role]');
+            const checks = document.querySelectorAll('#heroTable input[data-role]:checked');
             const heroes = [];
 
-            inputs.forEach(input => {
+            checks.forEach(input => {
                 const name = input.value.trim();
                 const role = input.dataset.role;
 
@@ -538,7 +562,9 @@
                 setStatus('Composition sauvegardée !', 'success');
                 document.getElementById('compositionName').value = '';
                 document.getElementById('compositionShared').checked = false;
-                document.querySelectorAll('#heroTable input[data-role]').forEach(input => input.value = '');
+                document.querySelectorAll('#heroTable input[data-role]').forEach(input => {
+                    input.checked = false;
+                });
                 await loadCompositions();
             } catch (error) {
                 console.error(error);
@@ -548,6 +574,7 @@
             }
         }
 
+        renderHeroTable();
         saveButton.addEventListener('click', saveComposition);
 
         function updateAuthState() {
