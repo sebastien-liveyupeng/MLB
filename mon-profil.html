@@ -26,17 +26,17 @@
         }
 
         .profile-page {
-            max-width: 720px;
+            max-width: 900px;
             margin: 2rem auto 4rem;
             padding: 0 1.5rem;
         }
 
         .profile-panel {
-            background: var(--panel-bg);
-            border: 2px solid var(--panel-border);
-            border-radius: 20px;
-            padding: 2.2rem;
-            box-shadow: var(--shadow-strong);
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
         }
 
         .profile-panel h1 {
@@ -48,6 +48,12 @@
         .profile-panel p {
             color: var(--text-muted);
             margin-bottom: 1.5rem;
+            max-width: 560px;
+        }
+
+        .profile-form {
+            display: grid;
+            gap: 1.2rem;
         }
 
         .form-group {
@@ -234,7 +240,7 @@
             <div id="loginHint" class="login-hint" style="display: none;">
                 Connecte-toi pour modifier ton profil.
             </div>
-            <form onsubmit="handleProfileUpdate(event)">
+            <form class="profile-form" onsubmit="handleProfileUpdate(event)">
                 <div class="form-group">
                     <label for="profile-username">
                         <i class='bx bx-user'></i> Nom d'utilisateur
