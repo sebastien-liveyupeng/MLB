@@ -118,6 +118,8 @@
         box-shadow: 0 20px 60px rgba(156, 44, 23, 0.3);
         animation: slideUp 0.4s ease;
         backdrop-filter: blur(20px);
+        max-height: 90vh;
+        overflow-y: auto;
     }
 
     .auth-modal-close {
@@ -392,11 +394,9 @@
                 <label>
                     <i class='bx bx-image-alt'></i> Photo de profil
                 </label>
-                <div class="avatar-picker" id="avatarPicker"></div>
                 <div class="avatar-preview">
                     <img id="profile-avatar-preview" src="" alt="Avatar sélectionné">
                 </div>
-                <input type="hidden" id="profile-avatar-url">
                 <input type="url" id="profile-avatar-custom" placeholder="URL d'une image (optionnel)">
                 <input type="file" id="profile-avatar-file" accept="image/*">
                 <small class="avatar-hint">Choisis une image depuis ta galerie.</small>
@@ -454,34 +454,6 @@
         box-shadow: 0 0 15px rgba(255, 107, 53, 0.2);
     }
 
-    #profileModal .avatar-picker {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
-        gap: 0.6rem;
-        margin-bottom: 0.6rem;
-    }
-
-    #profileModal .avatar-picker button {
-        border: 2px solid rgba(255, 255, 255, 0.15);
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 12px;
-        padding: 0.3rem;
-        cursor: pointer;
-        transition: border 0.2s ease, transform 0.2s ease;
-    }
-
-    #profileModal .avatar-picker button.selected {
-        border-color: #ff6b35;
-        transform: translateY(-2px);
-    }
-
-    #profileModal .avatar-picker img {
-        width: 100%;
-        height: 64px;
-        object-fit: cover;
-        border-radius: 10px;
-        display: block;
-    }
 
     #profileModal .avatar-preview {
         display: flex;

@@ -69,7 +69,8 @@ const server = http.createServer((req, res) => {
     '/apropos': '/apropos.html',
     '/galerie': '/galerie.html',
     '/auth': '/auth.html',
-    '/profil': '/profil.html'
+    '/profil': '/profil.html',
+    '/profils': '/profils.html'
   };
 
   if (rewrites[pathname]) {

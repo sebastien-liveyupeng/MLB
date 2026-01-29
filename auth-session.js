@@ -325,66 +325,18 @@ document.addEventListener('click', function(event) {
 });
 
 // Gestion du profil utilisateur
-const defaultAvatars = [
-    '/assets/avatars/avatar-1.svg',
-    '/assets/avatars/avatar-2.svg',
-    '/assets/avatars/avatar-3.svg',
-    '/assets/avatars/avatar-4.svg',
-    '/assets/avatars/avatar-5.svg',
-    '/assets/avatars/avatar-6.svg'
-];
-
 function setSelectedAvatar(url) {
-    const hiddenInput = document.getElementById('profile-avatar-url');
     const preview = document.getElementById('profile-avatar-preview');
-    if (hiddenInput) {
-        hiddenInput.value = url || '';
-    }
     if (preview) {
         preview.src = url || '';
         preview.style.display = url ? 'block' : 'none';
     }
-
-    const picker = document.getElementById('avatarPicker');
-    if (picker) {
-        picker.querySelectorAll('button').forEach(btn => {
-            btn.classList.toggle('selected', btn.dataset.avatar === url);
-        });
-    }
-}
-
-function buildAvatarPicker(selectedUrl) {
-    const picker = document.getElementById('avatarPicker');
-    if (!picker) return;
-
-    picker.innerHTML = '';
-    defaultAvatars.forEach(url => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.dataset.avatar = url;
-
-        const img = document.createElement('img');
-        img.src = url;
-        img.alt = 'Avatar';
-
-        button.appendChild(img);
-        button.addEventListener('click', () => {
-            const customInput = document.getElementById('profile-avatar-custom');
-            if (customInput) customInput.value = '';
-            setSelectedAvatar(url);
-        });
-
-        picker.appendChild(button);
-    });
-
-    setSelectedAvatar(selectedUrl || defaultAvatars[0]);
 }
 
 function openProfileModal() {
     const profileModal = document.getElementById('profileModal');
     if (profileModal) {
         // Charger les données du profil actuel
-        buildAvatarPicker();
         const customInput = document.getElementById('profile-avatar-custom');
         if (customInput && !customInput.dataset.bound) {
             customInput.addEventListener('input', () => {
@@ -392,7 +344,7 @@ function openProfileModal() {
                 if (value) {
                     setSelectedAvatar(value);
                 } else {
-                    const current = document.getElementById('profile-avatar-url')?.value || defaultAvatars[0];
+                    const current = document.getElementById('profile-avatar-preview')?.src || '';
                     setSelectedAvatar(current);
                 }
             });
@@ -501,8 +453,7 @@ async function loadProfileData() {
             if (bioField) bioField.value = data.user.bio || '';
 
             const avatarUrl = data.user.avatar_url || '';
-            buildAvatarPicker(avatarUrl);
-            setSelectedAvatar(avatarUrl || defaultAvatars[0]);
+            setSelectedAvatar(avatarUrl);
 
             const publicLink = document.getElementById('profile-public-link');
             if (publicLink && data.user.id) {
@@ -544,9 +495,8 @@ async function handleProfileUpdate(event) {
     const username = document.getElementById('profile-username').value;
     const email = document.getElementById('profile-email').value;
     const bio = document.getElementById('profile-bio')?.value || '';
-    const avatarHidden = document.getElementById('profile-avatar-url')?.value || '';
     const avatarCustom = document.getElementById('profile-avatar-custom')?.value || '';
-    const avatar_url = avatarCustom || avatarHidden;
+    const avatar_url = avatarCustom || document.getElementById('profile-avatar-preview')?.src || '';
     const currentPassword = document.getElementById('profile-current-password').value;
     const newPassword = document.getElementById('profile-new-password').value;
 

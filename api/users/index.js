@@ -176,7 +176,9 @@ module.exports = async function handler(req, res) {
       .map(account => ({
         id: account.id,
         email: account.email,
-        username: account.user_metadata?.username || account.email?.split('@')[0] || 'Membre'
+        username: account.user_metadata?.username || account.email?.split('@')[0] || 'Membre',
+        bio: account.user_metadata?.bio || '',
+        avatar_url: account.user_metadata?.avatar_url || ''
       }));
 
     return res.status(200).json({ success: true, users });

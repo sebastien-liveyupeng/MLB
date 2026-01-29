@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profils - Gascom Esport</title>
+    <link rel="icon" type="image/png" href="assets/Ges-white.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        :root {
+            --accent: #ff6b35;
+            --accent-strong: #d94a1f;
+            --text-primary: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+            --panel-bg: linear-gradient(135deg, rgba(18, 18, 28, 0.9), rgba(42, 20, 16, 0.78));
+            --panel-border: rgba(156, 44, 23, 0.45);
+            --shadow-strong: 0 20px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        .profiles-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem 4rem;
+        }
+
+        .profiles-hero {
+            text-align: center;
+            padding: 2.5rem 1rem 1.5rem;
+        }
+
+        .profiles-hero h1 {
+            font-family: 'Russo One', sans-serif;
+            font-size: 2.6rem;
+            color: var(--text-primary);
+            margin-bottom: 0.6rem;
+        }
+
+        .profiles-hero p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        .profiles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.4rem;
+            margin-top: 2rem;
+        }
+
+        .profile-card {
+            background: var(--panel-bg);
+            border: 2px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-strong);
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .profile-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 32px rgba(255, 107, 53, 0.25);
+        }
+
+        .profile-avatar {
+            width: 92px;
+            height: 92px;
+            margin: 0 auto 0.8rem;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .profile-initials {
+            font-weight: 800;
+            color: #fff;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+        }
+
+        .profile-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #fff;
+        }
+
+        .profile-bio {
+            margin-top: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            min-height: 42px;
+        }
+
+        .profile-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.8rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .status {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <section class="profiles-hero">
+        <h1>Profils de l'équipe</h1>
+        <p>Découvre les membres et leurs profils.</p>
+    </section>
+
+    <section class="profiles-container">
+        <div class="profiles-grid" id="profilesGrid"></div>
+        <div class="status" id="profilesStatus">Chargement...</div>
+    </section>
+
+    <script>
+        const grid = document.getElementById('profilesGrid');
+        const status = document.getElementById('profilesStatus');
+
+        function getToken() {
+            const localToken = localStorage.getItem('access_token');
+            if (localToken) return localToken;
+            const sessionToken = sessionStorage.getItem('access_token');
+            if (sessionToken) return sessionToken;
+            const match = document.cookie.match(/(?:^|; )access_token=([^;]+)/);
+            return match ? decodeURIComponent(match[1]) : null;
+        }
+
+        async function loadProfiles() {
+            const token = getToken();
+            if (!token) {
+                status.textContent = 'Connecte-toi pour voir les profils.';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/users', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    status.textContent = data.error || 'Impossible de charger les profils.';
+                    return;
+                }
+
+                const users = data.users || [];
+                if (users.length === 0) {
+                    status.textContent = 'Aucun profil disponible.';
+                    return;
+                }
+
+                grid.innerHTML = '';
+                users.forEach(user => {
+                    const card = document.createElement('div');
+                    card.className = 'profile-card';
+
+                    const avatar = document.createElement('div');
+                    avatar.className = 'profile-avatar';
+                    if (user.avatar_url) {
+                        const img = document.createElement('img');
+                        img.src = user.avatar_url;
+                        img.alt = user.username || 'Membre';
+                        avatar.appendChild(img);
+                    } else {
+                        const initials = document.createElement('div');
+                        initials.className = 'profile-initials';
+                        const name = user.username || 'Membre';
+                        initials.textContent = name.split(' ').map(part => part[0]).join('').slice(0, 2).toUpperCase();
+                        avatar.appendChild(initials);
+                    }
+
+                    const name = document.createElement('div');
+                    name.className = 'profile-name';
+                    name.textContent = user.username || 'Membre';
+
+                    const bio = document.createElement('div');
+                    bio.className = 'profile-bio';
+                    bio.textContent = user.bio || 'Aucune bio pour le moment.';
+
+                    const link = document.createElement('a');
+                    link.className = 'profile-link';
+                    link.href = `/profil?id=${encodeURIComponent(user.id)}`;
+                    link.innerHTML = `<i class='bx bx-link-external'></i> Voir le profil`;
+
+                    card.appendChild(avatar);
+                    card.appendChild(name);
+                    card.appendChild(bio);
+                    card.appendChild(link);
+                    grid.appendChild(card);
+                });
+
+                status.textContent = '';
+            } catch (error) {
+                console.error(error);
+                status.textContent = 'Erreur lors du chargement.';
+            }
+        }
+
+        loadProfiles();
+    </script>
+</body>
+</html>

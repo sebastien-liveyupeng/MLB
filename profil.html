@@ -61,6 +61,13 @@
             display: block;
         }
 
+        .profile-initials {
+            font-weight: 800;
+            font-size: 2rem;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
         .profile-name {
             font-family: 'Russo One', sans-serif;
             font-size: 2rem;
@@ -96,9 +103,7 @@
 
     <div class="profile-wrapper">
         <div class="profile-card" id="profileCard" style="display: none;">
-            <div class="profile-avatar">
-                <img id="profileAvatar" src="" alt="Avatar utilisateur">
-            </div>
+            <div class="profile-avatar" id="profileAvatar"></div>
             <div>
                 <div class="profile-name" id="profileName"></div>
                 <div class="profile-bio" id="profileBio"></div>
@@ -131,14 +136,22 @@
                     return;
                 }
 
-                document.getElementById('profileName').textContent = data.user.username || 'Membre';
+                const displayName = data.user.username || 'Membre';
+                document.getElementById('profileName').textContent = displayName;
                 document.getElementById('profileBio').textContent = data.user.bio || 'Aucune bio pour le moment.';
 
                 const avatar = document.getElementById('profileAvatar');
+                avatar.innerHTML = '';
                 if (data.user.avatar_url) {
-                    avatar.src = data.user.avatar_url;
+                    const img = document.createElement('img');
+                    img.src = data.user.avatar_url;
+                    img.alt = displayName;
+                    avatar.appendChild(img);
                 } else {
-                    avatar.src = '/assets/avatars/avatar-1.svg';
+                    const initials = document.createElement('div');
+                    initials.className = 'profile-initials';
+                    initials.textContent = displayName.split(' ').map(part => part[0]).join('').slice(0, 2).toUpperCase();
+                    avatar.appendChild(initials);
                 }
 
                 status.textContent = '';

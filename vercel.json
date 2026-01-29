@@ -12,6 +12,7 @@
     { "source": "/galerie", "destination": "/galerie.html" },
     { "source": "/chat", "destination": "/chat.html" },
     { "source": "/auth", "destination": "/auth.html" },
-    { "source": "/profil", "destination": "/profil.html" }
+    { "source": "/profil", "destination": "/profil.html" },
+    { "source": "/profils", "destination": "/profils.html" }
   ]
 }
