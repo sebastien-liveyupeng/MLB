@@ -90,6 +90,12 @@
             vertical-align: top;
         }
 
+        .roles-table td {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.7rem;
+        }
+
         .roles-table th {
             color: rgba(255, 255, 255, 0.85);
             font-size: 0.9rem;
@@ -136,8 +142,8 @@
         }
 
         .hero-avatar {
-            width: 64px;
-            height: 64px;
+            width: 92px;
+            height: 92px;
             border-radius: 50%;
             overflow: hidden;
             display: grid;
@@ -161,7 +167,7 @@
         }
 
         .hero-name {
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             color: rgba(255, 255, 255, 0.9);
             text-align: center;
         }
@@ -445,6 +451,100 @@
             padding: 1rem 1.2rem;
             border-radius: 12px;
             color: rgba(255, 255, 255, 0.85);
+        }
+
+        @media (max-width: 900px) {
+            .composition-container {
+                padding: 2rem 1rem 3rem;
+            }
+
+            .panel {
+                padding: 1.7rem;
+            }
+
+            .roles-table th,
+            .roles-table td {
+                padding: 0.7rem;
+            }
+
+            .hero-avatar {
+                width: 84px;
+                height: 84px;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .composition-hero {
+                padding: 2.2rem 1rem 1.6rem;
+            }
+
+            .composition-hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .composition-hero p {
+                font-size: 0.95rem;
+            }
+
+            .panel {
+                padding: 1.4rem;
+            }
+
+            .roles-table {
+                display: block;
+            }
+
+            .roles-table thead {
+                display: none;
+            }
+
+            .roles-table tbody,
+            .roles-table tr,
+            .roles-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .roles-table td {
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                border-radius: 12px;
+                margin-bottom: 0.9rem;
+                padding: 0.8rem;
+            }
+
+            .roles-table td::before {
+                display: block;
+                font-weight: 700;
+                color: rgba(255, 255, 255, 0.9);
+                margin-bottom: 0.6rem;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            #role-tank::before { content: 'Tank'; }
+            #role-fighter::before { content: 'Fighter'; }
+            #role-assassin::before { content: 'Assassin'; }
+            #role-mage::before { content: 'Mage'; }
+            #role-marksman::before { content: 'Marksman'; }
+            #role-support::before { content: 'Support'; }
+
+            .hero-avatar {
+                width: 96px;
+                height: 96px;
+            }
+
+            .hero-name {
+                font-size: 1rem;
+            }
+
+            .friend-search {
+                flex-direction: column;
+            }
+
+            .share-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
     </style>
 </head>
