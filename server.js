@@ -308,7 +308,7 @@ function handleProfile(req, res) {
 
           const { data: { user }, error } = await supabase.auth.admin.getUserById(
             // Extract user ID from token JWT
-            JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()).sub
+            JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString()).sub
           );
 
           if (error || !user) {
@@ -371,7 +371,7 @@ function handleProfile(req, res) {
         // Extract user ID from token
         let userId;
         try {
-          const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+          const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
           userId = decodedToken.sub;
         } catch (e) {
           res.writeHead(401, { 'Content-Type': 'application/json' });
@@ -478,7 +478,7 @@ async function handleCompositions(req, res) {
   let userId;
 
   try {
-    const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
     userId = decodedToken.sub;
   } catch (e) {
     res.writeHead(401, { 'Content-Type': 'application/json' });
@@ -702,7 +702,7 @@ async function handleUsers(req, res) {
   let userId;
 
   try {
-    const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
     userId = decodedToken.sub;
   } catch (e) {
     res.writeHead(401, { 'Content-Type': 'application/json' });
@@ -767,7 +767,7 @@ async function handleShareComposition(req, res) {
   let userId;
 
   try {
-    const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    const decodedToken = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
     userId = decodedToken.sub;
   } catch (e) {
     res.writeHead(401, { 'Content-Type': 'application/json' });
