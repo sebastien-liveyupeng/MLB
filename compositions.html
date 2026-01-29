@@ -909,60 +909,49 @@
             }
 
             container.innerHTML = '';
-                const renderRoleHeroes = (list) => {
-                    scrollContainer.innerHTML = '';
-                    list.forEach(hero => {
-                        const label = document.createElement('label');
-                        label.className = 'hero-card';
+            users.forEach(user => {
+                const label = document.createElement('label');
+                label.className = 'member-chip';
 
-                        const checkbox = document.createElement('input');
-                        checkbox.type = 'checkbox';
-                        checkbox.dataset.role = role;
-                        checkbox.value = hero;
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = user.id;
 
-                        const avatar = document.createElement('div');
-                        avatar.className = 'hero-avatar';
+                const icon = document.createElement('i');
+                icon.className = 'bx bx-user';
 
-                        const image = document.createElement('img');
-                        image.src = getHeroImage(hero);
-                        image.alt = hero;
+                const name = document.createElement('span');
+                name.textContent = user.username || user.email || 'Membre';
 
-                        const initials = document.createElement('span');
-                        initials.className = 'hero-initials';
-                        initials.textContent = getHeroInitials(hero);
-                        initials.style.display = 'none';
+                label.appendChild(checkbox);
+                label.appendChild(icon);
+                label.appendChild(name);
+                container.appendChild(label);
+            });
+        }
 
-                        image.addEventListener('error', () => {
-                            image.style.display = 'none';
-                            initials.style.display = 'inline';
-                        });
+        function renderFriendCards(container, users, emptyMessage, actionRenderer) {
+            if (!Array.isArray(users) || users.length === 0) {
+                container.innerHTML = `<div class="empty-state">${emptyMessage}</div>`;
+                return;
+            }
 
-                        avatar.appendChild(image);
-                        avatar.appendChild(initials);
+            container.innerHTML = '';
+            users.forEach(user => {
+                const card = document.createElement('div');
+                card.className = 'friend-card';
 
-                        const name = document.createElement('span');
-                        name.className = 'hero-name';
-                        name.textContent = hero;
+                const info = document.createElement('div');
+                info.className = 'friend-info';
 
-                        label.appendChild(checkbox);
-                        label.appendChild(avatar);
-                        label.appendChild(name);
-                        scrollContainer.appendChild(label);
-                    });
-                };
+                const name = document.createElement('span');
+                name.textContent = user.username || 'Membre';
 
-                renderRoleHeroes(heroes);
-
-                searchInput.addEventListener('input', () => {
-                    const query = searchInput.value.trim().toLowerCase();
-                    const filtered = heroes.filter(hero => hero.toLowerCase().includes(query));
-                    renderRoleHeroes(filtered);
-                });
                 const email = document.createElement('small');
-                target.appendChild(searchWrapper);
                 email.textContent = user.email || '';
 
-                target.appendChild(scrollContainer);
+                info.appendChild(name);
+                info.appendChild(email);
 
                 const actions = document.createElement('div');
                 actions.className = 'friend-actions';
