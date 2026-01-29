@@ -1,0 +1,2 @@
+# Ignore legacy friends API files (merged into /api/friends.js)
+/api/friends/**
