@@ -124,6 +124,50 @@
 <body>
     <div class="bg-animation"></div>
 
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <img src="assets/Ges-white.png" alt="Gascom Esport Logo" class="logo-img">
+                </div>
+                <div class="logo-text">Gascom Esport</div>
+            </div>
+            <nav>
+                <button class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="username-display-mobile" id="usernameDisplayMobile" style="display: none;">
+                    <span></span>
+                    <button class="logout-mobile-btn" onclick="handleLogout()"><i class='bx bx-log-out'></i></button>
+                </div>
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item"><a href="/">Accueil</a></li>
+                    <li class="nav-item"><a href="/equipe">Équipe</a></li>
+                    <li class="nav-item"><a href="/compositions">Compositions</a></li>
+                    <li class="nav-item"><a href="/tournois">Tournois</a></li>
+                    <li class="nav-item"><a href="/galerie">Galerie</a></li>
+                    <li class="nav-item"><a href="/contact">Contact</a></li>
+                    <li class="nav-item"><a href="/apropos">A propos</a></li>
+                    <li class="nav-item"><a href="/profils" class="active">Profils</a></li>
+                    <li class="nav-item"><a href="/chat"><i class='bx bx-message'></i> Chat</a></li>
+                    <li class="nav-item auth-nav" id="authNav">
+                        <button class="auth-btn" onclick="openLoginModal()">Connexion</button>
+                        <button class="auth-btn" onclick="openSignupModal()">Inscription</button>
+                    </li>
+                    <li class="nav-item user-nav" id="userNav" style="display: none;">
+                        <span class="username-display" id="usernameNav"></span>
+                        <button class="logout-btn" onclick="openProfileModal()" title="Mon Profil" style="background: transparent; border: none; color: #FFFFFF; cursor: pointer; padding: 0.5rem; font-size: 1.2rem;">
+                            <i class='bx bx-user-circle'></i>
+                        </button>
+                        <button class="logout-btn" onclick="handleLogout()">Déconnexion</button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
     <section class="profiles-hero">
         <h1>Profils de l'équipe</h1>
         <p>Découvre les membres et leurs profils.</p>
@@ -134,7 +178,25 @@
         <div class="status" id="profilesStatus">Chargement...</div>
     </section>
 
+    <script src="auth-session.js"></script>
     <script>
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        if (hamburger && navMenu) {
+            hamburger.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                hamburger.classList.toggle('active');
+            });
+
+            document.querySelectorAll('.nav-item a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navMenu.classList.remove('active');
+                    hamburger.classList.remove('active');
+                });
+            });
+        }
+
         const grid = document.getElementById('profilesGrid');
         const status = document.getElementById('profilesStatus');
 
