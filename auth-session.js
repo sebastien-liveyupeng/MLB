@@ -411,8 +411,8 @@ async function uploadAvatarFile(file) {
         return;
     }
 
-    if (file.size > 2 * 1024 * 1024) {
-        if (errorElement) errorElement.textContent = 'Image trop lourde (max 2MB).';
+    if (file.size > 20 * 1024 * 1024) {
+        if (errorElement) errorElement.textContent = 'Image trop lourde (max 20MB).';
         return;
     }
 
