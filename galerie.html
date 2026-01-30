@@ -246,6 +246,11 @@
                 box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35);
             }
 
+            .media-card.highlight {
+                outline: 2px solid rgba(156, 44, 23, 0.9);
+                box-shadow: 0 0 0 3px rgba(156, 44, 23, 0.35), 0 20px 40px rgba(0, 0, 0, 0.4);
+            }
+
             .media-lightbox {
                 position: fixed;
                 inset: 0;
@@ -821,6 +826,39 @@
                 }
             }
 
+            function highlightPost(card) {
+                if (!card) return;
+                card.classList.add('highlight');
+                setTimeout(() => card.classList.remove('highlight'), 2200);
+            }
+
+            function scrollToPost(postId) {
+                if (!postId || !feedGrid) return false;
+                const card = feedGrid.querySelector(`.media-card[data-post-id="${postId}"]`);
+                if (!card) return false;
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                highlightPost(card);
+                const comments = card.querySelector('.media-comments');
+                if (comments) {
+                    comments.classList.add('open');
+                    if (card.dataset.commentsLoaded !== 'true') {
+                        loadComments(card);
+                    }
+                }
+                return true;
+            }
+
+            async function ensurePostVisible(postId) {
+                if (!postId) return;
+                let attempts = 0;
+                while (attempts < 6) {
+                    if (scrollToPost(postId)) return;
+                    if (!hasMore) return;
+                    await loadFeed();
+                    attempts += 1;
+                }
+            }
+
             async function loadFeed(reset = false) {
                 if (loading || (!hasMore && !reset)) return;
                 loading = true;
@@ -1094,6 +1132,10 @@
                 await loadCurrentUser();
                 updateUploadVisibility();
                 await loadFeed(true);
+                const targetPostId = new URLSearchParams(window.location.search).get('post');
+                if (targetPostId) {
+                    await ensurePostVisible(targetPostId);
+                }
             });
 
             if (uploadForm) {

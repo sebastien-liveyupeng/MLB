@@ -134,6 +134,7 @@ async function checkUserSession() {
         if (response.ok) {
             const data = await response.json();
             const username = data.user.username || data.user.email;
+            notificationsUserId = data.user.id || null;
 
             // Afficher l'utilisateur connecté
             authNav.style.setProperty('display', 'none', 'important');
@@ -610,6 +611,8 @@ document.addEventListener('click', function(event) {
 
 let notificationsPollingId = null;
 let notificationsLoading = false;
+let notificationsUserId = null;
+let notificationsCache = [];
 
 function setupNotifications(isLoggedIn) {
     ensureNotificationsUI();
@@ -620,6 +623,7 @@ function setupNotifications(isLoggedIn) {
 
     if (!isLoggedIn) {
         stopNotificationsPolling();
+        notificationsCache = [];
         updateNotificationsCount(0);
         closeNotificationsSidebar();
         return;
@@ -774,8 +778,11 @@ async function refreshNotifications() {
         }
 
         const data = await response.json();
-        updateNotificationsCount(data?.counts?.total || 0);
-        renderNotifications(data?.items || []);
+        const items = data?.items || [];
+        notificationsCache = items;
+        const unread = items.filter(item => !isNotificationSeen(item.id));
+        updateNotificationsCount(unread.length);
+        renderNotifications(items);
     } catch (error) {
         console.error('Notifications error:', error);
     } finally {
@@ -808,18 +815,32 @@ function renderNotifications(items) {
 
     requestsEl.querySelectorAll('[data-request-id]').forEach(btn => {
         btn.addEventListener('click', async event => {
+            event.stopPropagation();
             const action = event.currentTarget.dataset.action;
             const requestId = event.currentTarget.dataset.requestId;
             if (!action || !requestId) return;
             await respondToFriendRequest(requestId, action);
         });
     });
+
+    document.querySelectorAll('.notification-item[data-type="like"], .notification-item[data-type="comment"]').forEach(itemEl => {
+        itemEl.addEventListener('click', () => {
+            const notifId = itemEl.dataset.notifId;
+            const postId = itemEl.dataset.postId;
+            if (notifId) markNotificationSeen(notifId);
+            updateNotificationsCount(getUnreadCountFromCache());
+            if (postId) {
+                window.location.href = `/galerie?post=${encodeURIComponent(postId)}`;
+            }
+        });
+    });
 }
 
 function renderRequestItem(item) {
     const name = item.from_user?.username || 'Membre';
+    const seenClass = isNotificationSeen(item.id) ? ' seen' : '';
     return `
-        <div class="notification-item">
+        <div class="notification-item${seenClass}" data-type="friend_request" data-notif-id="${item.id}">
             <div class="notification-text"><strong>${escapeHtml(name)}</strong> veut vous ajouter</div>
             <div class="notification-actions">
                 <button class="notif-btn accept" data-action="accept" data-request-id="${item.request_id}">Accepter</button>
@@ -832,8 +853,9 @@ function renderRequestItem(item) {
 function renderLikeItem(item) {
     const name = item.from_user?.username || 'Membre';
     const date = formatNotificationDate(item.created_at);
+    const seenClass = isNotificationSeen(item.id) ? ' seen' : '';
     return `
-        <div class="notification-item">
+        <div class="notification-item clickable${seenClass}" data-type="like" data-notif-id="${item.id}" data-post-id="${item.post_id}">
             <div class="notification-text"><strong>${escapeHtml(name)}</strong> a liké votre média</div>
             <div class="notification-meta">${date}</div>
         </div>
@@ -844,8 +866,9 @@ function renderCommentItem(item) {
     const name = item.from_user?.username || 'Membre';
     const excerpt = item.content ? escapeHtml(item.content).slice(0, 120) : '';
     const date = formatNotificationDate(item.created_at);
+    const seenClass = isNotificationSeen(item.id) ? ' seen' : '';
     return `
-        <div class="notification-item">
+        <div class="notification-item clickable${seenClass}" data-type="comment" data-notif-id="${item.id}" data-post-id="${item.post_id}">
             <div class="notification-text"><strong>${escapeHtml(name)}</strong> a commenté : "${excerpt}"</div>
             <div class="notification-meta">${date}</div>
         </div>
@@ -857,7 +880,7 @@ async function respondToFriendRequest(requestId, decision) {
     if (!token) return;
 
     try {
-        await fetch('/api/friends', {
+        const response = await fetch('/api/friends', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -865,9 +888,46 @@ async function respondToFriendRequest(requestId, decision) {
             },
             body: JSON.stringify({ action: 'respond', request_id: requestId, decision })
         });
+        if (response.ok) {
+            markNotificationSeen(`fr_${requestId}`);
+        }
+        updateNotificationsCount(getUnreadCountFromCache());
         refreshNotifications();
     } catch (error) {
         console.error('Friend request respond error:', error);
+    }
+}
+
+function getUnreadCountFromCache() {
+    return (notificationsCache || []).filter(item => !isNotificationSeen(item.id)).length;
+}
+
+function getNotificationsStorageKey() {
+    if (!notificationsUserId) return 'notifications_seen_guest';
+    return `notifications_seen_${notificationsUserId}`;
+}
+
+function getSeenNotifications() {
+    try {
+        const raw = localStorage.getItem(getNotificationsStorageKey());
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function isNotificationSeen(id) {
+    if (!id) return false;
+    const seen = getSeenNotifications();
+    return seen.includes(id);
+}
+
+function markNotificationSeen(id) {
+    if (!id) return;
+    const seen = getSeenNotifications();
+    if (!seen.includes(id)) {
+        seen.push(id);
+        localStorage.setItem(getNotificationsStorageKey(), JSON.stringify(seen.slice(-500)));
     }
 }
 

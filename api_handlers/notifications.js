@@ -146,6 +146,7 @@ module.exports = async function handler(req, res) {
 
     (incoming || []).forEach(request => {
       items.push({
+        id: `fr_${request.id}`,
         type: 'friend_request',
         created_at: request.created_at,
         request_id: request.id,
@@ -160,6 +161,7 @@ module.exports = async function handler(req, res) {
       .filter(like => like.user_id !== userId)
       .forEach(like => {
         items.push({
+          id: `like_${like.post_id}_${like.user_id}_${like.created_at}`,
           type: 'like',
           created_at: like.created_at,
           post_id: like.post_id,
@@ -174,6 +176,7 @@ module.exports = async function handler(req, res) {
       .filter(comment => comment.user_id !== userId)
       .forEach(comment => {
         items.push({
+          id: `comment_${comment.post_id}_${comment.user_id}_${comment.created_at}`,
           type: 'comment',
           created_at: comment.created_at,
           post_id: comment.post_id,
