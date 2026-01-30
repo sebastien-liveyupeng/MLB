@@ -32,7 +32,8 @@ const mediaDelete = require('../api_handlers/media/delete');
 module.exports = async function handler(req, res) {
   const parsedUrl = url.parse(req.url, true);
   const pathname = parsedUrl.pathname || '';
-  const route = pathname.replace(/^\/api\/?/, '');
+  const cleaned = pathname.replace(/^\/+/, '');
+  const route = cleaned.startsWith('api/') ? cleaned.slice(4) : cleaned;
 
   req.query = parsedUrl.query || {};
 
