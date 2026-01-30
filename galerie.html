@@ -104,28 +104,31 @@
             }
 
             .upload-form input[type="file"] {
-                padding: 0.8rem;
-                border-style: dashed;
-                border-color: rgba(255, 107, 53, 0.45);
-                color: transparent;
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                border: 0;
             }
 
-            .upload-form input[type="file"]::-webkit-file-upload-button {
-                color: #fff;
-            }
-
-            .upload-form input[type="file"]::file-selector-button {
-                color: #fff;
-            }
-
-            .upload-form input[type="file"]::file-selector-button {
-                border: none;
+            .upload-file-label {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.6rem;
+                padding: 0.7rem 1rem;
+                border-radius: 12px;
                 background: rgba(255, 107, 53, 0.2);
+                border: 1px dashed rgba(255, 107, 53, 0.45);
                 color: #fff;
-                padding: 0.4rem 0.8rem;
-                border-radius: 8px;
-                margin-right: 0.8rem;
                 cursor: pointer;
+                font-weight: 600;
+            }
+
+            .upload-form input[type="file"]::file-selector-button {
+                display: none;
             }
 
             .upload-form textarea {
@@ -597,6 +600,9 @@
                     <button type="button" onclick="openLoginModal()">Se connecter</button>
                 </div>
                 <form class="upload-form" id="uploadForm" style="display: none;">
+                    <label for="mediaFile" class="upload-file-label">
+                        <i class='bx bx-image-alt'></i> Médias
+                    </label>
                     <input type="file" id="mediaFile" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" required>
                     <textarea id="mediaCaption" maxlength="300" placeholder="Ajoute une description (optionnel)"></textarea>
                     <button type="submit">Publier</button>
