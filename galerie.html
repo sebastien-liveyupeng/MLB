@@ -2,17 +2,13 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <!DOCTYPE html>
-    <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Médias - Gascom Esport</title>
-        <link rel="icon" type="image/png" href="assets/Ges-white.png">
-        <link rel="stylesheet" href="styles.css">
-        <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
-        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-        <style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Médias - Gascom Esport</title>
+    <link rel="icon" type="image/png" href="assets/Ges-white.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
             .media-hero {
                 padding: 7rem 2rem 3rem;
                 text-align: center;
@@ -324,6 +320,48 @@
                 }
                 .media-wrapper {
                     padding: 1.5rem;
+                }
+                .upload-card {
+                    padding: 1.2rem;
+                }
+                .feed-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+                .media-actions {
+                    flex-wrap: wrap;
+                    gap: 0.6rem;
+                }
+                .media-body img,
+                .media-body video {
+                    max-height: 260px;
+                }
+                .comment-form {
+                    flex-direction: column;
+                }
+                .comment-form button {
+                    width: 100%;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .media-hero {
+                    padding: 6rem 1.2rem 2rem;
+                }
+                .media-wrapper {
+                    padding: 1rem;
+                }
+                .feed-grid {
+                    grid-template-columns: 1fr;
+                }
+                .upload-form button,
+                .load-more {
+                    width: 100%;
+                }
+                .media-header {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 0.6rem;
                 }
             }
         </style>
@@ -907,219 +945,3 @@
         </script>
     </body>
     </html>
-                    <span>Ges Photo #4</span>
-                </div>
-                <div class="gallery-overlay">
-                    <div class="category">Ges Pics</div>
-                    <h3>Ges Collection</h3>
-                </div>
-            </div>
-
-            <!-- Behind the Scenes -->
-            <div class="gallery-item" data-category="backstage">
-                <iframe src="https://www.facebook.com/plugins/video.php?height=476&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F2447063952375320%2F&show_text=false&width=267&t=0" width="100%" height="100%" style="border:none;overflow:hidden;border-radius:12px;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowFullScreen="true"></iframe>
-                <div class="gallery-overlay">
-                    <div class="category">Behind the Scene</div>
-                    <h3>Nganjin & Maestrr</h3>
-                </div>
-            </div>
-
-            <div class="gallery-item" data-category="backstage">
-                <iframe src="https://www.facebook.com/plugins/video.php?height=476&href=https%3A%2F%2Fwww.facebook.com%2FGascomEsport%2Fvideos%2F1061788738768906%2F&show_text=false&width=267&t=0" width="100%" height="100%" style="border:none;overflow:hidden;border-radius:12px;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowFullScreen="true"></iframe>
-                <div class="gallery-overlay">
-                    <div class="category">Behind the Scene</div>
-                    <h3>MihMih</h3>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Lightbox -->
-    <div class="lightbox" id="lightbox">
-        <div class="lightbox-content">
-            <button class="lightbox-close" id="lightboxClose">×</button>
-            <img src="" alt="" id="lightboxImage" style="display: none;">
-            <video controls id="lightboxVideo" style="display: none; max-width: 100%; max-height: 90vh; border-radius: 8px;">
-                <source src="" type="video/mp4">
-                Votre navigateur ne supporte pas la vidéo.
-            </video>
-            <iframe
-                id="lightboxFrame"
-                src=""
-                title="YouTube video player"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
-                allowfullscreen
-                style="display: none; width: 100%; height: 70vh; border-radius: 8px;"
-                loading="lazy"
-                referrerpolicy="strict-origin-when-cross-origin">
-            </iframe>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-logo">Gascom Esport</div>
-            <p class="footer-text">© 2025 Gascom - Tous droits réservés | Made in Madagascar 🇲🇬 - SHI</p>
-        </div>
-    </footer>
-
-    <script>
-        // Header scroll effect
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('header');
-            if (window.scrollY > 100) {
-                header.style.background = 'rgba(11, 11, 15, 0.98)';
-                header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
-            } else {
-                header.style.background = 'rgba(11, 11, 15, 0.95)';
-                header.style.boxShadow = 'none';
-            }
-        });
-
-        // Hamburger menu toggle
-        const hamburger = document.getElementById('hamburger');
-        const navMenu = document.getElementById('navMenu');
-
-        hamburger.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-            hamburger.classList.toggle('active');
-        });
-
-        // Close menu when a link is clicked
-        document.querySelectorAll('.nav-item a').forEach(link => {
-            link.addEventListener('click', () => {
-                navMenu.classList.remove('active');
-                hamburger.classList.remove('active');
-            });
-        });
-
-        // ===== GALLERY FILTER FUNCTIONALITY =====
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const galleryItems = document.querySelectorAll('.gallery-item');
-
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Remove active class from all buttons
-                filterBtns.forEach(b => b.classList.remove('active'));
-                // Add active class to clicked button
-                btn.classList.add('active');
-
-                const filterValue = btn.getAttribute('data-filter');
-
-                galleryItems.forEach(item => {
-                    if (filterValue === 'all') {
-                        item.classList.remove('hidden');
-                    } else {
-                        if (item.getAttribute('data-category') === filterValue) {
-                            item.classList.remove('hidden');
-                        } else {
-                            item.classList.add('hidden');
-                        }
-                    }
-                });
-            });
-        });
-
-        // ===== LIGHTBOX FUNCTIONALITY =====
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImage = document.getElementById('lightboxImage');
-        const lightboxVideo = document.getElementById('lightboxVideo');
-        const lightboxFrame = document.getElementById('lightboxFrame');
-        const lightboxClose = document.getElementById('lightboxClose');
-
-        galleryItems.forEach(item => {
-            item.addEventListener('click', () => {
-                const img = item.querySelector('img');
-                const video = item.querySelector('video');
-                const iframe = item.querySelector('iframe');
-                
-                if (img) {
-                    lightboxImage.src = img.src;
-                    lightboxImage.style.display = 'block';
-                    lightboxVideo.style.display = 'none';
-                    lightboxFrame.style.display = 'none';
-                    lightbox.classList.add('active');
-                } else if (video) {
-                    const videoSrc = video.querySelector('source').src;
-                    lightboxVideo.querySelector('source').src = videoSrc;
-                    lightboxVideo.load();
-                    lightboxVideo.style.display = 'block';
-                    lightboxImage.style.display = 'none';
-                    lightboxFrame.style.display = 'none';
-                    lightbox.classList.add('active');
-                    lightboxVideo.play();
-                } else if (iframe) {
-                    const baseSrc = iframe.getAttribute('src');
-                    const separator = baseSrc.includes('?') ? '&' : '?';
-                    const autoplaySrc = `${baseSrc}${separator}autoplay=1&modestbranding=1&rel=0&playsinline=1`;
-                    lightboxFrame.src = autoplaySrc;
-                    lightboxFrame.style.display = 'block';
-                    lightboxImage.style.display = 'none';
-                    lightboxVideo.style.display = 'none';
-                    lightbox.classList.add('active');
-                }
-            });
-        });
-
-        lightboxClose.addEventListener('click', () => {
-            lightbox.classList.remove('active');
-            if (lightboxVideo.style.display === 'block') {
-                lightboxVideo.pause();
-            }
-            if (lightboxFrame.style.display === 'block') {
-                lightboxFrame.src = '';
-            }
-        });
-
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) {
-                lightbox.classList.remove('active');
-                if (lightboxVideo.style.display === 'block') {
-                    lightboxVideo.pause();
-                }
-                if (lightboxFrame.style.display === 'block') {
-                    lightboxFrame.src = '';
-                }
-            }
-        });
-
-        // Close lightbox with ESC key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-                lightbox.classList.remove('active');
-                if (lightboxVideo.style.display === 'block') {
-                    lightboxVideo.pause();
-                }
-                if (lightboxFrame.style.display === 'block') {
-                    lightboxFrame.src = '';
-                }
-            }
-        });
-    </script>
-
-    <!-- AOS Library -->
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-    <!-- GLightbox Library -->
-    <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
-    <script>
-        // Initialize AOS
-        AOS.init({
-            duration: 1000,
-            offset: 100,
-            once: true
-        });
-
-        // Initialize GLightbox Lightbox
-        const lightboxLib = GLightbox({
-            selector: '.glightbox',
-            touchNavigation: true,
-            loop: true,
-            autoplayVideos: true
-        });
-    </script>
-    <script src="/auth-session.js"></script>
-</body>
-</html>
