@@ -10,6 +10,7 @@ const mediaLikeHandler = require('./api_handlers/media/like');
 const mediaCommentHandler = require('./api_handlers/media/comment');
 const mediaCommentsHandler = require('./api_handlers/media/comments');
 const mediaDeleteHandler = require('./api_handlers/media/delete');
+const notificationsHandler = require('./api_handlers/notifications');
 require('dotenv').config({ path: '.env.local' });
 
 const PORT = 3002;
@@ -80,6 +81,9 @@ const server = http.createServer((req, res) => {
       return;
     } else if (apiPath === 'media/delete') {
       mediaDeleteHandler(req, res);
+      return;
+    } else if (apiPath === 'notifications') {
+      notificationsHandler(req, res);
       return;
     }
   }

@@ -118,6 +118,7 @@ async function checkUserSession() {
             // Pas de token - afficher boutons de connexion/inscription
             authNav.style.setProperty('display', 'flex', 'important');
             userNav.style.setProperty('display', 'none', 'important');
+            setupNotifications(false);
             return;
         }
 
@@ -149,12 +150,15 @@ async function checkUserSession() {
             if (usernameMobileNav) {
                 usernameMobileNav.textContent = username;
             }
+
+            setupNotifications(true);
         } else {
             // Token invalide ou réponse non-ok - supprimer le token
             console.log('Session check failed, clearing token');
             clearStoredToken();
             authNav.style.setProperty('display', 'flex', 'important');
             userNav.style.setProperty('display', 'none', 'important');
+            setupNotifications(false);
         }
     } catch (error) {
         console.error('Erreur lors de la vérification de session:', error);
@@ -166,6 +170,7 @@ async function checkUserSession() {
         if (userNav) {
             userNav.style.setProperty('display', 'none', 'important');
         }
+        setupNotifications(false);
     }
 }
 
@@ -602,4 +607,280 @@ document.addEventListener('click', function(event) {
         closeProfileModal();
     }
 });
+
+let notificationsPollingId = null;
+let notificationsLoading = false;
+
+function setupNotifications(isLoggedIn) {
+    ensureNotificationsUI();
+    const navItem = document.getElementById('notificationsNavItem');
+    if (navItem) {
+        navItem.style.display = isLoggedIn ? 'flex' : 'none';
+    }
+
+    if (!isLoggedIn) {
+        stopNotificationsPolling();
+        updateNotificationsCount(0);
+        closeNotificationsSidebar();
+        return;
+    }
+
+    if (!notificationsPollingId) {
+        refreshNotifications();
+        notificationsPollingId = setInterval(refreshNotifications, 30000);
+    }
+}
+
+function stopNotificationsPolling() {
+    if (notificationsPollingId) {
+        clearInterval(notificationsPollingId);
+        notificationsPollingId = null;
+    }
+}
+
+function ensureNotificationsUI() {
+    const navMenu = document.querySelector('.nav-menu');
+    if (!navMenu) return;
+
+    let navItem = document.getElementById('notificationsNavItem');
+    if (!navItem) {
+        navItem = document.createElement('li');
+        navItem.className = 'nav-item';
+        navItem.id = 'notificationsNavItem';
+
+        const link = document.createElement('a');
+        link.href = '#';
+        link.id = 'notificationsNavLink';
+
+        const label = document.createElement('span');
+        label.className = 'notifications-label';
+        label.textContent = 'Notifications';
+
+        const count = document.createElement('span');
+        count.className = 'notifications-count';
+        count.id = 'notificationsCount';
+        count.textContent = '0';
+        count.style.display = 'none';
+
+        link.appendChild(label);
+        link.appendChild(count);
+        navItem.appendChild(link);
+
+        const chatLink = navMenu.querySelector('a[href*="chat"]');
+        if (chatLink && chatLink.parentElement) {
+            chatLink.parentElement.insertAdjacentElement('afterend', navItem);
+        } else {
+            navMenu.appendChild(navItem);
+        }
+
+        link.addEventListener('click', event => {
+            event.preventDefault();
+            openNotificationsSidebar();
+        });
+    }
+
+    let overlay = document.getElementById('notificationsOverlay');
+    let sidebar = document.getElementById('notificationsSidebar');
+    if (!overlay || !sidebar) {
+        overlay = document.createElement('div');
+        overlay.id = 'notificationsOverlay';
+        overlay.className = 'notifications-overlay';
+
+        sidebar = document.createElement('aside');
+        sidebar.id = 'notificationsSidebar';
+        sidebar.className = 'notifications-sidebar';
+        sidebar.innerHTML = `
+            <div class="notifications-header">
+                <h3>Notifications</h3>
+                <button class="notifications-close" type="button" aria-label="Fermer">×</button>
+            </div>
+            <div class="notifications-body">
+                <div class="notifications-section" id="notificationsRequestsSection">
+                    <div class="notifications-section-title">Demandes d'amis</div>
+                    <div class="notifications-list" id="notificationsRequests"></div>
+                </div>
+                <div class="notifications-section" id="notificationsLikesSection">
+                    <div class="notifications-section-title">Likes</div>
+                    <div class="notifications-list" id="notificationsLikes"></div>
+                </div>
+                <div class="notifications-section" id="notificationsCommentsSection">
+                    <div class="notifications-section-title">Commentaires</div>
+                    <div class="notifications-list" id="notificationsComments"></div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+        document.body.appendChild(sidebar);
+
+        overlay.addEventListener('click', closeNotificationsSidebar);
+        sidebar.querySelector('.notifications-close')?.addEventListener('click', closeNotificationsSidebar);
+    }
+}
+
+function openNotificationsSidebar() {
+    const overlay = document.getElementById('notificationsOverlay');
+    const sidebar = document.getElementById('notificationsSidebar');
+    if (overlay && sidebar) {
+        overlay.classList.add('show');
+        sidebar.classList.add('show');
+        refreshNotifications();
+    }
+}
+
+function closeNotificationsSidebar() {
+    const overlay = document.getElementById('notificationsOverlay');
+    const sidebar = document.getElementById('notificationsSidebar');
+    if (overlay && sidebar) {
+        overlay.classList.remove('show');
+        sidebar.classList.remove('show');
+    }
+}
+
+function updateNotificationsCount(total) {
+    const countEl = document.getElementById('notificationsCount');
+    const labelEl = document.querySelector('#notificationsNavLink .notifications-label');
+    if (!countEl || !labelEl) return;
+
+    if (total > 0) {
+        countEl.style.display = 'none';
+        countEl.textContent = String(total);
+        labelEl.textContent = `Notifications ${total}`;
+    } else {
+        countEl.style.display = 'none';
+        countEl.textContent = '0';
+        labelEl.textContent = 'Notifications';
+    }
+}
+
+async function refreshNotifications() {
+    if (notificationsLoading) return;
+    const token = getStoredToken();
+    if (!token) return;
+
+    notificationsLoading = true;
+    try {
+        const response = await fetch('/api/notifications', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            notificationsLoading = false;
+            return;
+        }
+
+        const data = await response.json();
+        updateNotificationsCount(data?.counts?.total || 0);
+        renderNotifications(data?.items || []);
+    } catch (error) {
+        console.error('Notifications error:', error);
+    } finally {
+        notificationsLoading = false;
+    }
+}
+
+function renderNotifications(items) {
+    const requestsEl = document.getElementById('notificationsRequests');
+    const likesEl = document.getElementById('notificationsLikes');
+    const commentsEl = document.getElementById('notificationsComments');
+
+    if (!requestsEl || !likesEl || !commentsEl) return;
+
+    const requests = items.filter(item => item.type === 'friend_request');
+    const likes = items.filter(item => item.type === 'like');
+    const comments = items.filter(item => item.type === 'comment');
+
+    requestsEl.innerHTML = requests.length
+        ? requests.map(renderRequestItem).join('')
+        : '<div class="notifications-empty">Aucune demande.</div>';
+
+    likesEl.innerHTML = likes.length
+        ? likes.map(renderLikeItem).join('')
+        : '<div class="notifications-empty">Aucun like.</div>';
+
+    commentsEl.innerHTML = comments.length
+        ? comments.map(renderCommentItem).join('')
+        : '<div class="notifications-empty">Aucun commentaire.</div>';
+
+    requestsEl.querySelectorAll('[data-request-id]').forEach(btn => {
+        btn.addEventListener('click', async event => {
+            const action = event.currentTarget.dataset.action;
+            const requestId = event.currentTarget.dataset.requestId;
+            if (!action || !requestId) return;
+            await respondToFriendRequest(requestId, action);
+        });
+    });
+}
+
+function renderRequestItem(item) {
+    const name = item.from_user?.username || 'Membre';
+    return `
+        <div class="notification-item">
+            <div class="notification-text"><strong>${escapeHtml(name)}</strong> veut vous ajouter</div>
+            <div class="notification-actions">
+                <button class="notif-btn accept" data-action="accept" data-request-id="${item.request_id}">Accepter</button>
+                <button class="notif-btn decline" data-action="decline" data-request-id="${item.request_id}">Refuser</button>
+            </div>
+        </div>
+    `;
+}
+
+function renderLikeItem(item) {
+    const name = item.from_user?.username || 'Membre';
+    const date = formatNotificationDate(item.created_at);
+    return `
+        <div class="notification-item">
+            <div class="notification-text"><strong>${escapeHtml(name)}</strong> a liké votre média</div>
+            <div class="notification-meta">${date}</div>
+        </div>
+    `;
+}
+
+function renderCommentItem(item) {
+    const name = item.from_user?.username || 'Membre';
+    const excerpt = item.content ? escapeHtml(item.content).slice(0, 120) : '';
+    const date = formatNotificationDate(item.created_at);
+    return `
+        <div class="notification-item">
+            <div class="notification-text"><strong>${escapeHtml(name)}</strong> a commenté : "${excerpt}"</div>
+            <div class="notification-meta">${date}</div>
+        </div>
+    `;
+}
+
+async function respondToFriendRequest(requestId, decision) {
+    const token = getStoredToken();
+    if (!token) return;
+
+    try {
+        await fetch('/api/friends', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ action: 'respond', request_id: requestId, decision })
+        });
+        refreshNotifications();
+    } catch (error) {
+        console.error('Friend request respond error:', error);
+    }
+}
+
+function formatNotificationDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return '';
+    return date.toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' });
+}
+
+function escapeHtml(value) {
+    const div = document.createElement('div');
+    div.textContent = value || '';
+    return div.innerHTML;
+}
 

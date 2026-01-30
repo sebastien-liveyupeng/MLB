@@ -29,6 +29,7 @@ const mediaLike = require('../api_handlers/media/like');
 const mediaComment = require('../api_handlers/media/comment');
 const mediaComments = require('../api_handlers/media/comments');
 const mediaDelete = require('../api_handlers/media/delete');
+const notificationsHandler = require('../api_handlers/notifications');
 
 module.exports = async function handler(req, res) {
   const parsedUrl = url.parse(req.url, true);
@@ -92,6 +93,9 @@ module.exports = async function handler(req, res) {
       return mediaComments(req, res);
     case 'media/delete':
       return mediaDelete(req, res);
+
+    case 'notifications':
+      return notificationsHandler(req, res);
 
     case '':
       return res.status(200).json({ success: true, message: 'API OK' });
