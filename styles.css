@@ -255,15 +255,35 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 20px;
-            height: 20px;
-            padding: 0 6px;
+            min-width: 22px;
+            height: 22px;
+            padding: 0 7px;
             border-radius: 999px;
             background: linear-gradient(135deg, var(--electric-blue), var(--primary-purple));
             color: white;
             font-size: 0.75rem;
             font-weight: 700;
             margin-left: 0.35rem;
+            box-shadow: 0 0 0 2px rgba(12, 12, 18, 0.9), 0 0 12px rgba(156, 44, 23, 0.55);
+        }
+
+        .notifications-count.pulse {
+            animation: notif-pulse 1.6s ease-in-out infinite;
+        }
+
+        @keyframes notif-pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 2px rgba(12, 12, 18, 0.9), 0 0 12px rgba(156, 44, 23, 0.55);
+            }
+            50% {
+                transform: scale(1.08);
+                box-shadow: 0 0 0 2px rgba(12, 12, 18, 0.9), 0 0 18px rgba(156, 44, 23, 0.85);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 2px rgba(12, 12, 18, 0.9), 0 0 12px rgba(156, 44, 23, 0.55);
+            }
         }
 
         .notifications-overlay {

@@ -747,12 +747,14 @@ function updateNotificationsCount(total) {
     if (!countEl || !labelEl) return;
 
     if (total > 0) {
-        countEl.style.display = 'none';
+        countEl.style.display = 'inline-flex';
         countEl.textContent = String(total);
-        labelEl.textContent = `Notifications ${total}`;
+        countEl.classList.add('pulse');
+        labelEl.textContent = 'Notifications';
     } else {
         countEl.style.display = 'none';
         countEl.textContent = '0';
+        countEl.classList.remove('pulse');
         labelEl.textContent = 'Notifications';
     }
 }
