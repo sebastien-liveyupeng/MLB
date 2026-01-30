@@ -2,455 +2,911 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galerie - Gascom Esport</title>
-    <link rel="icon" type="image/png" href="assets/Ges-white.png">
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
-    <style>
-        /* Gallery Hero Logo Background */
-        .gallery-hero::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 500px;
-            height: 500px;
-            background-image: url('assets/logo.svg');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0.5;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .gallery-hero {
-            position: relative;
-        }
-
-        /* Gallery Specific Styles */
-        .gallery-hero {
-            padding: 8rem 2rem 4rem;
-            text-align: center;
-            background: linear-gradient(180deg, rgba(11, 11, 15, 0.8) 0%, rgba(11, 11, 15, 0.95) 100%);
-        }
-
-        .gallery-hero h1 {
-            font-family: 'Russo One', sans-serif;
-            font-size: 3rem;
-            color: #FFFFFF;
-            margin-bottom: 1rem;
-            background: linear-gradient(45deg, #9c2c17, #7c1808);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .gallery-hero p {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.8);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Filter Buttons */
-        .gallery-filters {
-            padding: 2rem;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            background: rgba(11, 11, 15, 0.5);
-        }
-
-        .filter-btn {
-            padding: 0.8rem 1.8rem;
-            background: rgba(156, 44, 23, 0.2);
-            border: 2px solid rgba(156, 44, 23, 0.5);
-            color: #FFFFFF;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .filter-btn i {
-            font-size: 1.2rem;
-        }
-
-        .filter-btn:hover,
-        .filter-btn.active {
-            background: linear-gradient(135deg, #7c1808, #9c2c17);
-            border-color: #9c2c17;
-            transform: translateY(-2px);
-        }
-
-        /* Gallery Grid */
-        .gallery-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .gallery-item {
-            position: relative;
-            overflow: hidden;
-            border-radius: 12px;
-            cursor: pointer;
-            aspect-ratio: 4/3;
-            background: linear-gradient(135deg, rgba(156, 44, 23, 0.2) 0%, rgba(124, 24, 8, 0.2) 100%);
-            border: 1px solid rgba(156, 44, 23, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .gallery-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(156, 44, 23, 0.3);
-            border-color: rgba(156, 44, 23, 0.6);
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.1);
-        }
-
-        /* Placeholder for images */
-        .gallery-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            padding: 2rem;
-        }
-
-        .gallery-placeholder i {
-            font-size: 3rem;
-            color: rgba(156, 44, 23, 0.6);
-        }
-
-        .gallery-placeholder span {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.9rem;
-            text-align: center;
-        }
-
-        .gallery-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
-            padding: 1.5rem;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-item:hover .gallery-overlay {
-            transform: translateY(0);
-        }
-
-        .gallery-overlay h3 {
-            color: #FFFFFF;
-            font-size: 1.1rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .gallery-overlay .category {
-            color: #9c2c17;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        /* Lightbox */
-        .lightbox {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            padding: 2rem;
-        }
-
-        .lightbox.active {
-            display: flex;
-        }
-
-        .lightbox-content {
-            max-width: 90%;
-            max-height: 90%;
-            position: relative;
-        }
-
-        .lightbox-content img {
-            max-width: 100%;
-            max-height: 90vh;
-            border-radius: 8px;
-        }
-
-        .lightbox-close {
-            position: absolute;
-            top: -3rem;
-            right: 0;
-            background: rgba(156, 44, 23, 0.8);
-            border: none;
-            color: #FFFFFF;
-            font-size: 2rem;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .lightbox-close:hover {
-            background: #9c2c17;
-            transform: rotate(90deg);
-        }
-
-        /* Hide filtered items */
-        .gallery-item.hidden {
-            display: none;
-        }
-
-        /* Video Styles */
-        .gallery-item video {
-            cursor: pointer;
-            background: #000;
-        }
-
-        .gallery-item video::-webkit-media-controls-panel {
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-        }
-
-        .gallery-item video::-webkit-media-controls-play-button,
-        .gallery-item video::-webkit-media-controls-timeline,
-        .gallery-item video::-webkit-media-controls-volume-slider,
-        .gallery-item video::-webkit-media-controls-fullscreen-button {
-            filter: brightness(1.2);
-        }
-
-        #lightboxVideo {
-            background: #000;
-        }
-
-        #lightboxVideo::-webkit-media-controls-panel {
-            background: linear-gradient(to top, rgba(156, 44, 23, 0.9), transparent);
-        }
-
-        /* Animations */
-        .gallery-item {
-            opacity: 0;
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .gallery-item:nth-child(1) { animation-delay: 0.1s; }
-        .gallery-item:nth-child(2) { animation-delay: 0.2s; }
-        .gallery-item:nth-child(3) { animation-delay: 0.3s; }
-        .gallery-item:nth-child(4) { animation-delay: 0.4s; }
-        .gallery-item:nth-child(5) { animation-delay: 0.5s; }
-        .gallery-item:nth-child(6) { animation-delay: 0.6s; }
-
-        @media (max-width: 768px) {
-            .gallery-hero h1 {
-                font-size: 2rem;
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Médias - Gascom Esport</title>
+        <link rel="icon" type="image/png" href="assets/Ges-white.png">
+        <link rel="stylesheet" href="styles.css">
+        <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;900&family=Russo+One&display=swap" rel="stylesheet">
+        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+        <style>
+            .media-hero {
+                padding: 7rem 2rem 3rem;
+                text-align: center;
+                background: linear-gradient(180deg, rgba(11, 11, 15, 0.9) 0%, rgba(11, 11, 15, 0.98) 100%);
             }
 
-            .gallery-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            .media-hero h1 {
+                font-family: 'Russo One', sans-serif;
+                font-size: 2.7rem;
+                color: #FFFFFF;
+                margin-bottom: 0.8rem;
+                background: linear-gradient(45deg, #9c2c17, #ff6b35);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .media-hero p {
+                color: rgba(255, 255, 255, 0.75);
+                max-width: 640px;
+                margin: 0 auto;
+                line-height: 1.6;
+            }
+
+            .media-wrapper {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 2rem;
+                display: flex;
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .upload-card {
+                background: rgba(15, 15, 22, 0.8);
+                border: 1px solid rgba(156, 44, 23, 0.4);
+                border-radius: 18px;
+                padding: 1.8rem;
+                box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+            }
+
+            .upload-head {
+                display: flex;
+                flex-direction: column;
+                gap: 0.4rem;
+                margin-bottom: 1.2rem;
+            }
+
+            .upload-head h2 {
+                color: #fff;
+                font-size: 1.5rem;
+            }
+
+            .upload-head p {
+                color: rgba(255, 255, 255, 0.6);
+                font-size: 0.9rem;
+            }
+
+            .upload-form {
+                display: grid;
                 gap: 1rem;
             }
 
-            .gallery-filters {
-                padding: 1.5rem 1rem;
+            .upload-form input[type="file"] {
+                background: rgba(255, 255, 255, 0.05);
+                padding: 0.8rem;
+                border-radius: 12px;
+                border: 1px dashed rgba(156, 44, 23, 0.5);
+                color: rgba(255, 255, 255, 0.9);
             }
 
-            .filter-btn {
+            .upload-form textarea {
+                min-height: 90px;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 12px;
+                padding: 0.8rem 1rem;
+                color: #fff;
+                resize: vertical;
+            }
+
+            .upload-form button {
+                background: linear-gradient(135deg, #7c1808, #9c2c17);
+                border: none;
+                color: #fff;
+                padding: 0.9rem 1.5rem;
+                border-radius: 12px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: transform 0.2s ease;
+            }
+
+            .upload-form button:hover {
+                transform: translateY(-2px);
+            }
+
+            .upload-gate {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 1rem;
+                background: rgba(255, 255, 255, 0.04);
+                border-radius: 12px;
+                padding: 1rem 1.2rem;
+                border: 1px dashed rgba(255, 255, 255, 0.1);
+                color: rgba(255, 255, 255, 0.7);
+            }
+
+            .upload-gate button {
+                background: rgba(255, 107, 53, 0.15);
+                border: 1px solid rgba(255, 107, 53, 0.5);
+                padding: 0.6rem 1rem;
+                color: #fff;
+                border-radius: 10px;
+                cursor: pointer;
+            }
+
+            .status {
+                color: rgba(255, 255, 255, 0.7);
+                font-size: 0.9rem;
+                margin-top: 0.6rem;
+            }
+
+            .status.error {
+                color: #ff7b7b;
+            }
+
+            .status.success {
+                color: #7bffb4;
+            }
+
+            .feed-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                color: #fff;
+            }
+
+            .feed-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .media-card {
+                background: rgba(15, 15, 22, 0.85);
+                border-radius: 16px;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                gap: 0.8rem;
+                padding-bottom: 1rem;
+            }
+
+            .media-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                padding: 1rem 1rem 0 1rem;
+            }
+
+            .media-user {
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+            }
+
+            .media-avatar {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                background: linear-gradient(135deg, #ff6b35, #9c2c17);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                font-weight: 700;
+            }
+
+            .media-meta {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .media-username {
+                color: #fff;
+                font-weight: 600;
+            }
+
+            .media-time {
+                font-size: 0.8rem;
+                color: rgba(255, 255, 255, 0.5);
+            }
+
+            .media-delete {
+                background: transparent;
+                border: none;
+                color: rgba(255, 255, 255, 0.6);
+                cursor: pointer;
+            }
+
+            .media-body img,
+            .media-body video {
+                width: 100%;
+                max-height: 360px;
+                object-fit: cover;
+                background: #000;
+            }
+
+            .media-caption {
+                padding: 0 1rem;
+                color: rgba(255, 255, 255, 0.85);
+                font-size: 0.95rem;
+            }
+
+            .media-actions {
+                display: flex;
+                gap: 0.8rem;
+                padding: 0 1rem;
+            }
+
+            .media-actions button {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                color: #fff;
+                padding: 0.4rem 0.9rem;
+                border-radius: 999px;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.4rem;
+                cursor: pointer;
+            }
+
+            .media-actions button.liked {
+                background: rgba(255, 107, 53, 0.2);
+                border-color: rgba(255, 107, 53, 0.5);
+            }
+
+            .media-comments {
+                padding: 0 1rem;
+                display: none;
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+
+            .media-comments.open {
+                display: flex;
+            }
+
+            .comments-list {
+                display: flex;
+                flex-direction: column;
+                gap: 0.6rem;
+            }
+
+            .comment-item {
+                background: rgba(255, 255, 255, 0.04);
+                border-radius: 10px;
+                padding: 0.6rem 0.8rem;
+                color: rgba(255, 255, 255, 0.85);
+                font-size: 0.9rem;
+            }
+
+            .comment-meta {
+                font-size: 0.75rem;
+                color: rgba(255, 255, 255, 0.5);
+                margin-bottom: 0.3rem;
+            }
+
+            .comment-form {
+                display: flex;
+                gap: 0.6rem;
+            }
+
+            .comment-form input {
+                flex: 1;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+                padding: 0.5rem 0.8rem;
+                color: #fff;
+            }
+
+            .comment-form button {
+                background: rgba(255, 107, 53, 0.2);
+                border: 1px solid rgba(255, 107, 53, 0.5);
+                color: #fff;
+                border-radius: 10px;
+                padding: 0.5rem 1rem;
+            }
+
+            .load-more {
+                margin: 0 auto;
+                background: rgba(255, 255, 255, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                color: #fff;
                 padding: 0.6rem 1.2rem;
-                font-size: 0.85rem;
+                border-radius: 999px;
+                cursor: pointer;
             }
-        }
-    </style>
-</head>
-<body>
-    <div class="bg-animation"></div>
-    
-    <!-- Header -->
-    <header>
-        <div class="header-content">
-            <div class="logo-container">
-                <div class="logo-icon">
-                    <img src="assets/Ges-white.png" alt="Gascom Esport Logo" class="logo-img">
-                </div>
-                <div class="logo-text">Gascom Esport</div>
-            </div>
-            <nav>
-                <button class="hamburger" id="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-                <div class="username-display-mobile" id="usernameDisplayMobile" style="display: none;">
-                    <span></span>
-                    <button class="logout-mobile-btn" onclick="handleLogout()"><i class='bx bx-log-out'></i></button>
-                </div>
-                <ul class="nav-menu" id="navMenu">
-                    <li class="nav-item"><a href="/">Accueil</a></li>
-                    <li class="nav-item"><a href="/equipe">Équipe</a></li>
-                    <li class="nav-item"><a href="/compositions">Compositions</a></li>
-                    <li class="nav-item"><a href="/tournois">Tournois</a></li>
-                    <li class="nav-item"><a href="/galerie" class="active">Galerie</a></li>
-                    <li class="nav-item"><a href="/contact">Contact</a></li>
-                    <li class="nav-item"><a href="/chat"><i class='bx bx-message'></i> Chat</a></li>
-                    <li class="nav-item auth-nav" id="authNav">
-                        <button class="auth-btn" onclick="openLoginModal()">Connexion</button>
-                        <button class="auth-btn" onclick="openSignupModal()">Inscription</button>
-                    </li>
-                    <li class="nav-item user-nav" id="userNav" style="display: none;">
-                        <span class="username-display" id="usernameNav"></span>
-                        <a class="logout-btn" href="/mon-profil" title="Mon Profil" style="background: transparent; border: none; color: #FFFFFF; cursor: pointer; padding: 0.5rem; font-size: 1.2rem; text-decoration: none;">
-                            <i class='bx bx-user-circle'></i>
-                        </a>
-                        <button class="logout-btn" onclick="handleLogout()">Déconnexion</button>
-                    </li>
-                </ul>
-            </nav>
+
+            @media (max-width: 768px) {
+                .media-hero h1 {
+                    font-size: 2rem;
+                }
+                .media-wrapper {
+                    padding: 1.5rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="background">
+            <div class="animated-bg"></div>
         </div>
-    </header>
 
-    <!-- Gallery Hero -->
-    <section class="gallery-hero">
-        <h1>Notre Galerie</h1>
-        <p>Revivez nos plus beaux moments, victoires et événements à travers notre collection de photos</p>
-    </section>
-
-    <!-- Filter Buttons -->
-    <div class="gallery-filters">
-        <button class="filter-btn active" data-filter="all"><i class='bx bxs-grid-alt'></i> Tout Voir</button>
-        <button class="filter-btn" data-filter="victoires"><i class='bx bxs-trophy'></i> Victoires & Podiums</button>
-        <button class="filter-btn" data-filter="gespics"><i class='bx bxs-image-alt'></i> Ges Pics</button>
-        <button class="filter-btn" data-filter="backstage"><i class='bx bxs-camera'></i> Behind the Scene</button>
-    </div>
-
-    <!-- Gallery Grid -->
-    <div class="gallery-container">
-        <div class="gallery-grid" id="galleryGrid">
-            
-            <!-- Victoires & Podiums -->
-            <div class="gallery-item" data-category="victoires" data-aos="zoom-in">
-                <div class="gallery-placeholder">
-                    <i class='bx bxs-trophy'></i>
-                    <span>Victoire Tournoi #1</span>
+        <header>
+            <div class="header-content">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <img src="assets/Ges-white.png" alt="Gascom Esport Logo" class="logo-img">
+                    </div>
+                    <div class="logo-text">Gascom Esport</div>
                 </div>
-                <div class="gallery-overlay">
-                    <div class="category">Victoires</div>
-                    <h3>Premier Trophée 2021</h3>
-                </div>
+                <nav>
+                    <button class="hamburger" id="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <div class="username-display-mobile" id="usernameDisplayMobile" style="display: none;">
+                        <span id="usernameMobileNav"></span>
+                        <button onclick="handleLogout()" class="logout-mobile-btn" title="Déconnexion">
+                            <i class='bx bx-log-out'></i>
+                        </button>
+                    </div>
+                    <ul class="nav-menu" id="navMenu">
+                        <li class="nav-item"><a href="/">Accueil</a></li>
+                        <li class="nav-item"><a href="/equipe">Équipe</a></li>
+                        <li class="nav-item"><a href="/compositions">Compositions</a></li>
+                        <li class="nav-item"><a href="/tournois">Tournois</a></li>
+                        <li class="nav-item"><a href="/galerie" class="active">Galerie</a></li>
+                        <li class="nav-item"><a href="/contact">Contact</a></li>
+                        <li class="nav-item"><a href="/apropos">A propos</a></li>
+                        <li class="nav-item"><a href="/chat"><i class='bx bx-message'></i> Chat</a></li>
+                        <li class="nav-item auth-nav" id="authNav">
+                            <button class="auth-btn" onclick="openLoginModal()">Connexion</button>
+                            <button class="auth-btn" onclick="openSignupModal()">Inscription</button>
+                        </li>
+                        <li class="nav-item user-nav" id="userNav" style="display: none;">
+                            <span class="username-display" id="usernameNav"></span>
+                            <a class="logout-btn" href="/mon-profil" title="Mon Profil" style="background: transparent; border: none; color: #FFFFFF; cursor: pointer; padding: 0.5rem; font-size: 1.2rem; text-decoration: none;">
+                                <i class='bx bx-user-circle'></i>
+                            </a>
+                            <button class="logout-btn" onclick="handleLogout()">Déconnexion</button>
+                        </li>
+                    </ul>
+                </nav>
             </div>
+        </header>
 
-            <div class="gallery-item" data-category="victoires" data-aos="zoom-in" data-aos-delay="100">
-                <div class="gallery-placeholder">
-                    <i class='bx bxs-award'></i>
-                    <span>Podium Régional</span>
+        <section class="media-hero">
+            <h1>Medias Gascom</h1>
+            <p>Partagez vos gameplays, vos highlights et vos moments forts. Les membres connectés peuvent poster, tout le monde peut voir.</p>
+        </section>
+
+        <main class="media-wrapper">
+            <section class="upload-card" id="uploadSection">
+                <div class="upload-head">
+                    <h2>Publier un média</h2>
+                    <p>Photos (jpg/png/webp/gif) • 10MB max — Vidéos (mp4/webm/mov) • 200MB max</p>
                 </div>
-                <div class="gallery-overlay">
-                    <div class="category">Victoires</div>
-                    <h3>Podium Championnat</h3>
+                <div class="upload-gate" id="uploadGate">
+                    <span>Connecte-toi pour publier un contenu.</span>
+                    <button type="button" onclick="openLoginModal()">Se connecter</button>
                 </div>
+                <form class="upload-form" id="uploadForm" style="display: none;">
+                    <input type="file" id="mediaFile" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" required>
+                    <textarea id="mediaCaption" maxlength="300" placeholder="Ajoute une description (optionnel)"></textarea>
+                    <button type="submit">Publier</button>
+                </form>
+                <div class="status" id="uploadStatus"></div>
+            </section>
+
+            <section class="media-feed">
+                <div class="feed-header">
+                    <h2>Derniers posts</h2>
+                    <span id="feedCount"></span>
+                </div>
+                <div class="status" id="feedStatus"></div>
+                <div class="feed-grid" id="feedGrid"></div>
+                <button class="load-more" id="loadMoreBtn">Charger plus</button>
+            </section>
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-logo">Gascom Esport</div>
+                <p>&copy; 2024 Gascom Esport. Tous droits réservés.</p>
             </div>
+        </footer>
 
-            <div class="gallery-item" data-category="victoires" data-aos="zoom-in" data-aos-delay="200">
-                <div class="gallery-placeholder">
-                    <i class='bx bxs-medal'></i>
-                    <span>Célébration Victoire</span>
-                </div>
-                <div class="gallery-overlay">
-                    <div class="category">Victoires</div>
-                    <h3>Moment de Gloire</h3>
-                </div>
-            </div>
+        <script src="auth-session.js"></script>
+        <script>
+            const PAGE_SIZE = 10;
+            const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
+            const MAX_VIDEO_SIZE = 200 * 1024 * 1024;
+            const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+            const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
 
-            <!-- Ges Pics -->
-            <div class="gallery-item" data-category="gespics" data-aos="zoom-in">
-                <div class="gallery-placeholder">
-                    <i class='bx bxs-image-alt'></i>
-                    <span>Ges Photo #1</span>
-                </div>
-                <div class="gallery-overlay">
-                    <div class="category">Ges Pics</div>
-                    <h3>Gascom Esport Moment</h3>
-                </div>
-            </div>
+            const uploadForm = document.getElementById('uploadForm');
+            const uploadGate = document.getElementById('uploadGate');
+            const uploadStatus = document.getElementById('uploadStatus');
+            const feedGrid = document.getElementById('feedGrid');
+            const feedStatus = document.getElementById('feedStatus');
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            const feedCount = document.getElementById('feedCount');
 
-            <div class="gallery-item" data-category="gespics" data-aos="zoom-in" data-aos-delay="100">
-                <div class="gallery-placeholder">
-                    <i class='bx bxs-photo-album'></i>
-                    <span>Ges Photo #2</span>
-                </div>
-                <div class="gallery-overlay">
-                    <div class="category">Ges Pics</div>
-                    <h3>Team Gascom</h3>
-                </div>
-            </div>
+            let currentUser = null;
+            let token = null;
+            let offset = 0;
+            let loading = false;
+            let hasMore = true;
 
-            <div class="gallery-item" data-category="gespics" data-aos="zoom-in" data-aos-delay="200">
-                <div class="gallery-placeholder">
-                    <i class='bx bxs-camera-plus'></i>
-                    <span>Ges Photo #3</span>
-                </div>
-                <div class="gallery-overlay">
-                    <div class="category">Ges Pics</div>
-                    <h3>Gascom Memories</h3>
-                </div>
-            </div>
+            function setStatus(element, message, type) {
+                if (!element) return;
+                element.textContent = message || '';
+                element.classList.remove('error', 'success');
+                if (type) element.classList.add(type);
+            }
 
-            <div class="gallery-item" data-category="gespics" data-aos="zoom-in" data-aos-delay="300">
-                <div class="gallery-placeholder">
-                    <i class='bx bxs-landscape'></i>
+            function formatDate(value) {
+                if (!value) return '';
+                return new Date(value).toLocaleString('fr-FR');
+            }
+
+            function getAvatarInitial(name) {
+                return (name || 'M')[0].toUpperCase();
+            }
+
+            async function loadCurrentUser() {
+                token = getStoredToken();
+                if (!token) return;
+
+                try {
+                    const response = await fetch('/api/auth/session', {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                    const data = await response.json();
+                    if (response.ok && data.user) {
+                        currentUser = data.user;
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            function updateUploadVisibility() {
+                if (token && currentUser) {
+                    uploadGate.style.display = 'none';
+                    uploadForm.style.display = 'grid';
+                } else {
+                    uploadGate.style.display = 'flex';
+                    uploadForm.style.display = 'none';
+                }
+            }
+
+            function createMediaElement(post) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'media-body';
+                if (post.media_type === 'video') {
+                    const video = document.createElement('video');
+                    video.controls = true;
+                    video.preload = 'metadata';
+                    video.src = post.media_url;
+                    wrapper.appendChild(video);
+                } else {
+                    const img = document.createElement('img');
+                    img.src = post.media_url;
+                    img.alt = post.caption || 'Media';
+                    wrapper.appendChild(img);
+                }
+                return wrapper;
+            }
+
+            function renderPost(post, { prepend = false } = {}) {
+                const card = document.createElement('article');
+                card.className = 'media-card';
+                card.dataset.postId = post.id;
+
+                const header = document.createElement('div');
+                header.className = 'media-header';
+
+                const userWrap = document.createElement('div');
+                userWrap.className = 'media-user';
+
+                const avatar = document.createElement('div');
+                avatar.className = 'media-avatar';
+                avatar.textContent = getAvatarInitial(post.username || post.email);
+
+                const meta = document.createElement('div');
+                meta.className = 'media-meta';
+                const username = document.createElement('div');
+                username.className = 'media-username';
+                username.textContent = post.username || post.email || 'Membre';
+                const time = document.createElement('div');
+                time.className = 'media-time';
+                time.textContent = formatDate(post.created_at);
+                meta.appendChild(username);
+                meta.appendChild(time);
+
+                userWrap.appendChild(avatar);
+                userWrap.appendChild(meta);
+                header.appendChild(userWrap);
+
+                if (currentUser && post.user_id === currentUser.id) {
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'media-delete';
+                    deleteBtn.dataset.action = 'delete';
+                    deleteBtn.innerHTML = "<i class='bx bx-trash'></i>";
+                    header.appendChild(deleteBtn);
+                }
+
+                card.appendChild(header);
+                card.appendChild(createMediaElement(post));
+
+                if (post.caption) {
+                    const caption = document.createElement('div');
+                    caption.className = 'media-caption';
+                    caption.textContent = post.caption;
+                    card.appendChild(caption);
+                }
+
+                const actions = document.createElement('div');
+                actions.className = 'media-actions';
+
+                const likeBtn = document.createElement('button');
+                likeBtn.dataset.action = 'like';
+                likeBtn.className = post.liked_by_me ? 'liked' : '';
+                likeBtn.innerHTML = `<i class='bx bxs-heart'></i> <span class="like-count">${post.like_count || 0}</span>`;
+
+                const commentBtn = document.createElement('button');
+                commentBtn.dataset.action = 'toggle-comments';
+                commentBtn.innerHTML = `<i class='bx bx-message'></i> <span class="comment-count">${post.comment_count || 0}</span>`;
+
+                actions.appendChild(likeBtn);
+                actions.appendChild(commentBtn);
+                card.appendChild(actions);
+
+                const commentsSection = document.createElement('div');
+                commentsSection.className = 'media-comments';
+
+                const commentsList = document.createElement('div');
+                commentsList.className = 'comments-list';
+                commentsSection.appendChild(commentsList);
+
+                const commentsStatus = document.createElement('div');
+                commentsStatus.className = 'status';
+                commentsSection.appendChild(commentsStatus);
+
+                if (token) {
+                    const commentForm = document.createElement('form');
+                    commentForm.className = 'comment-form';
+                    commentForm.innerHTML = `
+                        <input type="text" maxlength="500" placeholder="Écrire un commentaire...">
+                        <button type="submit">Envoyer</button>
+                    `;
+                    commentsSection.appendChild(commentForm);
+                }
+
+                card.appendChild(commentsSection);
+
+                if (prepend) {
+                    feedGrid.prepend(card);
+                } else {
+                    feedGrid.appendChild(card);
+                }
+            }
+
+            async function loadFeed(reset = false) {
+                if (loading || (!hasMore && !reset)) return;
+                loading = true;
+                setStatus(feedStatus, 'Chargement...', '');
+
+                if (reset) {
+                    offset = 0;
+                    hasMore = true;
+                    feedGrid.innerHTML = '';
+                }
+
+                try {
+                    const response = await fetch(`/api/media/feed?limit=${PAGE_SIZE}&offset=${offset}`, {
+                        headers: token ? { Authorization: `Bearer ${token}` } : {}
+                    });
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        setStatus(feedStatus, data.error || 'Impossible de charger le feed.', 'error');
+                        return;
+                    }
+
+                    const posts = data.posts || [];
+                    if (posts.length === 0 && offset === 0) {
+                        setStatus(feedStatus, 'Aucun post pour le moment.', '');
+                        loadMoreBtn.style.display = 'none';
+                        return;
+                    }
+
+                    setStatus(feedStatus, '', '');
+                    posts.forEach(post => renderPost(post));
+
+                    offset += posts.length;
+                    hasMore = data.hasMore;
+                    loadMoreBtn.style.display = hasMore ? 'block' : 'none';
+                    feedCount.textContent = `${offset} posts`;
+                } catch (error) {
+                    console.error(error);
+                    setStatus(feedStatus, 'Erreur lors du chargement.', 'error');
+                } finally {
+                    loading = false;
+                }
+            }
+
+            async function uploadMedia(event) {
+                event.preventDefault();
+
+                if (!token) {
+                    openLoginModal();
+                    return;
+                }
+
+                const fileInput = document.getElementById('mediaFile');
+                const captionInput = document.getElementById('mediaCaption');
+                const file = fileInput.files[0];
+
+                if (!file) {
+                    setStatus(uploadStatus, 'Choisis un fichier.', 'error');
+                    return;
+                }
+
+                const isImage = ALLOWED_IMAGE_TYPES.includes(file.type);
+                const isVideo = ALLOWED_VIDEO_TYPES.includes(file.type);
+
+                if (!isImage && !isVideo) {
+                    setStatus(uploadStatus, 'Format non supporté.', 'error');
+                    return;
+                }
+
+                if (isImage && file.size > MAX_IMAGE_SIZE) {
+                    setStatus(uploadStatus, 'Image trop lourde (max 10MB).', 'error');
+                    return;
+                }
+
+                if (isVideo && file.size > MAX_VIDEO_SIZE) {
+                    setStatus(uploadStatus, 'Vidéo trop lourde (max 200MB).', 'error');
+                    return;
+                }
+
+                setStatus(uploadStatus, 'Upload en cours...', '');
+
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('caption', captionInput.value || '');
+
+                try {
+                    const response = await fetch('/api/media/upload', {
+                        method: 'POST',
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+                    if (!response.ok) {
+                        setStatus(uploadStatus, data.error || 'Upload échoué.', 'error');
+                        return;
+                    }
+
+                    setStatus(uploadStatus, 'Publié !', 'success');
+                    fileInput.value = '';
+                    captionInput.value = '';
+                    renderPost(data.post, { prepend: true });
+                    offset += 1;
+                } catch (error) {
+                    console.error(error);
+                    setStatus(uploadStatus, 'Erreur lors de l\'upload.', 'error');
+                }
+            }
+
+            async function loadComments(card) {
+                const postId = card.dataset.postId;
+                const list = card.querySelector('.comments-list');
+                const status = card.querySelector('.media-comments .status');
+
+                setStatus(status, 'Chargement...', '');
+
+                try {
+                    const response = await fetch(`/api/media/comments?postId=${encodeURIComponent(postId)}`);
+                    const data = await response.json();
+                    if (!response.ok) {
+                        setStatus(status, data.error || 'Erreur chargement.', 'error');
+                        return;
+                    }
+
+                    list.innerHTML = '';
+                    (data.comments || []).forEach(comment => {
+                        const item = document.createElement('div');
+                        item.className = 'comment-item';
+                        item.innerHTML = `
+                            <div class="comment-meta">${comment.username || 'Membre'} • ${formatDate(comment.created_at)}</div>
+                            <div>${comment.content}</div>
+                        `;
+                        list.appendChild(item);
+                    });
+
+                    if (!(data.comments || []).length) {
+                        setStatus(status, 'Aucun commentaire.', '');
+                    } else {
+                        setStatus(status, '', '');
+                    }
+
+                    card.dataset.commentsLoaded = 'true';
+                } catch (error) {
+                    console.error(error);
+                    setStatus(status, 'Erreur chargement.', 'error');
+                }
+            }
+
+            async function handleLike(card, button) {
+                if (!token) {
+                    openLoginModal();
+                    return;
+                }
+
+                const postId = card.dataset.postId;
+                try {
+                    const response = await fetch('/api/media/like', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ postId })
+                    });
+
+                    const data = await response.json();
+                    if (!response.ok) {
+                        return;
+                    }
+
+                    button.classList.toggle('liked', data.liked);
+                    const countEl = button.querySelector('.like-count');
+                    if (countEl) countEl.textContent = data.like_count;
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            async function handleCommentSubmit(event) {
+                const form = event.target;
+                if (!form.classList.contains('comment-form')) return;
+                event.preventDefault();
+
+                if (!token) {
+                    openLoginModal();
+                    return;
+                }
+
+                const card = form.closest('.media-card');
+                const input = form.querySelector('input');
+                const value = (input.value || '').trim();
+
+                if (!value) return;
+
+                try {
+                    const response = await fetch('/api/media/comment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ postId: card.dataset.postId, content: value })
+                    });
+
+                    const data = await response.json();
+                    if (!response.ok) {
+                        return;
+                    }
+
+                    const list = card.querySelector('.comments-list');
+                    const newItem = document.createElement('div');
+                    newItem.className = 'comment-item';
+                    newItem.innerHTML = `
+                        <div class="comment-meta">${data.comment.username || 'Membre'} • ${formatDate(data.comment.created_at)}</div>
+                        <div>${data.comment.content}</div>
+                    `;
+                    list.appendChild(newItem);
+                    input.value = '';
+
+                    const countEl = card.querySelector('.comment-count');
+                    if (countEl) countEl.textContent = data.comment_count;
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            async function handleDelete(card) {
+                if (!token) return;
+                const postId = card.dataset.postId;
+                const confirmed = confirm('Supprimer ce post ?');
+                if (!confirmed) return;
+
+                try {
+                    const response = await fetch('/api/media/delete', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ postId })
+                    });
+
+                    if (response.ok) {
+                        card.remove();
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', async () => {
+                const hamburger = document.getElementById('hamburger');
+                const navMenu = document.getElementById('navMenu');
+
+                if (hamburger && navMenu) {
+                    hamburger.addEventListener('click', () => {
+                        navMenu.classList.toggle('show');
+                        hamburger.classList.toggle('active');
+                    });
+
+                    document.querySelectorAll('.nav-menu a').forEach(link => {
+                        link.addEventListener('click', () => {
+                            navMenu.classList.remove('show');
+                            hamburger.classList.remove('active');
+                        });
+                    });
+                }
+
+                await loadCurrentUser();
+                updateUploadVisibility();
+                await loadFeed(true);
+            });
+
+            if (uploadForm) {
+                uploadForm.addEventListener('submit', uploadMedia);
+            }
+
+            if (loadMoreBtn) {
+                loadMoreBtn.addEventListener('click', () => loadFeed());
+            }
+
+            if (feedGrid) {
+                feedGrid.addEventListener('click', (event) => {
+                    const button = event.target.closest('button[data-action]');
+                    if (!button) return;
+                    const card = button.closest('.media-card');
+                    if (!card) return;
+
+                    const action = button.dataset.action;
+                    if (action === 'like') {
+                        handleLike(card, button);
+                    } else if (action === 'toggle-comments') {
+                        const comments = card.querySelector('.media-comments');
+                        comments.classList.toggle('open');
+                        if (comments.classList.contains('open') && card.dataset.commentsLoaded !== 'true') {
+                            loadComments(card);
+                        }
+                    } else if (action === 'delete') {
+                        handleDelete(card);
+                    }
+                });
+
+                feedGrid.addEventListener('submit', handleCommentSubmit);
+            }
+        </script>
+    </body>
+    </html>
                     <span>Ges Photo #4</span>
                 </div>
                 <div class="gallery-overlay">

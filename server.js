@@ -3,6 +3,12 @@ const fs = require('fs');
 const path = require('path');
 const url = require('url');
 const friendsHandler = require('./api/friends');
+const mediaUploadHandler = require('./api/media/upload');
+const mediaFeedHandler = require('./api/media/feed');
+const mediaLikeHandler = require('./api/media/like');
+const mediaCommentHandler = require('./api/media/comment');
+const mediaCommentsHandler = require('./api/media/comments');
+const mediaDeleteHandler = require('./api/media/delete');
 require('dotenv').config({ path: '.env.local' });
 
 const PORT = 3002;
@@ -52,6 +58,24 @@ const server = http.createServer((req, res) => {
       return;
     } else if (apiPath === 'friends') {
       friendsHandler(req, res);
+      return;
+    } else if (apiPath === 'media/upload') {
+      mediaUploadHandler(req, res);
+      return;
+    } else if (apiPath === 'media/feed') {
+      mediaFeedHandler(req, res);
+      return;
+    } else if (apiPath === 'media/like') {
+      mediaLikeHandler(req, res);
+      return;
+    } else if (apiPath === 'media/comment') {
+      mediaCommentHandler(req, res);
+      return;
+    } else if (apiPath === 'media/comments') {
+      mediaCommentsHandler(req, res);
+      return;
+    } else if (apiPath === 'media/delete') {
+      mediaDeleteHandler(req, res);
       return;
     }
   }
