@@ -210,6 +210,62 @@
             font-size: 0.7rem;
         }
 
+        .profile-lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 5, 8, 0.92);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .profile-lightbox.active {
+            display: flex;
+        }
+
+        .profile-lightbox-content {
+            position: relative;
+            max-width: 92vw;
+            max-height: 88vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-lightbox img,
+        .profile-lightbox video {
+            max-width: 92vw;
+            max-height: 88vh;
+            border-radius: 12px;
+            background: #000;
+        }
+
+        .profile-lightbox img {
+            cursor: zoom-in;
+            transition: transform 0.2s ease;
+        }
+
+        .profile-lightbox img.zoomed {
+            transform: scale(1.6);
+            cursor: zoom-out;
+        }
+
+        .profile-lightbox-close {
+            position: absolute;
+            top: -16px;
+            right: -16px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            font-size: 1.4rem;
+            cursor: pointer;
+        }
+
         @media (max-width: 680px) {
             .profile-avatar {
                 left: 50%;
@@ -309,6 +365,12 @@
         </section>
 
         <div class="profile-status" id="profileStatus">Chargement du profil...</div>
+    </div>
+
+    <div class="profile-lightbox" id="profileLightbox">
+        <div class="profile-lightbox-content" id="profileLightboxContent">
+            <button class="profile-lightbox-close" id="profileLightboxClose">×</button>
+        </div>
     </div>
 
     <script src="auth-session.js"></script>
@@ -550,6 +612,75 @@
                 mediaStatus.textContent = 'Erreur lors du chargement.';
             }
         }
+
+        const profileLightbox = document.getElementById('profileLightbox');
+        const profileLightboxContent = document.getElementById('profileLightboxContent');
+        const profileLightboxClose = document.getElementById('profileLightboxClose');
+
+        function openProfileLightbox(target) {
+            if (!profileLightbox || !profileLightboxContent) return;
+
+            const existing = profileLightboxContent.querySelector('img, video');
+            if (existing) existing.remove();
+
+            let mediaEl;
+            if (target.tagName.toLowerCase() === 'video') {
+                mediaEl = document.createElement('video');
+                mediaEl.controls = true;
+                mediaEl.src = target.currentSrc || target.src;
+                mediaEl.preload = 'metadata';
+            } else {
+                mediaEl = document.createElement('img');
+                mediaEl.src = target.src;
+                mediaEl.alt = target.alt || 'Media';
+                mediaEl.addEventListener('click', () => {
+                    mediaEl.classList.toggle('zoomed');
+                });
+            }
+
+            profileLightboxContent.appendChild(mediaEl);
+            profileLightbox.classList.add('active');
+        }
+
+        function closeProfileLightbox() {
+            if (!profileLightbox) return;
+            profileLightbox.classList.remove('active');
+            const media = profileLightboxContent.querySelector('video');
+            if (media) {
+                media.pause();
+            }
+            const img = profileLightboxContent.querySelector('img');
+            if (img) {
+                img.classList.remove('zoomed');
+            }
+        }
+
+        if (mediaGrid) {
+            mediaGrid.addEventListener('click', (event) => {
+                const target = event.target.closest('img, video');
+                if (target) {
+                    openProfileLightbox(target);
+                }
+            });
+        }
+
+        if (profileLightboxClose) {
+            profileLightboxClose.addEventListener('click', closeProfileLightbox);
+        }
+
+        if (profileLightbox) {
+            profileLightbox.addEventListener('click', (event) => {
+                if (event.target === profileLightbox) {
+                    closeProfileLightbox();
+                }
+            });
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeProfileLightbox();
+            }
+        });
 
         (async () => {
             await loadCurrentUser();
