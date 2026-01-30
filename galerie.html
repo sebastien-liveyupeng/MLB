@@ -222,6 +222,62 @@
                 box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35);
             }
 
+            .media-lightbox {
+                position: fixed;
+                inset: 0;
+                background: rgba(5, 5, 8, 0.92);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+                padding: 2rem;
+            }
+
+            .media-lightbox.active {
+                display: flex;
+            }
+
+            .media-lightbox-content {
+                position: relative;
+                max-width: 92vw;
+                max-height: 88vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .media-lightbox img,
+            .media-lightbox video {
+                max-width: 92vw;
+                max-height: 88vh;
+                border-radius: 12px;
+                background: #000;
+            }
+
+            .media-lightbox img {
+                cursor: zoom-in;
+                transition: transform 0.2s ease;
+            }
+
+            .media-lightbox img.zoomed {
+                transform: scale(1.6);
+                cursor: zoom-out;
+            }
+
+            .media-lightbox-close {
+                position: absolute;
+                top: -16px;
+                right: -16px;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                border: none;
+                background: rgba(255, 255, 255, 0.12);
+                color: #fff;
+                font-size: 1.4rem;
+                cursor: pointer;
+            }
+
             .media-header {
                 display: flex;
                 align-items: center;
@@ -547,6 +603,12 @@
                 <p>&copy; 2024 Gascom Esport. Tous droits réservés.</p>
             </div>
         </footer>
+
+        <div class="media-lightbox" id="mediaLightbox">
+            <div class="media-lightbox-content" id="mediaLightboxContent">
+                <button class="media-lightbox-close" id="mediaLightboxClose">×</button>
+            </div>
+        </div>
 
         <script src="auth-session.js"></script>
         <script>
@@ -1019,6 +1081,12 @@
 
             if (feedGrid) {
                 feedGrid.addEventListener('click', (event) => {
+                    const mediaTarget = event.target.closest('.media-body img, .media-body video');
+                    if (mediaTarget) {
+                        openLightbox(mediaTarget);
+                        return;
+                    }
+
                     const button = event.target.closest('button[data-action]');
                     if (!button) return;
                     const card = button.closest('.media-card');
@@ -1040,6 +1108,66 @@
 
                 feedGrid.addEventListener('submit', handleCommentSubmit);
             }
+
+            const lightbox = document.getElementById('mediaLightbox');
+            const lightboxContent = document.getElementById('mediaLightboxContent');
+            const lightboxClose = document.getElementById('mediaLightboxClose');
+
+            function openLightbox(target) {
+                if (!lightbox || !lightboxContent) return;
+
+                const existing = lightboxContent.querySelector('img, video');
+                if (existing) existing.remove();
+
+                let mediaEl;
+                if (target.tagName.toLowerCase() === 'video') {
+                    mediaEl = document.createElement('video');
+                    mediaEl.controls = true;
+                    mediaEl.src = target.currentSrc || target.src;
+                    mediaEl.preload = 'metadata';
+                } else {
+                    mediaEl = document.createElement('img');
+                    mediaEl.src = target.src;
+                    mediaEl.alt = target.alt || 'Media';
+                    mediaEl.addEventListener('click', () => {
+                        mediaEl.classList.toggle('zoomed');
+                    });
+                }
+
+                lightboxContent.appendChild(mediaEl);
+                lightbox.classList.add('active');
+            }
+
+            function closeLightbox() {
+                if (!lightbox) return;
+                lightbox.classList.remove('active');
+                const media = lightboxContent.querySelector('video');
+                if (media) {
+                    media.pause();
+                }
+                const img = lightboxContent.querySelector('img');
+                if (img) {
+                    img.classList.remove('zoomed');
+                }
+            }
+
+            if (lightboxClose) {
+                lightboxClose.addEventListener('click', closeLightbox);
+            }
+
+            if (lightbox) {
+                lightbox.addEventListener('click', (event) => {
+                    if (event.target === lightbox) {
+                        closeLightbox();
+                    }
+                });
+            }
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    closeLightbox();
+                }
+            });
         </script>
     </body>
     </html>
