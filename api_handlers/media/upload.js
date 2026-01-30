@@ -156,10 +156,12 @@ module.exports = async function handler(req, res) {
     const mediaUrl = publicUrlData?.publicUrl;
 
     const username = user.user_metadata?.username || user.email.split('@')[0];
+    const avatarUrl = user.user_metadata?.avatar_url || '';
     const payload = {
       user_id: auth.userId,
       username,
       email: user.email,
+      avatar_url: avatarUrl || null,
       media_url: mediaUrl,
       media_type: mediaType,
       caption: caption ? caption.trim() : null,

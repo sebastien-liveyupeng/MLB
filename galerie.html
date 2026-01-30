@@ -247,6 +247,14 @@
                 color: #fff;
                 font-weight: 700;
                 font-size: 1rem;
+                overflow: hidden;
+            }
+
+            .media-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
             }
 
             .media-meta {
@@ -638,7 +646,14 @@
 
                 const avatar = document.createElement('div');
                 avatar.className = 'media-avatar';
-                avatar.textContent = getAvatarInitial(post.username || post.email);
+                if (post.avatar_url) {
+                    const avatarImg = document.createElement('img');
+                    avatarImg.src = post.avatar_url;
+                    avatarImg.alt = post.username || post.email || 'Avatar';
+                    avatar.appendChild(avatarImg);
+                } else {
+                    avatar.textContent = getAvatarInitial(post.username || post.email);
+                }
 
                 const meta = document.createElement('div');
                 meta.className = 'media-meta';
