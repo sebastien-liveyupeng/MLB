@@ -31,28 +31,40 @@
             padding: 0 1.5rem;
         }
 
-        .profile-card {
+        .profile-hero-card {
             background: var(--panel-bg);
-            border: 2px solid var(--panel-border);
-            border-radius: 20px;
-            padding: 2.2rem;
+            border-radius: 22px;
             box-shadow: var(--shadow-strong);
-            display: grid;
-            grid-template-columns: 120px 1fr;
-            gap: 1.6rem;
-            align-items: center;
+            overflow: hidden;
+        }
+
+        .profile-banner {
+            height: 180px;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.35), rgba(30, 15, 10, 0.9));
+            position: relative;
+        }
+
+        .profile-banner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.15), transparent 60%);
         }
 
         .profile-avatar {
             width: 120px;
             height: 120px;
-            border-radius: 20px;
+            border-radius: 22px;
             overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            border: 3px solid rgba(255, 255, 255, 0.2);
             background: rgba(0, 0, 0, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
+            position: absolute;
+            left: 2rem;
+            bottom: -50px;
+            z-index: 2;
         }
 
         .profile-avatar img {
@@ -67,6 +79,45 @@
             font-size: 2rem;
             letter-spacing: 1px;
             color: #fff;
+        }
+
+        .profile-info {
+            padding: 4.5rem 2rem 2rem;
+        }
+
+        .profile-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .profile-action-btn {
+            border: none;
+            background: rgba(255, 107, 53, 0.18);
+            color: #fff;
+            padding: 0.6rem 1.1rem;
+            border-radius: 999px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .profile-action-btn.outline {
+            background: transparent;
+            border: 1px solid rgba(255, 107, 53, 0.4);
+        }
+
+        .profile-action-status {
+            margin-top: 0.6rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
 
         .profile-name {
@@ -113,14 +164,70 @@
             object-fit: cover;
         }
 
+        .profile-media {
+            margin-top: 2rem;
+            background: var(--panel-bg);
+            border-radius: 18px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-strong);
+        }
+
+        .profile-media h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .profile-media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.8rem;
+        }
+
+        .profile-media-card {
+            position: relative;
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.35);
+            aspect-ratio: 1 / 1;
+        }
+
+        .profile-media-card img,
+        .profile-media-card video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .profile-media-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            padding: 0.2rem 0.5rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+        }
+
         @media (max-width: 680px) {
-            .profile-card {
-                grid-template-columns: 1fr;
+            .profile-avatar {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .profile-info {
+                padding: 5rem 1.2rem 1.5rem;
                 text-align: center;
             }
 
-            .profile-avatar {
-                margin: 0 auto;
+            .profile-main {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .profile-actions {
+                justify-content: center;
             }
         }
     </style>
@@ -175,14 +282,32 @@
     </header>
 
     <div class="profile-wrapper">
-        <div class="profile-card" id="profileCard" style="display: none;">
-            <div class="profile-avatar" id="profileAvatar"></div>
-            <div>
-                <div class="profile-name" id="profileName"></div>
-                <div class="profile-bio" id="profileBio"></div>
-                <div class="profile-lanes" id="profileLanes"></div>
+        <div class="profile-hero-card" id="profileCard" style="display: none;">
+            <div class="profile-banner" id="profileBanner">
+                <div class="profile-avatar" id="profileAvatar"></div>
+            </div>
+            <div class="profile-info">
+                <div class="profile-main">
+                    <div>
+                        <div class="profile-name" id="profileName"></div>
+                        <div class="profile-bio" id="profileBio"></div>
+                        <div class="profile-lanes" id="profileLanes"></div>
+                    </div>
+                    <div class="profile-actions" id="profileActions">
+                        <button class="profile-action-btn" id="profileMessageBtn"><i class='bx bx-message'></i> Message</button>
+                        <button class="profile-action-btn outline" id="profileFriendBtn"><i class='bx bx-user-plus'></i> Ajouter ami</button>
+                    </div>
+                </div>
+                <div class="profile-action-status" id="profileActionStatus"></div>
             </div>
         </div>
+
+        <section class="profile-media" id="profileMediaSection" style="display: none;">
+            <h3>Derniers médias</h3>
+            <div class="profile-media-grid" id="profileMediaGrid"></div>
+            <div class="profile-action-status" id="profileMediaStatus"></div>
+        </section>
+
         <div class="profile-status" id="profileStatus">Chargement du profil...</div>
     </div>
 
@@ -210,6 +335,34 @@
         const username = params.get('u');
         const status = document.getElementById('profileStatus');
         const card = document.getElementById('profileCard');
+        const actionStatus = document.getElementById('profileActionStatus');
+        const messageBtn = document.getElementById('profileMessageBtn');
+        const friendBtn = document.getElementById('profileFriendBtn');
+        const banner = document.getElementById('profileBanner');
+        const mediaSection = document.getElementById('profileMediaSection');
+        const mediaGrid = document.getElementById('profileMediaGrid');
+        const mediaStatus = document.getElementById('profileMediaStatus');
+
+        let currentUser = null;
+
+        async function loadCurrentUser() {
+            const token = typeof getStoredToken === 'function' ? getStoredToken() : null;
+            if (!token) return;
+
+            try {
+                const response = await fetch('/api/auth/session', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                if (response.ok && data.user) {
+                    currentUser = data.user;
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
 
         async function loadProfile() {
             if (!userId && !username) {
@@ -239,6 +392,11 @@
                     img.src = data.user.avatar_url;
                     img.alt = displayName;
                     avatar.appendChild(img);
+                    if (banner) {
+                        banner.style.backgroundImage = `linear-gradient(135deg, rgba(255, 107, 53, 0.35), rgba(30, 15, 10, 0.9)), url('${data.user.avatar_url}')`;
+                        banner.style.backgroundSize = 'cover';
+                        banner.style.backgroundPosition = 'center';
+                    }
                 } else {
                     const initials = document.createElement('div');
                     initials.className = 'profile-initials';
@@ -271,14 +429,132 @@
                 });
 
                 status.textContent = '';
-                card.style.display = 'grid';
+                card.style.display = 'block';
+
+                setupActions(data.user);
+                await loadUserMedia(data.user.id || userId, data.user.username || username);
             } catch (error) {
                 status.textContent = 'Impossible de charger le profil.';
                 console.error(error);
             }
         }
 
-        loadProfile();
+        function setActionStatus(message, type) {
+            if (!actionStatus) return;
+            actionStatus.textContent = message || '';
+            actionStatus.classList.remove('error', 'success');
+            if (type) actionStatus.classList.add(type);
+        }
+
+        function setupActions(profileUser) {
+            if (!messageBtn || !friendBtn) return;
+
+            if (currentUser && profileUser.id === currentUser.id) {
+                messageBtn.style.display = 'none';
+                friendBtn.style.display = 'none';
+                return;
+            }
+
+            messageBtn.addEventListener('click', () => {
+                const token = typeof getStoredToken === 'function' ? getStoredToken() : null;
+                if (!token) {
+                    openLoginModal();
+                    return;
+                }
+                const target = profileUser.id ? `messageUserId=${encodeURIComponent(profileUser.id)}` : `messageUsername=${encodeURIComponent(profileUser.username || '')}`;
+                window.location.href = `/profils?${target}`;
+            });
+
+            friendBtn.addEventListener('click', async () => {
+                const token = typeof getStoredToken === 'function' ? getStoredToken() : null;
+                if (!token) {
+                    openLoginModal();
+                    return;
+                }
+
+                setActionStatus('Envoi de la demande...', '');
+                try {
+                    const response = await fetch('/api/friends', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ action: 'request', user_id: profileUser.id })
+                    });
+
+                    const data = await response.json();
+                    if (!response.ok) {
+                        setActionStatus(data.error || 'Impossible d\'envoyer la demande.', 'error');
+                        return;
+                    }
+
+                    setActionStatus('Demande envoyée ✅', 'success');
+                } catch (error) {
+                    console.error(error);
+                    setActionStatus('Erreur lors de l\'envoi.', 'error');
+                }
+            });
+        }
+
+        async function loadUserMedia(id, name) {
+            if (!mediaSection || !mediaGrid || !mediaStatus) return;
+            mediaSection.style.display = 'block';
+            mediaGrid.innerHTML = '';
+            mediaStatus.textContent = 'Chargement...';
+
+            const query = id ? `userId=${encodeURIComponent(id)}` : `username=${encodeURIComponent(name || '')}`;
+            try {
+                const response = await fetch(`/api/media/user?${query}&limit=6`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    mediaStatus.textContent = data.error || 'Impossible de charger les médias.';
+                    return;
+                }
+
+                const posts = data.posts || [];
+                if (posts.length === 0) {
+                    mediaStatus.textContent = 'Aucun média pour le moment.';
+                    return;
+                }
+
+                mediaStatus.textContent = '';
+                posts.forEach(post => {
+                    const card = document.createElement('div');
+                    card.className = 'profile-media-card';
+
+                    if (post.media_type === 'video') {
+                        const video = document.createElement('video');
+                        video.src = post.media_url;
+                        video.muted = true;
+                        video.playsInline = true;
+                        video.preload = 'metadata';
+                        card.appendChild(video);
+
+                        const badge = document.createElement('div');
+                        badge.className = 'profile-media-badge';
+                        badge.textContent = 'Vidéo';
+                        card.appendChild(badge);
+                    } else {
+                        const img = document.createElement('img');
+                        img.src = post.media_url;
+                        img.alt = post.caption || 'Media';
+                        card.appendChild(img);
+                    }
+
+                    mediaGrid.appendChild(card);
+                });
+            } catch (error) {
+                console.error(error);
+                mediaStatus.textContent = 'Erreur lors du chargement.';
+            }
+        }
+
+        (async () => {
+            await loadCurrentUser();
+            await loadProfile();
+        })();
     </script>
 </body>
 </html>

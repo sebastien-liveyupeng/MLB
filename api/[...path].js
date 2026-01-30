@@ -24,6 +24,7 @@ const usersAvatar = require('../api_handlers/users/avatar');
 
 const mediaUpload = require('../api_handlers/media/upload');
 const mediaFeed = require('../api_handlers/media/feed');
+const mediaUser = require('../api_handlers/media/user');
 const mediaLike = require('../api_handlers/media/like');
 const mediaComment = require('../api_handlers/media/comment');
 const mediaComments = require('../api_handlers/media/comments');
@@ -81,6 +82,8 @@ module.exports = async function handler(req, res) {
       return mediaUpload(req, res);
     case 'media/feed':
       return mediaFeed(req, res);
+    case 'media/user':
+      return mediaUser(req, res);
     case 'media/like':
       return mediaLike(req, res);
     case 'media/comment':

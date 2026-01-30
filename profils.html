@@ -365,6 +365,12 @@
 
         let currentUser = null;
         let selectedUser = null;
+        let pendingChatUserId = null;
+        let pendingChatUsername = null;
+
+        const queryParams = new URLSearchParams(window.location.search);
+        pendingChatUserId = queryParams.get('messageUserId');
+        pendingChatUsername = queryParams.get('messageUsername');
 
         function getToken() {
             const localToken = localStorage.getItem('access_token');
@@ -452,6 +458,17 @@
                     card.appendChild(actions);
                     grid.appendChild(card);
                 });
+
+                if (pendingChatUserId || pendingChatUsername) {
+                    const target = users.find(user => (
+                        pendingChatUserId && user.id === pendingChatUserId
+                    ) || (
+                        pendingChatUsername && (user.username || '').toLowerCase() === pendingChatUsername.toLowerCase()
+                    ));
+                    if (target) {
+                        openChatSidebar(target);
+                    }
+                }
 
                 status.textContent = '';
             } catch (error) {

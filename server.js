@@ -5,6 +5,7 @@ const url = require('url');
 const friendsHandler = require('./api_handlers/friends');
 const mediaUploadHandler = require('./api_handlers/media/upload');
 const mediaFeedHandler = require('./api_handlers/media/feed');
+const mediaUserHandler = require('./api_handlers/media/user');
 const mediaLikeHandler = require('./api_handlers/media/like');
 const mediaCommentHandler = require('./api_handlers/media/comment');
 const mediaCommentsHandler = require('./api_handlers/media/comments');
@@ -64,6 +65,9 @@ const server = http.createServer((req, res) => {
       return;
     } else if (apiPath === 'media/feed') {
       mediaFeedHandler(req, res);
+      return;
+    } else if (apiPath === 'media/user') {
+      mediaUserHandler(req, res);
       return;
     } else if (apiPath === 'media/like') {
       mediaLikeHandler(req, res);
