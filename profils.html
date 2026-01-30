@@ -495,6 +495,20 @@
         if (chatClose) chatClose.addEventListener('click', closeChatSidebar);
         if (chatOverlay) chatOverlay.addEventListener('click', closeChatSidebar);
 
+        const PRIVATE_PREFIX = '[PRIVE]';
+
+        function isPrivateMessage(content) {
+            return (content || '').trim().toUpperCase().startsWith(PRIVATE_PREFIX);
+        }
+
+        function stripPrivatePrefix(content) {
+            const trimmed = (content || '').trim();
+            if (trimmed.toUpperCase().startsWith(PRIVATE_PREFIX)) {
+                return trimmed.slice(PRIVATE_PREFIX.length).trim();
+            }
+            return content || '';
+        }
+
         async function loadChatMessages() {
             const token = getToken();
             if (!token || !selectedUser || !currentUser) {
@@ -517,10 +531,12 @@
                 const mentionSelected = `@${(selectedUser.username || '').toLowerCase()}`;
                 const mentionMe = `@${(currentUser.username || '').toLowerCase()}`;
                 const messages = (data.messages || []).filter(msg => {
-                    const content = (msg.message || '').toLowerCase();
+                    const contentRaw = msg.message || '';
+                    const content = stripPrivatePrefix(contentRaw).toLowerCase();
                     const fromSelected = msg.username === selectedUser.username;
                     const fromMe = msg.username === currentUser.username;
-                    return (fromMe && content.includes(mentionSelected)) || (fromSelected && content.includes(mentionMe));
+                    const mentionsOk = (fromMe && content.includes(mentionSelected)) || (fromSelected && content.includes(mentionMe));
+                    return mentionsOk && (isPrivateMessage(contentRaw) || content.includes(mentionSelected) || content.includes(mentionMe));
                 });
 
                 chatMessages.innerHTML = '';
@@ -533,7 +549,7 @@
                 messages.forEach(msg => {
                     const bubble = document.createElement('div');
                     bubble.className = `chat-bubble ${msg.username === currentUser.username ? 'me' : ''}`;
-                    bubble.textContent = msg.message;
+                    bubble.textContent = stripPrivatePrefix(msg.message);
 
                     const meta = document.createElement('div');
                     meta.className = 'chat-meta';
@@ -564,7 +580,8 @@
                 if (!value) return;
 
                 const mention = `@${selectedUser.username}`;
-                const message = value.startsWith(mention) ? value : `${mention} ${value}`;
+                const baseMessage = value.startsWith(mention) ? value : `${mention} ${value}`;
+                const message = `${PRIVATE_PREFIX} ${baseMessage}`;
 
                 try {
                     const response = await fetch('/api/chat/send', {

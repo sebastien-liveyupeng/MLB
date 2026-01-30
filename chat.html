@@ -691,15 +691,22 @@
             }
         }
 
+        const PRIVATE_PREFIX = '[PRIVE]';
+
+        function isPrivateMessage(content) {
+            return (content || '').trim().toUpperCase().startsWith(PRIVATE_PREFIX);
+        }
+
         function displayMessages(messages) {
             const chatMessages = document.getElementById('chatMessages');
-            
-            if (messages.length === 0) {
+            const publicMessages = (messages || []).filter(msg => !isPrivateMessage(msg.message));
+
+            if (publicMessages.length === 0) {
                 chatMessages.innerHTML = '<div class="message system"><div class="message-content"><div class="message-text">Aucun message pour le moment. Soyez le premier à écrire !</div></div></div>';
                 return;
             }
 
-            chatMessages.innerHTML = messages.map(msg => {
+            chatMessages.innerHTML = publicMessages.map(msg => {
                 const isOwn = msg.user_id === currentUser.id;
                 const avatar = (msg.username || msg.email)[0].toUpperCase();
                 const time = new Date(msg.created_at).toLocaleTimeString('fr-FR', { 
