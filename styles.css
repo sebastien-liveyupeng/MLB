@@ -1817,6 +1817,7 @@
             }
 
             .hamburger {
+                display: flex;
                 order: 2;
             }
 
