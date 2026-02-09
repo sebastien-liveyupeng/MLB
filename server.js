@@ -1,4 +1,20 @@
 const http = require('http');
+const multer = require('multer');
+// Multer setup for file uploads
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    // Use original name, but you can customize
+    cb(null, Date.now() + '-' + file.originalname.replace(/\s+/g, '_'));
+  }
+});
+const upload = multer({ storage: storage, limits: { fileSize: 2 * 1024 * 1024 * 1024 } }); // 2 Go max
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
@@ -16,6 +32,26 @@ require('dotenv').config({ path: '.env.local' });
 const PORT = 3002;
 
 const server = http.createServer((req, res) => {
+    // Handle file upload endpoint
+    if (req.method === 'POST' && pathname === '/api/upload') {
+      upload.single('file')(req, res, function (err) {
+        if (err) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: err.message }));
+          return;
+        }
+        if (!req.file) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Aucun fichier reçu.' }));
+          return;
+        }
+        // Return file info and URL
+        const fileUrl = `/uploads/${req.file.filename}`;
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, fileUrl, filename: req.file.filename }));
+      });
+      return;
+    }
   const parsedUrl = url.parse(req.url, true);
   let pathname = parsedUrl.pathname;
   req.query = parsedUrl.query || {};
@@ -110,16 +146,41 @@ const server = http.createServer((req, res) => {
     pathname = rewrites[pathname];
   }
 
-  // Serve static files
+  // Serve uploaded files statically
+  if (pathname.startsWith('/uploads/')) {
+    const filePath = path.join(uploadDir, pathname.replace('/uploads/', ''));
+    fs.readFile(filePath, (err, data) => {
+      if (err) {
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end('404 Not Found');
+        return;
+      }
+      // Set content type based on extension
+      const ext = path.extname(filePath).toLowerCase();
+      let contentType = 'application/octet-stream';
+      if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
+      if (ext === '.png') contentType = 'image/png';
+      if (ext === '.gif') contentType = 'image/gif';
+      if (ext === '.mp4') contentType = 'video/mp4';
+      if (ext === '.mov') contentType = 'video/quicktime';
+      if (ext === '.webm') contentType = 'video/webm';
+      if (ext === '.avi') contentType = 'video/x-msvideo';
+      if (ext === '.mkv') contentType = 'video/x-matroska';
+      if (ext === '.pdf') contentType = 'application/pdf';
+      res.writeHead(200, { 'Content-Type': contentType });
+      res.end(data);
+    });
+    return;
+  }
+
+  // Serve static files (HTML, CSS, JS, etc.)
   const filePath = path.join(__dirname, pathname);
-  
   fs.readFile(filePath, (err, data) => {
     if (err) {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
       res.end('404 Not Found');
       return;
     }
-
     const ext = path.extname(filePath);
     let contentType = 'text/html';
     if (ext === '.js') contentType = 'application/javascript';
@@ -128,7 +189,6 @@ const server = http.createServer((req, res) => {
     if (ext === '.avif') contentType = 'image/avif';
     if (ext === '.png') contentType = 'image/png';
     if (ext === '.svg') contentType = 'image/svg+xml';
-
     res.writeHead(200, { 'Content-Type': contentType });
     res.end(data);
   });

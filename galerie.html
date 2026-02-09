@@ -643,8 +643,8 @@
         <script src="auth-session.js"></script>
         <script>
             const PAGE_SIZE = 10;
-            const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
-            const MAX_VIDEO_SIZE = 200 * 1024 * 1024;
+            const MAX_IMAGE_SIZE = 1024 * 1024 * 1024; // 1 Go
+            const MAX_VIDEO_SIZE = 1024 * 1024 * 1024; // 1 Go
             const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
             const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime'];
 
@@ -929,40 +929,38 @@
                 }
 
                 if (isImage && file.size > MAX_IMAGE_SIZE) {
-                    setStatus(uploadStatus, 'Image trop lourde (max 10MB).', 'error');
+                    setStatus(uploadStatus, 'Image trop lourde (max 1 Go).', 'error');
                     return;
                 }
-
                 if (isVideo && file.size > MAX_VIDEO_SIZE) {
-                    setStatus(uploadStatus, 'Vidéo trop lourde (max 200MB).', 'error');
+                    setStatus(uploadStatus, 'Vidéo trop lourde (max 1 Go).', 'error');
                     return;
                 }
-
                 setStatus(uploadStatus, 'Upload en cours...', '');
-
                 const formData = new FormData();
                 formData.append('file', file);
                 formData.append('caption', captionInput.value || '');
-
                 try {
-                    const response = await fetch('/api/media/upload', {
+                    const response = await fetch('/api/upload', {
                         method: 'POST',
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        },
                         body: formData
                     });
-
                     const data = await response.json();
                     if (!response.ok) {
                         setStatus(uploadStatus, data.error || 'Upload échoué.', 'error');
                         return;
                     }
-
                     setStatus(uploadStatus, 'Publié !', 'success');
                     fileInput.value = '';
                     captionInput.value = '';
-                    renderPost(data.post, { prepend: true });
+                    // Ajoute le média à la galerie
+                    renderPost({
+                        media_type: isVideo ? 'video' : 'image',
+                        media_url: data.fileUrl,
+                        caption: captionInput.value,
+                        created_at: new Date().toISOString(),
+                        username: currentUser ? currentUser.username : 'Membre'
+                    }, { prepend: true });
                     offset += 1;
                 } catch (error) {
                     console.error(error);
